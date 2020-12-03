@@ -1,0 +1,12 @@
+[submodule "ext/sfml"]
+	path = ext/sfml
+	url = https://github.com/SFML/SFML.git
+[submodule "ext/imgui-sfml"]
+	path = ext/imgui-sfml
+	url = https://github.com/eliasdaler/imgui-sfml.git
+[submodule "ext/imgui"]
+	path = ext/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "ext/glm"]
+	path = ext/glm
+	url = https://github.com/g-truc/glm.git

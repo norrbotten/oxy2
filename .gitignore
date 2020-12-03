@@ -1,0 +1,8 @@
+build/
+
+ext/
+
+src/oldrenderer/
+
+*.stl
+*.obj
