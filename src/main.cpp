@@ -1,17 +1,19 @@
 
 #include <iostream>
 
-#include "renderer/primitives/sphere.hpp"
+#include "renderer/material/texture.hpp"
 
 using namespace Oxy;
 
 int main() {
-  auto sphere = Primitive::SpherePrimitive(Vec3(0, 0, 0), 1.0);
-
-  auto res = Primitive::Traits::intersect_ray(sphere, SingleRay{Vec3(-5, 1, 0), Vec3(1, 0, 0)});
-
-  if (res.has_value())
-    std::cout << res.value() << "\n";
+  auto texture = Texture();
+  if (texture.load_from_file("./data/grass.png")) {
+    std::cout << "fucked\n";
+  }
+  else {
+    auto col = texture.sample(0.5, 0.5);
+    std::cout << "r: " << col.r() << "\ng: " << col.g() << "\nb: " << col.b() << "\n";
+  }
 
   return 0;
 }

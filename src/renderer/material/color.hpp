@@ -31,6 +31,10 @@ namespace Oxy {
         , m_g((FloatType)g / 255.0)
         , m_b((FloatType)b / 255.0) {}
 
+    const auto& r() const { return m_r; }
+    const auto& g() const { return m_g; }
+    const auto& b() const { return m_b; }
+
   private:
     FloatType m_r, m_g, m_b;
   };
