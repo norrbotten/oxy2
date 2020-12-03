@@ -51,7 +51,12 @@ namespace Oxy::Primitive {
       if (disc < 0)
         return {};
 
-      return (-b - std::sqrt(disc)) / (2.0 * a);
+      FloatType t = (-b - std::sqrt(disc)) / (2.0 * a);
+
+      if (t < 0)
+        return {};
+
+      return t;
     }
 
   } // namespace Traits

@@ -22,9 +22,10 @@ workspace "oxy2"
 project "oxy2"
     kind "ConsoleApp"
 
-    files { "src/**.cpp" }
+    files { "src/**.cpp", "ext/lodepng/lodepng.cpp" }
 
-    includedirs { "src/", "ext/glm" }
+    includedirs { "src/", "ext/glm", "ext/lodepng" }
+
     excludes { "src/oldrenderer/**.*" }
 
     buildoptions "-march=native"
