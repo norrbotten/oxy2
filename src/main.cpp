@@ -6,7 +6,7 @@
 
 #include "renderer/material/materials.hpp"
 
-#include "renderer/primitives/sphere.hpp"
+#include "renderer/tracing/sphere.hpp"
 
 using namespace Oxy;
 
@@ -15,26 +15,20 @@ int main() {
   film.resize(1024, 1024);
 
   auto cam = Camera();
-  cam.set_pos(Vec3(-5, 0, 0));
+  cam.set_pos(Vec3(-7, 0, 0));
   cam.set_fov(70);
   cam.aim(Vec3(0, 0, 0));
 
-  auto sphere  = Primitive::SpherePrimitive(Vec3(0, 0, 0), 1.0);
-  namespace TR = Primitive::Traits;
+  auto bsdf = std::make_shared<BSDF>(Color(1.0, 0.0, 0.0));
+
+  auto sphere       = TracableSphere(Vec3(0.0, 0.0, 0.0), 1.0);
+  sphere.material() = bsdf;
 
   cam.for_each_pixel(film, [&](SingleRay ray) {
-    if (auto isect = TR::intersect_ray(sphere, ray); isect.has_value()) {
-      IntersectionContext ctx;
-      ctx.ray = ray;
-      ctx.hit = true;
+    auto isect = sphere.intersect_ray(ray);
 
-      ctx.t         = isect.value();
-      ctx.hitpos    = ray.origin + ray.direction * isect.value();
-      ctx.hitnormal = TR::hitnormal(sphere, ctx.hitpos);
-
-      ctx.uv = {0.0, 0.0};
-
-      return Color(glm::dot(ray.direction, -ctx.hitnormal));
+    if (isect.hit) {
+      return isect.object->material()->sample(isect);
     }
 
     return Color(0.0);

@@ -6,6 +6,8 @@
 
 namespace Oxy {
 
+  class TracableObject;
+
   struct IntersectionContext {
     SingleRay ray;
 
@@ -16,6 +18,8 @@ namespace Oxy {
 
     Vec3 hitpos;
     Vec3 hitnormal;
+
+    TracableObject* object = nullptr;
   };
 
   // https://stackoverflow.com/questions/2704521/generate-random-double-numbers-in-c

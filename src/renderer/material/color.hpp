@@ -41,6 +41,9 @@ namespace Oxy {
     const auto& g() const { return m_g; }
     const auto& b() const { return m_b; }
 
+    Color operator*(const Color& rhs) { return Color{r() * rhs.r(), g() * rhs.g(), b() * rhs.b()}; }
+    Color operator*(double rhs) { return Color{r() * rhs, g() * rhs, b() * rhs}; }
+
   private:
     FloatType m_r, m_g, m_b;
   };
