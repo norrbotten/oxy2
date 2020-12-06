@@ -18,6 +18,21 @@ namespace Oxy {
     bool load_from_file(fs::path path);
     void make_solid_color(Color color = Color(1.0, 1.0, 1.0));
 
+    template <typename Callable>
+    void generate(int width, int height, Callable callback) {
+      if (m_buffer != nullptr)
+        delete m_buffer;
+
+      m_width  = width;
+      m_height = height;
+
+      m_buffer = new Color[width * height];
+
+      for (int y = 0; y < height; y++)
+        for (int x = 0; x < width; x++)
+          m_buffer[x + y * width] = callback(x, y);
+    }
+
     Color sample(FloatType x, FloatType y) const;
 
     const auto& buffer() const { return m_buffer; }

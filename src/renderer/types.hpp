@@ -7,6 +7,9 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
 
+#define REF(field)                                                                                 \
+  auto& field() { return m_##field; }
+
 namespace Oxy {
 
   using FloatType = double;

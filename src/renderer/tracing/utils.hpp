@@ -7,12 +7,15 @@
 namespace Oxy {
 
   struct IntersectionContext {
-    SingleRay* incident_ray = nullptr;
+    SingleRay ray;
 
     bool   hit = false;
     double t   = 0;
 
     Vec2 uv{0, 0};
+
+    Vec3 hitpos;
+    Vec3 hitnormal;
   };
 
   // https://stackoverflow.com/questions/2704521/generate-random-double-numbers-in-c
