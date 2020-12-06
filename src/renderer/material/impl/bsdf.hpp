@@ -5,7 +5,6 @@
 #include "renderer/material/material.hpp"
 #include "renderer/material/texture.hpp"
 
-#include "renderer/tracing/utils.hpp"
 #include "renderer/types.hpp"
 
 namespace Oxy {

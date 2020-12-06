@@ -86,7 +86,6 @@ namespace Oxy {
     Vec3 rotaxis{glm::sin(phi), -glm::cos(phi), 0};
     auto angle = 2 * theta * (1 - 2 * glm::acos(random<FloatType>(0, 1)) / M_PI);
 
-    // auto rotmatrix = glm::rotate(rotaxis, angle, Vec3{1, 0, 0});
     auto rotmatrix = glm::mat4_cast(glm::angleAxis(angle, rotaxis));
     auto point4    = rotmatrix * Vec4(x, y, z, 1);
 
@@ -96,8 +95,7 @@ namespace Oxy {
     if (normal.z < -0.999999)
       return -Vec3(point4);
 
-    auto rotaxis2 = glm::normalize(glm::cross(normal, Vec3(0, 0, -1)));
-    // auto rotmatrix2 = glm::rotate(Vec4(rotaxis2, 1), glm::acos(normal.z), Vec3{1, 0, 0});
+    auto rotaxis2   = glm::normalize(glm::cross(normal, Vec3(0, 0, -1)));
     auto rotmatrix2 = glm::mat4_cast(glm::angleAxis(glm::acos(normal.z), rotaxis2));
 
     return Vec3(rotmatrix2 * point4);

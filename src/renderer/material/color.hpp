@@ -31,6 +31,12 @@ namespace Oxy {
         , m_g((FloatType)g / 255.0)
         , m_b((FloatType)b / 255.0) {}
 
+    void to_chars(unsigned char& r, unsigned char& g, unsigned char& b) {
+      r = (unsigned char)(255 * m_r);
+      g = (unsigned char)(255 * m_g);
+      b = (unsigned char)(255 * m_b);
+    }
+
     const auto& r() const { return m_r; }
     const auto& g() const { return m_g; }
     const auto& b() const { return m_b; }

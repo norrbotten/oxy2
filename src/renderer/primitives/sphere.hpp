@@ -59,6 +59,11 @@ namespace Oxy::Primitive {
       return t;
     }
 
+    template <>
+    Vec3 hitnormal(const SpherePrimitive& primitive, const Vec3& point) {
+      return (point - primitive.center()) / primitive.radius();
+    }
+
   } // namespace Traits
 
 } // namespace Oxy::Primitive

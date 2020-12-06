@@ -1,7 +1,7 @@
 #pragma once
 
 #include "renderer/material/color.hpp"
-#include "renderer/tracing/utils.hpp"
+#include "renderer/utils.hpp"
 
 namespace Oxy {
 

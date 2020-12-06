@@ -53,6 +53,6 @@ newaction {
     trigger = "run",
     description = "run",
     execute = function()
-        os.execute("(premake5 gmake2 && cd build && make -j config=release) && ./build/bin/release/oxy2")
+        os.execute("(premake5 gmake2 && cd build && make -j config=release) && time -p ./build/bin/release/oxy2")
     end
 }

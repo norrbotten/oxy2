@@ -28,7 +28,7 @@ namespace Oxy {
 
       m_buffer = new Color[width * height];
 
-      for (int i = 0; i < width * height; i++)
+      for (unsigned int i = 0; i < width * height; i++)
         m_buffer[i] = Color(image.at(i * 4 + 0), image.at(i * 4 + 1), image.at(i * 4 + 2));
 
       return false;
