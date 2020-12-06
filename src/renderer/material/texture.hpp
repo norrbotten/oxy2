@@ -16,6 +16,7 @@ namespace Oxy {
     ~Texture();
 
     bool load_from_file(fs::path path);
+    void make_solid_color(Color color = Color(1.0, 1.0, 1.0));
 
     Color sample(FloatType x, FloatType y) const;
 

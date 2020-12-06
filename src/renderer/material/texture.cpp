@@ -37,6 +37,17 @@ namespace Oxy {
     return true;
   }
 
+  void Texture::make_solid_color(Color color) {
+    if (m_buffer != nullptr)
+      delete m_buffer;
+
+    m_width  = 1;
+    m_height = 1;
+
+    m_buffer    = new Color[1];
+    m_buffer[0] = color;
+  }
+
   Color Texture::sample(FloatType x, FloatType y) const {
     auto read = [this](int x, int y, int ox = 0, int oy = 0) {
       auto read_x = (x + ox) % m_width;

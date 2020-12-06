@@ -1,18 +1,14 @@
 
 #include <iostream>
 
-#include "renderer/material/texture.hpp"
+#include "renderer/tracing/utils.hpp"
 
 using namespace Oxy;
 
 int main() {
-  auto texture = Texture();
-  if (texture.load_from_file("./data/grass.png")) {
-    std::cout << "fucked\n";
-  }
-  else {
-    auto col = texture.sample(0.5, 0.5);
-    std::cout << "r: " << col.r() << "\ng: " << col.g() << "\nb: " << col.b() << "\n";
+
+  for (int i = 0; i < 100; i++) {
+    std::cout << random_vector_on_cone(Vec3{0, 0, 1}, M_PI / 16) << "\n";
   }
 
   return 0;
