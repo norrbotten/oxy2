@@ -21,6 +21,9 @@ namespace Oxy {
         ctx.hitpos    = ray.origin + ray.direction * isect.value();
         ctx.hitnormal = Primitive::Traits::hitnormal(m_sphere, ctx.hitpos);
 
+        auto& n = ctx.hitnormal;
+        ctx.uv  = Vec2(n.y * 0.5 + 0.5, 4 * std::atan2(n.x, n.z) / (2 * M_PI) + 0.5);
+
         ctx.object = this;
       }
 
