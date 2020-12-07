@@ -26,7 +26,7 @@ int main() {
   auto gdiffuse = std::shared_ptr<Material>(create_diffuse(Color(0.0, 1.0, 0.0)));
   auto bdiffuse = std::shared_ptr<Material>(create_diffuse(Color(0.0, 0.0, 1.0)));
 
-  auto emissive = std::shared_ptr<Material>(create_emissive(Color(1.0, 1.0, 1.0)));
+  auto emissive = std::shared_ptr<Material>(create_emissive(Color(3.0)));
 
   auto rsphere        = new TracableSphere(Vec3(0.0, 0.0, 0.0), 1.0);
   rsphere->material() = diffuse;
@@ -40,7 +40,7 @@ int main() {
   auto ground        = new TracableSphere(Vec3(0.0, 0.0, -1e6), 1e6 - 1);
   ground->material() = diffuse;
 
-  auto light        = new TracableSphere(Vec3(0.0, 0.0, 14.5), 10.0);
+  auto light        = new TracableSphere(Vec3(0.0, 0.0, 15), 10.0);
   light->material() = emissive;
 
   auto integrator = new Integrators::Naive();

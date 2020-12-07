@@ -15,9 +15,7 @@ namespace Oxy {
     virtual Color    sample(const IntersectionContext& ctx) const  = 0;
     virtual LightRay scatter(const IntersectionContext& ctx) const = 0;
 
-    virtual bool     is_emissive() const { return false; }
-    virtual LightRay get_emission() const { return {}; }
-    virtual Color    get_emission_color() const { return Color(); }
+    virtual bool is_emissive() const { return false; }
   };
 
 } // namespace Oxy

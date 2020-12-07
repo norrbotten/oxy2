@@ -14,11 +14,11 @@ namespace Oxy {
   class Emissive final : public Material {
   public:
     Emissive(Color energy)
-        : m_albedo(energy) {}
+        : m_energy(energy) {}
 
     virtual Color sample(const IntersectionContext& ctx) const override {
       (void)ctx;
-      return m_albedo;
+      return m_energy;
     }
 
     virtual LightRay scatter(const IntersectionContext& ctx) const override {
@@ -35,10 +35,8 @@ namespace Oxy {
 
     virtual bool is_emissive() const override { return true; }
 
-    virtual Color get_emission_color() const override { return m_albedo; }
-
   private:
-    Color m_albedo;
+    Color m_energy;
   };
 
 } // namespace Oxy

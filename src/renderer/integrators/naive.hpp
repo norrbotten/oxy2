@@ -24,10 +24,10 @@ namespace Oxy::Integrators {
         auto& obj   = isect.object;
         auto& mater = obj->material();
 
-        if (mater->is_emissive())
-          color += throughput * mater->get_emission_color();
-
         auto scatter = mater->scatter(isect);
+
+        if (mater->is_emissive())
+          color += throughput * scatter.light;
 
         throughput *= scatter.light;
         current_ray = scatter.ray;
