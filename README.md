@@ -1,5 +1,5 @@
-# Oxy
+# Oxy2 - Revisiting my old Oxy renderer
 
-A more serious renderer project, ment to have an interactive interface and scene editor.
-
-![buddhabrot](https://i.imgur.com/3uuN05s.png)
+<p align="center">
+  <img src="https://i.imgur.com/qrrctS9.png">
+</p>
