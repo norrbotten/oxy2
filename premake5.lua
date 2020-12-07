@@ -6,8 +6,6 @@ workspace "oxy2"
 
     configurations { "debug", "release" }
 
-    buildoptions { "-std=c++2a" }
-
     filter { "configurations:debug" }
         symbols "On"
         optimize "Off"
@@ -28,9 +26,9 @@ project "oxy2"
 
     excludes { "src/oldrenderer/**.*" }
 
-    buildoptions "-march=native"
+    buildoptions { "-march=native", "-std=c++2a", "-fopenmp" }
 
-    links "pthread"
+    links { "pthread", "gomp" }
 
 newaction {
     trigger = "build",

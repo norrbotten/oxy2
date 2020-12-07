@@ -46,9 +46,7 @@ namespace Oxy {
 
   void SampleFilm::splat(int x, int y, const Color& col) { splat(x, y, col.r(), col.g(), col.b()); }
 
-  Color SampleFilm::get(int x, int y, double exposure) const {
-    auto expose = [](double val, double fac) -> double { return std::pow(val, fac); };
-
+  Color SampleFilm::get(int x, int y) const {
     if (x >= 0 && y >= 0 && x < m_width && y < m_height) {
       auto num_samples = m_sample_count[x + y * m_width];
       if (num_samples == 0)
@@ -58,10 +56,64 @@ namespace Oxy {
       double g = m_cumulative_buffer[3 * (x + y * m_width) + 1] / num_samples;
       double b = m_cumulative_buffer[3 * (x + y * m_width) + 2] / num_samples;
 
-      return {expose(r, exposure), expose(g, exposure), expose(b, exposure)};
+      return {r, g, b};
     }
 
     return Color();
+  }
+
+  void SampleFilm::copy_to_rgba_buffer(unsigned char* buffer) const {
+    for (int y = 0; y < m_height; y++)
+      for (int x = 0; x < m_width; x++) {
+        unsigned char r, g, b, a = (char)255;
+        auto          col = get(x, y);
+        col.to_chars(r, g, b);
+
+        *(buffer + 0) = r;
+        *(buffer + 1) = g;
+        *(buffer + 2) = b;
+        *(buffer + 3) = a;
+
+        buffer += 4;
+      }
+  }
+
+  void SampleFilm::to_rgba_vector(std::vector<unsigned char>* buf) const {
+    for (int y = 0; y < m_height; y++)
+      for (int x = 0; x < m_width; x++) {
+        unsigned char r, g, b;
+        auto          col = get(x, y);
+
+        col.to_chars(r, g, b);
+
+        buf->push_back(r);
+        buf->push_back(g);
+        buf->push_back(b);
+        buf->push_back(255);
+      }
+  }
+
+  void SampleFilm::clear() {
+    if (m_cumulative_buffer != nullptr)
+      for (int i = 0; i < 3 * m_width * m_height; i++)
+        m_cumulative_buffer[i] = 0.0;
+
+    if (m_sample_count != nullptr)
+      for (int i = 0; i < m_width * m_height; i++)
+        m_sample_count[i] = 0;
+  }
+
+  void SampleFilm::write_png(const char* filename) {
+    if (m_cumulative_buffer == nullptr || m_sample_count == nullptr)
+      return;
+
+    std::vector<unsigned char> buf;
+    this->to_rgba_vector(&buf);
+
+    auto err = lodepng::encode(filename, buf, m_width, m_height);
+
+    if (err)
+      std::cout << lodepng_error_text(err);
   }
 
 } // namespace Oxy

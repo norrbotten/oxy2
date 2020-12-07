@@ -16,15 +16,26 @@ namespace Oxy {
     Emissive(Color energy)
         : m_albedo(energy) {}
 
-    Color sample(const IntersectionContext& ctx) override {
-      return Color(); // emissives shouldnt be sampled, but still need this
+    virtual Color sample(const IntersectionContext& ctx) const override {
+      (void)ctx;
+      return m_albedo;
     }
 
-    LightRay scatter(const IntersectionContext& ctx) override {
+    virtual LightRay scatter(const IntersectionContext& ctx) const override {
+      (void)ctx;
+
       LightRay result;
+
+      result.light         = this->sample(ctx);
+      result.ray.origin    = ctx.hitpos + ctx.hitnormal * 1e-6;
+      result.ray.direction = random_vector_on_hemisphere(ctx.hitnormal);
 
       return result;
     }
+
+    virtual bool is_emissive() const override { return true; }
+
+    virtual Color get_emission_color() const override { return m_albedo; }
 
   private:
     Color m_albedo;

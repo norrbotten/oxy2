@@ -37,12 +37,66 @@ namespace Oxy {
       b = (unsigned char)(255 * m_b);
     }
 
-    const auto& r() const { return m_r; }
-    const auto& g() const { return m_g; }
-    const auto& b() const { return m_b; }
+    auto max() const { return glm::max(m_r, glm::max(m_g, m_b)); }
+
+    REF(r);
+    REF(g);
+    REF(b);
+
+    CREF(r);
+    CREF(g);
+    CREF(b);
+
+    Color operator+(const Color& rhs) { return Color{r() + rhs.r(), g() + rhs.g(), b() + rhs.b()}; }
+    Color operator+(FloatType rhs) { return Color{r() + rhs, g() + rhs, b() + rhs}; }
 
     Color operator*(const Color& rhs) { return Color{r() * rhs.r(), g() * rhs.g(), b() * rhs.b()}; }
-    Color operator*(double rhs) { return Color{r() * rhs, g() * rhs, b() * rhs}; }
+    Color operator*(FloatType rhs) { return Color{r() * rhs, g() * rhs, b() * rhs}; }
+
+    Color operator/(const Color& rhs) { return Color{r() / rhs.r(), g() / rhs.g(), b() / rhs.b()}; }
+    Color operator/(FloatType rhs) { return Color{r() / rhs, g() / rhs, b() / rhs}; }
+
+    Color& operator+=(const Color& rhs) {
+      m_r += rhs.r();
+      m_g += rhs.g();
+      m_b += rhs.b();
+      return *this;
+    }
+
+    Color& operator+=(FloatType rhs) {
+      m_r += rhs;
+      m_g += rhs;
+      m_b += rhs;
+      return *this;
+    }
+
+    Color& operator*=(const Color& rhs) {
+      m_r *= rhs.r();
+      m_g *= rhs.g();
+      m_b *= rhs.b();
+      return *this;
+    }
+
+    Color& operator*=(FloatType rhs) {
+      m_r *= rhs;
+      m_g *= rhs;
+      m_b *= rhs;
+      return *this;
+    }
+
+    Color& operator/=(const Color& rhs) {
+      m_r /= rhs.r();
+      m_g /= rhs.g();
+      m_b /= rhs.b();
+      return *this;
+    }
+
+    Color& operator/=(FloatType rhs) {
+      m_r /= rhs;
+      m_g /= rhs;
+      m_b /= rhs;
+      return *this;
+    }
 
   private:
     FloatType m_r, m_g, m_b;

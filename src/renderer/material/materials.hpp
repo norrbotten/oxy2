@@ -1,6 +1,7 @@
 #pragma once
 
 #include "renderer/material/impl/bsdf.hpp"
+#include "renderer/material/impl/emissive.hpp"
 
 namespace Oxy {
 
@@ -17,6 +18,8 @@ namespace Oxy {
 
     return mat;
   }
+
+  Emissive* create_emissive(Color albedo) { return new Emissive(albedo); }
 
   BSDF* create_diffuse(Color albedo) { return create_bsdf(albedo, 1.0, 0.0, 0.0, 1.45, 0.0); }
 

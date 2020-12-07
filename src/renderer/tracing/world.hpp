@@ -17,8 +17,10 @@ namespace Oxy {
       for (auto&& obj : m_objects) {
         auto obj_ctx = obj->intersect_ray(ray);
 
-        if (obj_ctx.hit && obj_ctx.t < min)
+        if (obj_ctx.hit && obj_ctx.t < min) {
           res = obj_ctx;
+          min = res.t;
+        }
       }
 
       return res;
@@ -34,8 +36,10 @@ namespace Oxy {
       for (auto&& obj : m_objects) {
         auto obj_ctx = obj->intersect_ray(ray);
 
-        if (obj_ctx.hit && obj_ctx.t < min)
+        if (obj_ctx.hit && obj_ctx.t < min) {
           res = obj_ctx;
+          min = res.t;
+        }
       }
 
       return res;

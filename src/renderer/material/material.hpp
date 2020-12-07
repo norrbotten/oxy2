@@ -12,11 +12,12 @@ namespace Oxy {
 
   class Material {
   public:
-    virtual Color    sample(const IntersectionContext& ctx)  = 0;
-    virtual LightRay scatter(const IntersectionContext& ctx) = 0;
+    virtual Color    sample(const IntersectionContext& ctx) const  = 0;
+    virtual LightRay scatter(const IntersectionContext& ctx) const = 0;
 
-    virtual bool     is_emissive() { return false; }
-    virtual LightRay get_emission() { return {}; }
+    virtual bool     is_emissive() const { return false; }
+    virtual LightRay get_emission() const { return {}; }
+    virtual Color    get_emission_color() const { return Color(); }
   };
 
 } // namespace Oxy

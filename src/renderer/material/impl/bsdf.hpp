@@ -30,11 +30,11 @@ namespace Oxy {
       m_albedo = albedo;
     }
 
-    Color sample(const IntersectionContext& ctx) override {
+    Color sample(const IntersectionContext& ctx) const override {
       return m_texture.sample(ctx.uv.x, ctx.uv.y);
     }
 
-    LightRay scatter(const IntersectionContext& ctx) override {
+    LightRay scatter(const IntersectionContext& ctx) const override {
       LightRay result;
 
       result.light = this->sample(ctx);
