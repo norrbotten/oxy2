@@ -105,4 +105,17 @@ namespace Oxy {
     return Vec3(rotmatrix2 * point4);
   }
 
+  double estimate_seconds_left(int num_samples_done, double seconds_passed, int sample_target) {
+    auto samples_per_second = num_samples_done / seconds_passed;
+    return (sample_target - num_samples_done) / samples_per_second;
+  }
+
+  int next_sample_target(int current_samples) {
+    if (current_samples == 0)
+      return 10;
+
+    auto step = glm::max(10.0, (double)current_samples * 0.1);
+    return current_samples + step;
+  }
+
 } // namespace Oxy

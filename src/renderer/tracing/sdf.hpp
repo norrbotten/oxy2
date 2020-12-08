@@ -80,7 +80,7 @@ namespace Oxy {
 
     inline FloatType box(const Vec3& p, const Vec3& size) {
       auto q = glm::abs(p) - size;
-      return glm::length(glm::max(q, Vec3(0))) + glm::min(glm::max(q.x, q.z), 0.0);
+      return glm::length(glm::max(q, Vec3(0))) + glm::min(glm::max(q.x, glm::max(q.y, q.z)), 0.0);
     }
 
     inline FloatType rounded_box(const Vec3& p, const Vec3& size, FloatType radius) {
@@ -91,6 +91,28 @@ namespace Oxy {
     inline FloatType torus(const Vec3& p, const Vec2& params) {
       auto q = Vec2(glm::length(Vec2(p.x, p.z) - params.x), p.y);
       return glm::length(q) - params.y;
+    }
+
+    inline FloatType capped_cylinder(const Vec3& p, const Vec3& a, const Vec3& b, FloatType r) {
+      auto      ba   = b - a;
+      auto      pa   = p - a;
+      FloatType baba = glm::dot(ba, ba);
+      FloatType paba = glm::dot(pa, ba);
+      FloatType x    = glm::length(pa * baba - ba * paba) - r * baba;
+      FloatType y    = glm::abs(paba - baba * 0.5) - baba * 0.5;
+      FloatType x2   = x * x;
+      FloatType y2   = y * y * baba;
+      FloatType d    = (glm::max(x, y) < 0.0) ? -glm::min(x2, y2)
+                                           : (((x > 0.0) ? x2 : 0.0) + ((y > 0.0) ? y2 : 0.0));
+
+      return glm::sign(d) * glm::sqrt(glm::abs(d)) / baba;
+    }
+
+    inline FloatType capsule(const Vec3& p, const Vec3& a, const Vec3& b, FloatType r) {
+      auto pa = p - a;
+      auto ba = b - a;
+      auto h  = glm::clamp(glm::dot(pa, ba) / glm::dot(ba, ba), 0.0, 1.0);
+      return glm::length(pa - ba * h) - r;
     }
 
   } // namespace SDFShape
@@ -133,20 +155,20 @@ namespace Oxy {
 
   namespace SDFPos {
 
-    template <typename SDF>
-    FloatType offset(const Vec3& p, const Vec3& offset, SDF primitive) {
-      return primitive(p - offset);
+    template <typename SDF, typename... SDFArgs>
+    FloatType offset(const Vec3& p, const Vec3& offset, SDF primitive, SDFArgs... args) {
+      return primitive(p - offset, args...);
     }
 
-    template <typename SDF>
-    FloatType scale(const Vec3& p, FloatType scale, SDF primitive) {
-      return primitive(p / scale) * scale;
+    template <typename SDF, typename... SDFArgs>
+    FloatType scale(const Vec3& p, FloatType scale, SDF primitive, SDFArgs... args) {
+      return primitive(p / scale, args...) * scale;
     }
 
-    template <typename SDF>
-    FloatType repeat(const Vec3& p, const Vec3& repeat, SDF primitive) {
+    template <typename SDF, typename... SDFArgs>
+    FloatType repeat(const Vec3& p, const Vec3& repeat, SDF primitive, SDFArgs... args) {
       auto q = glm::mod(p + 0.5 * repeat, repeat) - 0.5 * repeat;
-      return primitive(q);
+      return primitive(q, args...);
     }
 
     template <typename SDF, typename... SDFArgs>
