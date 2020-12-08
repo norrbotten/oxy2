@@ -15,26 +15,29 @@ using namespace Oxy;
 
 int main() {
   auto film = SampleFilm();
-  film.resize(512, 512);
+  film.resize(1024, 1025);
 
   auto cam = Camera();
-  cam.set_pos(Vec3(-7, 0, 2));
-  cam.set_fov(50);
-  cam.aim(Vec3(0, 0, 0));
+  cam.set_pos(Vec3(-9, 9, 9));
+  cam.set_fov(70);
+  cam.aim(Vec3(0, 0, -1));
 
-  auto diffuse  = std::shared_ptr<Material>(create_diffuse(Color(1.0, 1.0, 1.0)));
-  auto emissive = std::shared_ptr<Material>(create_emissive(Color(3.0)));
+  // auto diffuse  = std::shared_ptr<Material>(create_diffuse(Color(1.0)));
+  auto glossy   = std::shared_ptr<Material>(create_glossy(Color(1.0), 0.8));
+  auto glossy2  = std::shared_ptr<Material>(create_glossy(Color(0.8, 1.0, 0.8), 0.4));
+  auto emissive = std::shared_ptr<Material>(create_emissive(Color(10.0, 8.0, 8.0)));
 
   auto ground        = new TracableSphere(Vec3(0.0, 0.0, -1e6), 1e6 - 1);
-  ground->material() = diffuse;
+  ground->material() = glossy2;
 
-  auto light        = new TracableSphere(Vec3(0.0, 0.0, 15), 10.0);
+  auto light        = new TracableSphere(Vec3(0.0, 0.0, 2.0), 2.0);
   light->material() = emissive;
 
-  auto sdf = new TracableSDF(Vec3(0.0), 1.0,
-                             [](const Vec3& point) { return SDFShape::box(point, Vec3(1, 2, 1)); });
+  auto sdf = new TracableSDF(Vec3(0.0), 1.0, [](const Vec3& point) {
+    return SDFPos::repeat_finite(point, Vec3(1.5), Vec3(3), SDFShape::sphere, 0.7);
+  });
 
-  sdf->material() = diffuse;
+  sdf->material() = glossy;
 
   auto integrator = new Integrators::Naive();
 
@@ -42,20 +45,15 @@ int main() {
   integrator->world().add_object(ground);
   integrator->world().add_object(light);
 
-  integrator->setup();
-
-  for (int n = 0; n < 64; n++) {
-    integrator->pre_pass();
+  for (int n = 0; n < 40000; n++) {
     cam.for_each_pixel(film, [&](SingleRay ray) { return integrator->radiance(ray); });
-    integrator->post_pass();
-
     std::cout << n << "\n";
   }
 
   delete integrator; // shaddap clang-tidy
 
   auto image = Image(film);
-  image.extended_reinhard().gamma(2.2).clamp().write_png("images/out3.png");
+  image.extended_reinhard().gamma(2.2).clamp().write_png("images/spheres_20000.png");
 
   return 0;
 }

@@ -17,16 +17,17 @@ namespace Oxy {
         , m_max_steps(max_steps) {}
 
     virtual IntersectionContext intersect_ray(const SingleRay& ray) override {
-      static const auto v1 = Vec3(1e-6, -1e-6, -1e-6);
-      static const auto v2 = Vec3(-1e-6, -1e-6, 1e-6);
-      static const auto v3 = Vec3(-1e-6, 1e-6, -1e-6);
-      static const auto v4 = Vec3(1e-6, 1e-6, 1e-6);
+      static const auto eps = 1e-3;
+      static const auto v1  = Vec3(1, -1, -1);
+      static const auto v2  = Vec3(-1, -1, 1);
+      static const auto v3  = Vec3(-1, 1, -1);
+      static const auto v4  = Vec3(1, 1, 1);
 
       auto normal = [](SDF sdf, const Vec3& point) {
-        auto p1 = v1 * sdf(point + v1);
-        auto p2 = v2 * sdf(point + v2);
-        auto p3 = v3 * sdf(point + v3);
-        auto p4 = v4 * sdf(point + v4);
+        auto p1 = v1 * sdf(point + v1 * eps);
+        auto p2 = v2 * sdf(point + v2 * eps);
+        auto p3 = v3 * sdf(point + v3 * eps);
+        auto p4 = v4 * sdf(point + v4 * eps);
         return glm::normalize(p1 + p2 + p3 + p4);
       };
 
@@ -57,9 +58,6 @@ namespace Oxy {
 
         ctx.hitpos    = ray.origin + ray.direction * t;
         ctx.hitnormal = normal(m_sdf, ctx.hitpos);
-
-        // move point outwards a bit so bounces dont get "stuck"
-        ctx.hitpos += ctx.hitnormal * 4.0;
 
         ctx.object = this;
       }
@@ -132,5 +130,32 @@ namespace Oxy {
     }
 
   } // namespace SDFOp
+
+  namespace SDFPos {
+
+    template <typename SDF>
+    FloatType offset(const Vec3& p, const Vec3& offset, SDF primitive) {
+      return primitive(p - offset);
+    }
+
+    template <typename SDF>
+    FloatType scale(const Vec3& p, FloatType scale, SDF primitive) {
+      return primitive(p / scale) * scale;
+    }
+
+    template <typename SDF>
+    FloatType repeat(const Vec3& p, const Vec3& repeat, SDF primitive) {
+      auto q = glm::mod(p + 0.5 * repeat, repeat) - 0.5 * repeat;
+      return primitive(q);
+    }
+
+    template <typename SDF, typename... SDFArgs>
+    FloatType repeat_finite(const Vec3& p, const Vec3& repeat, const Vec3& bound, SDF primitive,
+                            SDFArgs... args) {
+      auto q = p - repeat * glm::clamp(glm::round(p / repeat), -bound, bound);
+      return primitive(q, args...);
+    }
+
+  } // namespace SDFPos
 
 } // namespace Oxy
