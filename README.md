@@ -6,6 +6,6 @@
 </div>
 
 
-### Left: Repeated spheres using SDF, 20000 samples
+### Left: Repeated spheres using SDF, 40000 samples
 
 ### Right: First texture test
