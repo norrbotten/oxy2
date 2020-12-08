@@ -80,7 +80,7 @@ namespace Oxy {
 
     inline FloatType box(const Vec3& p, const Vec3& size) {
       auto q = glm::abs(p) - size;
-      return glm::length(glm::max(q, Vec3(0))) + glm::min(glm::max(q.x, q.z), 0.0);
+      return glm::length(glm::max(q, Vec3(0))) + glm::min(glm::max(q.x, glm::max(q.y, q.z)), 0.0);
     }
 
     inline FloatType rounded_box(const Vec3& p, const Vec3& size, FloatType radius) {

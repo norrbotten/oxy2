@@ -18,7 +18,7 @@ int main() {
   film.resize(1024, 1025);
 
   auto cam = Camera();
-  cam.set_pos(Vec3(-9, 9, 9));
+  cam.set_pos(Vec3(-8, 8, 13));
   cam.set_fov(70);
   cam.aim(Vec3(0, 0, -1));
 
@@ -34,7 +34,9 @@ int main() {
   light->material() = emissive;
 
   auto sdf = new TracableSDF(Vec3(0.0), 1.0, [](const Vec3& point) {
-    return SDFPos::repeat_finite(point, Vec3(1.5), Vec3(3), SDFShape::sphere, 0.7);
+    auto spheres = SDFPos::repeat_finite(point, Vec3(1.5), Vec3(3), SDFShape::sphere, 0.7);
+    auto cut     = SDFShape::box(point, Vec3(3.8, 3.8, 8));
+    return SDFOp::sub(cut, spheres);
   });
 
   sdf->material() = glossy;
@@ -45,7 +47,7 @@ int main() {
   integrator->world().add_object(ground);
   integrator->world().add_object(light);
 
-  for (int n = 0; n < 40000; n++) {
+  for (int n = 0; n < 32; n++) {
     cam.for_each_pixel(film, [&](SingleRay ray) { return integrator->radiance(ray); });
     std::cout << n << "\n";
   }
@@ -53,7 +55,7 @@ int main() {
   delete integrator; // shaddap clang-tidy
 
   auto image = Image(film);
-  image.extended_reinhard().gamma(2.2).clamp().write_png("images/spheres_20000.png");
+  image.extended_reinhard().gamma(2.2).clamp().write_png("images/spheres2.png");
 
   return 0;
 }
