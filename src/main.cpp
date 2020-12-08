@@ -32,7 +32,11 @@ int main() {
   film.resize(1024, 1025);
 
   auto cam = Camera();
+<<<<<<< HEAD
   cam.set_pos(Vec3(-6, 6, 13));
+=======
+  cam.set_pos(Vec3(-8, 8, 13));
+>>>>>>> 6224e88dd7e700d2566b5022d276a8f33b94a743
   cam.set_fov(70);
   cam.aim(Vec3(0, 0, -1));
 
