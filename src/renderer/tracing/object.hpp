@@ -7,6 +7,11 @@
 
 namespace Oxy {
 
+  /*
+    Abstract tracable class
+    Tracables have a material and only need to implement ray intersection which
+    returns an intersection context
+  */
   class TracableObject {
   public:
     virtual IntersectionContext intersect_ray(const SingleRay& ray) = 0;

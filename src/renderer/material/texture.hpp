@@ -11,6 +11,11 @@ namespace Oxy {
 
   namespace fs = std::filesystem;
 
+  /*
+    Simple texture implementation for use in materials
+
+    TODO: something better than point sampling
+  */
   class Texture {
   public:
     ~Texture();
@@ -21,7 +26,7 @@ namespace Oxy {
     template <typename Callable>
     void generate(int width, int height, Callable callback) {
       if (m_buffer != nullptr)
-        delete m_buffer;
+        delete[] m_buffer;
 
       m_width  = width;
       m_height = height;
@@ -33,6 +38,11 @@ namespace Oxy {
           m_buffer[x + y * width] = callback(x, y);
     }
 
+    /*
+      Returns a sample from the texture
+      0, 0 is top left
+      1, 1 is bottom right
+    */
     Color sample(FloatType x, FloatType y) const;
 
     const auto& buffer() const { return m_buffer; }

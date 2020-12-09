@@ -11,6 +11,14 @@ namespace Oxy {
 
   namespace fs = std::filesystem;
 
+  /*
+    Generic BSDF material, not fully implemented yet
+
+    TODO:
+    Clearcoat
+    Transmission
+    Probability distribution function (importance sampling related thing)
+  */
   class BSDF final : public Material {
   public:
     BSDF() {
@@ -37,7 +45,7 @@ namespace Oxy {
     LightRay scatter(const IntersectionContext& ctx) const override {
       LightRay result;
 
-      result.light = this->sample(ctx);
+      result.energy = this->sample(ctx);
 
       auto reflected =
           m_roughness == 0.0

@@ -7,6 +7,9 @@
 
 namespace Oxy {
 
+  /*
+    A camera class, its got a position, orientation and an FOV
+  */
   class Camera {
   public:
     Camera()
@@ -32,6 +35,9 @@ namespace Oxy {
       set_dir(dir);
     }
 
+    /*
+      Gets a primary ray
+    */
     SingleRay get_ray(int x, int y, int width, int height) {
       auto aspect = (double)height / (double)width;
 
@@ -46,6 +52,9 @@ namespace Oxy {
       return SingleRay{m_origin, dir};
     }
 
+    /*
+      Runs the callback for every pixel on the passed sample film
+    */
     template <typename Callable>
     void for_each_pixel(SampleFilm& film, Callable callback) {
 #pragma omp parallel for

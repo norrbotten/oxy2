@@ -8,6 +8,10 @@ namespace Oxy {
 
   class TracableObject;
 
+  /*
+    IntersectionContext is returned by tracables,
+    any kind of relevant information for coloring samples is stored in it
+  */
   struct IntersectionContext {
     SingleRay ray;
 
@@ -37,11 +41,17 @@ namespace Oxy {
     return dist(gen, typename dist_type::param_type{from, to});
   }
 
+  /*
+    Reflects a vector around a normal
+  */
   template <typename Vector>
   Vector reflect(const Vector& incident, const Vector& normal) {
     return incident - 2 * glm::dot(incident, normal) * normal;
   }
 
+  /*
+    Refracts a vector around a normal
+  */
   template <typename Vector>
   Vector refract(const Vector& incident, const Vector& normal, FloatType ior) {
     auto n = 1.0 / ior;
@@ -56,6 +66,9 @@ namespace Oxy {
     return n * incident + (n * cos * cos2) * normal;
   }
 
+  /*
+    Returns a normalized vector distributed uniformly on a sphere of radius 1
+  */
   Vec3 random_vector_on_unit_sphere() {
     auto theta  = random<FloatType>(0, 2 * M_PI);
     auto phi    = glm::acos(1 - 2 * random<FloatType>(0, 1));
@@ -67,6 +80,9 @@ namespace Oxy {
     };
   }
 
+  /*
+    Returns a normalized vector distributed uniformly on a hemisphere of radius 1
+  */
   Vec3 random_vector_on_hemisphere(const Vec3& normal) {
     auto vec = random_vector_on_unit_sphere();
 
@@ -76,6 +92,11 @@ namespace Oxy {
     return vec;
   }
 
+  /*
+    Returns a normalized vector (probably) distributed uniformly on a cone
+    Cones have a normal vector representing their forward direction and thete
+    is its half-angle
+  */
   Vec3 random_vector_on_cone(const Vec3& normal, FloatType theta) {
     // from the ipython notebook in trash/
     // there werent any real method in coming up with this,
@@ -105,11 +126,17 @@ namespace Oxy {
     return Vec3(rotmatrix2 * point4);
   }
 
+  /*
+    Estimates the number of seconds to render Y samples when we've done X samples
+  */
   double estimate_seconds_left(int num_samples_done, double seconds_passed, int sample_target) {
     auto samples_per_second = num_samples_done / seconds_passed;
     return (sample_target - num_samples_done) / samples_per_second;
   }
 
+  /*
+    Gets the next sample target
+  */
   int next_sample_target(int current_samples) {
     if (current_samples == 0)
       return 10;

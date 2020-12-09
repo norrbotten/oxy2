@@ -7,6 +7,9 @@
 
 namespace Oxy::Primitive {
 
+  /*
+    Sphere primitive implementation
+  */
   template <>
   class PrimitiveImpl<PrimitiveType::Sphere> {
   public:

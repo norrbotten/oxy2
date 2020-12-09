@@ -8,8 +8,17 @@ namespace Oxy {
 
   using SDF = FloatType (*)(const Vec3&);
 
+  /*
+    SDF (signed distance field) implementation
+  */
   class TracableSDF final : public TracableObject {
   public:
+    /*
+      max_steps is the upper limit of sphere tracing steps
+
+      TODO:
+      implement origin and scale
+    */
     TracableSDF(const Vec3& origin, FloatType scale, SDF sdf, int max_steps = 256)
         : m_origin(origin)
         , m_scale(scale)
@@ -34,6 +43,7 @@ namespace Oxy {
       IntersectionContext ctx;
       ctx.ray = ray;
 
+      // do sphere tracing to find the intersection distance
       auto t = ([this, ray] {
         FloatType depth = 0;
 
@@ -75,6 +85,9 @@ namespace Oxy {
 
   // from https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm
 
+  /*
+    Basic SDF shapes
+  */
   namespace SDFShape {
     inline FloatType sphere(const Vec3& p, FloatType radius) { return glm::length(p) - radius; }
 
@@ -117,6 +130,9 @@ namespace Oxy {
 
   } // namespace SDFShape
 
+  /*
+    SDF alterations
+  */
   namespace SDFAlt {
     inline FloatType round(FloatType in, FloatType radius) { return in - radius; }
 
@@ -129,23 +145,32 @@ namespace Oxy {
 
   } // namespace SDFAlt
 
+  /*
+    SDF operations
+  */
   namespace SDFOp {
+    // Adds two shapes (union operation)
     inline FloatType add(FloatType a, FloatType b) { return glm::min(a, b); }
 
+    // Subtracts two shapes, cuts A from B
     inline FloatType sub(FloatType a, FloatType b) { return glm::max(-a, b); }
 
+    // Intersection, returns the volume where A and B intersect
     inline FloatType intersect(FloatType a, FloatType b) { return glm::max(a, b); }
 
+    // Same as above but gives smoothed edges
     inline FloatType smooth_add(FloatType a, FloatType b, FloatType k) {
       auto h = glm::clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
       return glm::mix(b, a, h) - k * h * (1.0 - h);
     }
 
+    // Same as above but gives smoothed edges
     inline FloatType smooth_sub(FloatType a, FloatType b, FloatType k) {
       auto h = glm::clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
       return glm::mix(b, -a, h) + k * h * (1.0 - h);
     }
 
+    // Same as above but gives smoothed edges
     inline FloatType smooth_intersect(FloatType a, FloatType b, FloatType k) {
       auto h = glm::clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
       return glm::mix(b, a, h) + k * h * (1.0 - h);
@@ -153,29 +178,49 @@ namespace Oxy {
 
   } // namespace SDFOp
 
+  /*
+    SDF positioning
+    All these take an SDF function as an argument, so to do
+    multiple wrap the inner in a lambda
+  */
   namespace SDFPos {
 
+    /*
+      Applies an arbitrary transform to the SDF
+    */
     template <typename SDF, typename... SDFArgs>
     FloatType transform(const Vec3& p, const Mat4& transform, SDF primitive, SDFArgs... args) {
       return primitive(Vec3(glm::inverse(transform) * Vec4(p, 1.0)), args...);
     }
 
+    /*
+      Offsets the SDF in space
+    */
     template <typename SDF, typename... SDFArgs>
     FloatType offset(const Vec3& p, const Vec3& offset, SDF primitive, SDFArgs... args) {
       return primitive(p - offset, args...);
     }
 
+    /*
+      Scales the SDF
+    */
     template <typename SDF, typename... SDFArgs>
     FloatType scale(const Vec3& p, FloatType scale, SDF primitive, SDFArgs... args) {
       return primitive(p / scale, args...) * scale;
     }
 
+    /*
+      Infinitely repeats the SDF in space
+    */
     template <typename SDF, typename... SDFArgs>
     FloatType repeat(const Vec3& p, const Vec3& repeat, SDF primitive, SDFArgs... args) {
       auto q = glm::mod(p + 0.5 * repeat, repeat) - 0.5 * repeat;
       return primitive(q, args...);
     }
 
+    /*
+      Repeats the SDF in the space bounded by a box
+    */
     template <typename SDF, typename... SDFArgs>
     FloatType repeat_finite(const Vec3& p, const Vec3& repeat, const Vec3& bound, SDF primitive,
                             SDFArgs... args) {

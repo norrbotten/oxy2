@@ -4,6 +4,10 @@
 
 namespace Oxy::Primitive {
 
+  /*
+    Base primitive class
+    Polymorphism is achieved with template specialization
+  */
   enum class PrimitiveType {
     Sphere,
   };

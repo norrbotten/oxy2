@@ -10,6 +10,9 @@
 
 namespace Oxy {
 
+  /*
+    Sample film, a cumulative texture that keeps track of the number of samples on each pixel
+  */
   class SampleFilm final {
   public:
     SampleFilm();

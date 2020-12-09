@@ -5,12 +5,15 @@
 namespace Oxy::Integrators {
 
   enum class PreviewMode {
-    FlatAlbedo,
-    Albedo,
-    Flashlight,
-    Normal,
+    FlatAlbedo, // Flat colors
+    Albedo,     // Shaded colors
+    Flashlight, // B/W shaded
+    Normal,     // Show normal vectors (XYZ -> RGB)
   };
 
+  /*
+    Preview integrator, for rendering a fast preview image
+  */
   class Preview final : public Integrator {
   public:
     Preview(PreviewMode mode = PreviewMode::Albedo)

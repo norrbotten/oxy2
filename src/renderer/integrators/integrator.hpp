@@ -4,6 +4,10 @@
 
 namespace Oxy::Integrators {
 
+  /*
+    Abstract Integrator class, used to compute the radiance along a ray
+    Integrator owns the world instance, where all object data is stored
+  */
   class Integrator {
   public:
     virtual Color radiance(const SingleRay& ray) = 0;

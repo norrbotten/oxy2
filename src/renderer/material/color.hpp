@@ -4,6 +4,11 @@
 
 namespace Oxy {
 
+  /*
+    RGB/HDR color
+
+    TODO: replace this with glm::vec3
+  */
   struct Color {
   public:
     Color()

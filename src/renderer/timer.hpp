@@ -5,6 +5,9 @@
 
 namespace Oxy {
 
+  /*
+    General purpose timer
+  */
   class Timer {
   public:
     void start() {

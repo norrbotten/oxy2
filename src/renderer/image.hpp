@@ -4,17 +4,26 @@
 
 namespace Oxy {
 
+  /*
+    Image class
+
+    This is ment to be used when youre done sampling, and wanna filter the image and save
+
+    TODO: reinhard with luminescence
+  */
   class Image {
   public:
     Image(const SampleFilm& film);
     ~Image();
 
-    Image& clamp(double min = 0.0, double max = 1.0);
-    Image& gamma(double gamma = 2.2);
+    Image& clamp(double min = 0.0, double max = 1.0); // Clamps all values between min and max
 
-    Image& simple_reinhard();
-    Image& extended_reinhard();
+    Image& gamma(double gamma = 2.2); // Applies gamma correction
 
+    Image& simple_reinhard();   // Applies a simple reinhard filter
+    Image& extended_reinhard(); // Applies the extended reinhard filter
+
+    // Applies a custom TMO (tone mapping operation)
     template <typename Callable>
     Image& tmo(Callable callback) {
       for_each_pixel(callback);

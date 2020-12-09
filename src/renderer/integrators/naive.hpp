@@ -4,6 +4,11 @@
 
 namespace Oxy::Integrators {
 
+  /*
+    Naive pathtracing implementation
+
+    Dumb and slow, but works and produces pretty pictures
+  */
   class Naive final : public Integrator {
   public:
     Naive(int max_bounces = 16)
@@ -27,13 +32,13 @@ namespace Oxy::Integrators {
         auto scatter = mater->scatter(isect);
 
         if (mater->is_emissive())
-          color += throughput * scatter.light;
+          color += throughput * scatter.energy;
 
-        throughput *= scatter.light;
+        throughput *= scatter.energy;
         current_ray = scatter.ray;
 
+        // russian roulette ray termination
         auto p = throughput.max();
-
         if (random<FloatType>(0, 1) > p)
           break;
 

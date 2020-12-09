@@ -11,6 +11,9 @@ namespace Oxy {
 
   namespace fs = std::filesystem;
 
+  /*
+    Emissive material, has a single color and spews out light
+  */
   class Emissive final : public Material {
   public:
     Emissive(Color energy)
@@ -26,7 +29,7 @@ namespace Oxy {
 
       LightRay result;
 
-      result.light         = this->sample(ctx);
+      result.energy        = this->sample(ctx);
       result.ray.origin    = ctx.hitpos + ctx.hitnormal * 1e-6;
       result.ray.direction = random_vector_on_hemisphere(ctx.hitnormal);
 

@@ -5,6 +5,9 @@
 
 namespace Oxy {
 
+  /*
+    Sphere implementation
+  */
   class TracableSphere final : public TracableObject {
   public:
     TracableSphere(const Vec3& center, FloatType radius)

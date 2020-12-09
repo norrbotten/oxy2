@@ -4,9 +4,14 @@ namespace Oxy {
 
   Texture::~Texture() {
     if (m_buffer != nullptr)
-      delete m_buffer;
+      delete[] m_buffer;
   }
 
+  /*
+    Load a PNG from a file path
+
+    TODO: more formats
+  */
   bool Texture::load_from_file(fs::path path) {
     if (!fs::is_regular_file(path))
       return true;
@@ -24,7 +29,7 @@ namespace Oxy {
       m_height = height;
 
       if (m_buffer != nullptr)
-        delete m_buffer;
+        delete[] m_buffer;
 
       m_buffer = new Color[width * height];
 
@@ -39,7 +44,7 @@ namespace Oxy {
 
   void Texture::make_solid_color(Color color) {
     if (m_buffer != nullptr)
-      delete m_buffer;
+      delete[] m_buffer;
 
     m_width  = 1;
     m_height = 1;

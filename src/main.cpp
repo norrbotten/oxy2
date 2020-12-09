@@ -88,8 +88,8 @@ int main() {
 
   timer.start();
 
-  while (true) {
-    cam.for_each_pixel(film, [&](SingleRay ray) { return integrator->radiance(ray); });
+  while (done < 10) {
+    // cam.for_each_pixel(film, [&](SingleRay ray) { return integrator->radiance(ray); });
     done++;
 
     if (done == target) {
