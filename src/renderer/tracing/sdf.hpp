@@ -89,7 +89,7 @@ namespace Oxy {
     }
 
     inline FloatType torus(const Vec3& p, const Vec2& params) {
-      auto q = Vec2(glm::length(Vec2(p.x, p.z) - params.x), p.y);
+      auto q = Vec2(glm::length(Vec2(p.y, p.z)) - params.x, p.x);
       return glm::length(q) - params.y;
     }
 
@@ -154,6 +154,11 @@ namespace Oxy {
   } // namespace SDFOp
 
   namespace SDFPos {
+
+    template <typename SDF, typename... SDFArgs>
+    FloatType transform(const Vec3& p, const Mat4& transform, SDF primitive, SDFArgs... args) {
+      return primitive(Vec3(glm::inverse(transform) * Vec4(p, 1.0)), args...);
+    }
 
     template <typename SDF, typename... SDFArgs>
     FloatType offset(const Vec3& p, const Vec3& offset, SDF primitive, SDFArgs... args) {

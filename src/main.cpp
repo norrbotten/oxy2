@@ -12,6 +12,8 @@
 #include "renderer/sample_film.hpp"
 
 #include "renderer/integrators/naive.hpp"
+#include "renderer/integrators/preview.hpp"
+
 #include "renderer/material/materials.hpp"
 #include "renderer/tracing/sdf.hpp"
 #include "renderer/tracing/sphere.hpp"
@@ -29,50 +31,55 @@ int main() {
       });
 
   auto film = SampleFilm();
-  film.resize(1024, 1025);
+  film.resize(512, 512);
 
   auto cam = Camera();
-<<<<<<< HEAD
-  cam.set_pos(Vec3(-6, 6, 13));
-=======
-  cam.set_pos(Vec3(-8, 8, 13));
->>>>>>> 6224e88dd7e700d2566b5022d276a8f33b94a743
-  cam.set_fov(70);
-  cam.aim(Vec3(0, 0, -1));
+  cam.set_pos(Vec3(-10, 0, 0));
+  cam.set_fov(50);
+  cam.aim(Vec3(0, 0, 0));
 
-  auto diffuse = std::shared_ptr<Material>(create_diffuse(Color(0.0, 0.0, 1.0)));
-  auto glossy  = std::shared_ptr<Material>(create_glossy(Color(1.0), 0.8));
-  auto glossy2 = std::shared_ptr<Material>(create_glossy(Color(1.0, 1.0, 1.0), 0.5));
+  auto lambert_white = create_lambertian(Color(1.0));
+  auto lambert_red   = create_lambertian(Color(1.0, 0.0, 0.0));
+  auto lambert_green = create_lambertian(Color(0.0, 1.0, 0.0));
+  auto emissive      = create_emissive(Color(5.0));
 
-  auto emissive      = std::shared_ptr<Material>(create_emissive(Color(30.0)));
-  auto blue_emissive = std::shared_ptr<Material>(create_emissive(Color(0.0, 0.0, 150.0)));
+  auto left_wall        = new TracableSphere(Vec3(0.0, -1e6 - 4, 0.0), 1e6);
+  left_wall->material() = lambert_red;
 
-  auto ground        = new TracableSphere(Vec3(0.0, 0.0, -1e6), 1e6 - 1);
-  ground->material() = glossy2;
+  auto right_wall        = new TracableSphere(Vec3(0.0, 1e6 + 4, 0.0), 1e6);
+  right_wall->material() = lambert_green;
 
-  auto light        = new TracableSphere(Vec3(0.0, 0.0, 12.0), 1.0);
-  light->material() = emissive;
+  auto front_wall        = new TracableSphere(Vec3(1e6 + 4, 0.0, 0.0), 1e6);
+  front_wall->material() = lambert_white;
 
-  auto sdf = new TracableSDF(Vec3(0.0), 1.0, [](const Vec3& point) {
-    auto spheres = SDFPos::repeat_finite(point, Vec3(1.5), Vec3(3), SDFShape::sphere, 0.7);
-    auto cut     = SDFShape::box(point, Vec3(3.8, 3.8, 8));
-    return SDFOp::sub(cut, spheres);
+  auto top_wall        = new TracableSphere(Vec3(0.0, 0.0, 1e6 + 4), 1e6);
+  top_wall->material() = lambert_white;
+
+  auto bottom_wall        = new TracableSphere(Vec3(0.0, 0.0, -1e6 - 4), 1e6);
+  bottom_wall->material() = lambert_white;
+
+  auto lamp        = new TracableSphere(Vec3(0.0, 0.0, 9.0), 5.3);
+  lamp->material() = emissive;
+
+  auto sdf = new TracableSDF(Vec3(), 1.0, [](const Vec3& point) {
+    return SDFPos::scale(point, 2.0, [&](const Vec3& p) {
+      auto transform = glm::rotate(M_PI / 3, Vec3(1, 0, 1));
+      return SDFPos::transform(p, transform, SDFShape::torus, Vec2(1.0, 0.5));
+    });
   });
 
-  sdf->material() = glossy;
-
-  auto torus_sdf = new TracableSDF(Vec3(0.0), 1.0, [](const Vec3& point) {
-    return SDFShape::capsule(point, Vec3(0, 0, 4), Vec3(0, 0, -1), 0.15);
-  });
-
-  torus_sdf->material() = blue_emissive;
+  sdf->material() = lambert_white;
 
   auto integrator = new Integrators::Naive();
 
+  integrator->world().add_object(left_wall);
+  integrator->world().add_object(right_wall);
+  integrator->world().add_object(front_wall);
+  integrator->world().add_object(top_wall);
+  integrator->world().add_object(bottom_wall);
+  integrator->world().add_object(lamp);
+
   integrator->world().add_object(sdf);
-  integrator->world().add_object(torus_sdf);
-  integrator->world().add_object(ground);
-  integrator->world().add_object(light);
 
   Timer timer;
 
@@ -108,7 +115,7 @@ int main() {
   auto image = Image(film);
 
   std::stringstream ss;
-  ss << "images/sphere2_";
+  ss << "images/cornell1_";
   ss << done;
   ss << ".png";
 
