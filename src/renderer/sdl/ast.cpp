@@ -109,32 +109,31 @@ namespace Oxy::SDL {
         data.type = MaterialType::BSDF;
         auto bsdf = MaterialDeclarationData::BSDFParams();
 
-        if (m_nested_params.contains("albedo"))
-          if (parse_float_triplet(bsdf.albedo, m_nested_params.at("albedo"))) {
-            bsdf.albedo[0] = 1.0;
-            bsdf.albedo[1] = 1.0;
-            bsdf.albedo[2] = 1.0;
-          }
+        if (m_nested_params.contains("albedo") &&
+            !parse_float_triplet(bsdf.albedo, m_nested_params.at("albedo"))) {
+          bsdf.albedo[0] = 1.0;
+          bsdf.albedo[1] = 1.0;
+          bsdf.albedo[2] = 1.0;
+        }
 
-        if (m_nested_params.contains("roughness"))
-          if (parse_float(&bsdf.roughness, m_nested_params.at("roughness")))
-            bsdf.roughness = 1.0;
+        if (m_nested_params.contains("roughness") &&
+            !parse_float(&bsdf.roughness, m_nested_params.at("roughness")))
+          bsdf.roughness = 1.0;
 
-        if (m_nested_params.contains("clearcoat"))
-          if (parse_float(&bsdf.clearcoat, m_nested_params.at("clearcoat")))
-            bsdf.clearcoat = 0.0;
+        if (m_nested_params.contains("clearcoat") &&
+            !parse_float(&bsdf.clearcoat, m_nested_params.at("clearcoat")))
+          bsdf.clearcoat = 0.0;
 
-        if (m_nested_params.contains("clearcoat_roughness"))
-          if (parse_float(&bsdf.clearcoat_roughness, m_nested_params.at("clearcoat_roughness")))
-            bsdf.clearcoat_roughness = 0.0;
+        if (m_nested_params.contains("clearcoat_roughness") &&
+            !parse_float(&bsdf.clearcoat_roughness, m_nested_params.at("clearcoat_roughness")))
+          bsdf.clearcoat_roughness = 0.0;
 
-        if (m_nested_params.contains("ior"))
-          if (parse_float(&bsdf.ior, m_nested_params.at("ior")))
-            bsdf.ior = 0.0;
+        if (m_nested_params.contains("ior") && parse_float(&bsdf.ior, m_nested_params.at("ior")))
+          bsdf.ior = 0.0;
 
-        if (m_nested_params.contains("transmission"))
-          if (parse_float(&bsdf.transmission, m_nested_params.at("transmission")))
-            bsdf.transmission = 0.0;
+        if (m_nested_params.contains("transmission") &&
+            !parse_float(&bsdf.transmission, m_nested_params.at("transmission")))
+          bsdf.transmission = 0.0;
 
         data.params = bsdf;
       }
@@ -142,12 +141,12 @@ namespace Oxy::SDL {
         data.type     = MaterialType::Emission;
         auto emissive = MaterialDeclarationData::EmissiveParams();
 
-        if (m_nested_params.contains("energy"))
-          if (parse_float_triplet(emissive.energy, m_nested_params.at("energy"))) {
-            emissive.energy[0] = 1.0;
-            emissive.energy[1] = 1.0;
-            emissive.energy[2] = 1.0;
-          }
+        if (m_nested_params.contains("energy") &&
+            !parse_float_triplet(emissive.energy, m_nested_params.at("energy"))) {
+          emissive.energy[0] = 1.0;
+          emissive.energy[1] = 1.0;
+          emissive.energy[2] = 1.0;
+        }
 
         data.params = emissive;
       }
@@ -187,7 +186,42 @@ namespace Oxy::SDL {
       ss << "\n";
     }
 
+    auto decl_data = parse_into_data();
+    if (decl_data.type == ObjectType::Sphere) {
+      auto params = std::get<ObjectDeclarationData::SphereParams>(decl_data.params);
+      std::cout << params.radius << "\n";
+    }
+
     return ss.str();
+  }
+
+  ObjectDeclarationData ObjectDeclarationNode::parse_into_data() const {
+    ObjectDeclarationData data;
+
+    auto type = m_decl.contains("type") ? m_decl.at("type") : "";
+
+    if (type == "sphere") {
+      data.type   = ObjectType::Sphere;
+      auto sphere = ObjectDeclarationData::SphereParams();
+
+      if (m_nested_params.contains("center") &&
+          !parse_float_triplet(sphere.center, m_nested_params.at("center"))) {
+        sphere.center[0] = 1.0;
+        sphere.center[1] = 1.0;
+        sphere.center[2] = 1.0;
+      }
+
+      if (m_nested_params.contains("radius") &&
+          !parse_float(&sphere.radius, m_nested_params.at("radius")))
+        sphere.radius = 1.0;
+
+      data.params = sphere;
+    }
+    else {
+      data.type = ObjectType::Unset;
+    }
+
+    return data;
   }
 
 } // namespace Oxy::SDL

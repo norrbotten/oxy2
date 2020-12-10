@@ -81,11 +81,11 @@ namespace Oxy::SDL {
     double val;
 
     if (!(ss >> val))
-      return true;
+      return false;
 
     *result = val;
 
-    return false;
+    return true;
   }
 
   inline bool parse_float_triplet(double* result, const std::string& str) {
@@ -102,20 +102,20 @@ namespace Oxy::SDL {
     if (split.size() == 1) {
       double val = 0.0;
       if (!parse_float(&val, split.at(0)))
-        return true;
+        return false;
 
       result[0] = val;
       result[1] = val;
       result[2] = val;
 
-      return false;
+      return true;
     }
     else if (split.size() == 3) {
-      return parse_float(result + 0, split.at(0)) || parse_float(result + 1, split.at(1)) ||
+      return parse_float(result + 0, split.at(0)) && parse_float(result + 1, split.at(1)) &&
              parse_float(result + 2, split.at(2));
     }
     else {
-      return true;
+      return false;
     }
   }
 
