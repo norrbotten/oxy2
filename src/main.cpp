@@ -136,5 +136,8 @@ int main() {
 
   if (scenedecl != nullptr) {
     std::cout << scenedecl->stringify();
+
+    auto ctx = SDL::ExecutionContext();
+    scenedecl->exec(ctx);
   }
 }

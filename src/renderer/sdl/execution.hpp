@@ -2,11 +2,25 @@
 
 #include "renderer/material/color.hpp"
 
+#include <exception>
+#include <sstream>
 #include <string>
 #include <unordered_map>
 #include <variant>
+#include <vector>
 
 namespace Oxy::SDL {
+
+  class ExecutionError final : public std::exception {
+  public:
+    ExecutionError(const std::string& err)
+        : m_error(err) {}
+
+    virtual const char* what() const noexcept { return m_error.c_str(); }
+
+  private:
+    std::string m_error;
+  };
 
   /*
     Declaration data structs, this is data from the source file which means
@@ -27,6 +41,8 @@ namespace Oxy::SDL {
   struct MaterialDeclarationData {
     std::string  name;
     MaterialType type;
+
+    std::string texture;
 
     struct EmissiveParams {
       double energy[3];
@@ -52,7 +68,7 @@ namespace Oxy::SDL {
   struct ObjectDeclarationData {
     ObjectType type;
 
-    MaterialDeclarationData material_def;
+    std::string material;
 
     struct SphereParams {
       double center[3];
@@ -70,44 +86,7 @@ namespace Oxy::SDL {
   struct ExecutionContext {
     std::unordered_map<std::string, TextureDeclarationData>  texture_defs;
     std::unordered_map<std::string, MaterialDeclarationData> materials_defs;
-    std::unordered_map<std::string, ObjectDeclarationData>   object_defs;
-
-    void push_error(const std::string& msg) {
-      // TODO
-    }
-
-    // Declares a texture, returns true on failure
-    bool declare_texture(const KeyValue& base_params) {
-      if (!base_params.contains("name")) {
-        push_error("No name on texture declaration");
-        return true;
-      }
-
-      auto& name = base_params.at("name");
-
-      if (texture_defs.contains("name")) {
-        push_error("Texture with the same name already exists");
-        return true;
-      }
-
-      TextureDeclarationData texture;
-      texture.name = name;
-      texture.path = "bigbong";
-
-      texture_defs.emplace(texture.name, texture);
-
-      return false;
-    }
-
-    // Declares a material from base params and detail, returns true on failure
-    bool declare_material(const KeyValue& base_params, const KeyValue& detail_params) {
-      return false;
-    }
-
-    // Declares an object from base params and detail, returns true on failure
-    bool declare_object(const KeyValue& base_params, const KeyValue& detail_params) {
-      return false;
-    }
+    std::vector<ObjectDeclarationData>                       object_defs;
   };
 
 } // namespace Oxy::SDL
