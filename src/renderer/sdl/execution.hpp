@@ -33,12 +33,12 @@ namespace Oxy::SDL {
     };
 
     struct BSDFParams {
-      double bsdf_albedo[3];
-      double bsdf_roughness;
-      double bsdf_clearcoat;
-      double bsdf_clearcoat_roughness;
-      double bsdf_ior;
-      double bsdf_transmission;
+      double albedo[3];
+      double roughness;
+      double clearcoat;
+      double clearcoat_roughness;
+      double ior;
+      double transmission;
     };
 
     std::variant<EmissiveParams, BSDFParams> params;

@@ -106,12 +106,50 @@ namespace Oxy::SDL {
       data.type = MaterialType::Unset;
     else {
       if (type == "bsdf") {
-        data.type   = MaterialType::BSDF;
-        data.params = MaterialDeclarationData::BSDFParams();
+        data.type = MaterialType::BSDF;
+        auto bsdf = MaterialDeclarationData::BSDFParams();
+
+        if (m_nested_params.contains("albedo"))
+          if (parse_float_triplet(bsdf.albedo, m_nested_params.at("albedo"))) {
+            bsdf.albedo[0] = 1.0;
+            bsdf.albedo[1] = 1.0;
+            bsdf.albedo[2] = 1.0;
+          }
+
+        if (m_nested_params.contains("roughness"))
+          if (parse_float(&bsdf.roughness, m_nested_params.at("roughness")))
+            bsdf.roughness = 1.0;
+
+        if (m_nested_params.contains("clearcoat"))
+          if (parse_float(&bsdf.clearcoat, m_nested_params.at("clearcoat")))
+            bsdf.clearcoat = 0.0;
+
+        if (m_nested_params.contains("clearcoat_roughness"))
+          if (parse_float(&bsdf.clearcoat_roughness, m_nested_params.at("clearcoat_roughness")))
+            bsdf.clearcoat_roughness = 0.0;
+
+        if (m_nested_params.contains("ior"))
+          if (parse_float(&bsdf.ior, m_nested_params.at("ior")))
+            bsdf.ior = 0.0;
+
+        if (m_nested_params.contains("transmission"))
+          if (parse_float(&bsdf.transmission, m_nested_params.at("transmission")))
+            bsdf.transmission = 0.0;
+
+        data.params = bsdf;
       }
       else if (type == "emissive") {
-        data.type   = MaterialType::Emission;
-        data.params = MaterialDeclarationData::EmissiveParams();
+        data.type     = MaterialType::Emission;
+        auto emissive = MaterialDeclarationData::EmissiveParams();
+
+        if (m_nested_params.contains("energy"))
+          if (parse_float_triplet(emissive.energy, m_nested_params.at("energy"))) {
+            emissive.energy[0] = 1.0;
+            emissive.energy[1] = 1.0;
+            emissive.energy[2] = 1.0;
+          }
+
+        data.params = emissive;
       }
     }
 
