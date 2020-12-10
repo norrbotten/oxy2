@@ -40,7 +40,10 @@ namespace Oxy::SDL {
     virtual bool is_object_reference() const { return false; }
     virtual bool is_params_reference() const { return false; }
 
-    virtual std::string stringify(int indent = 0) const { return "**unimplemented**"; }
+    virtual std::string stringify(int indent = 0) const {
+      (void)indent;
+      return "**unimplemented**";
+    }
 
   protected:
     std::vector<AST*> m_children;
@@ -49,103 +52,52 @@ namespace Oxy::SDL {
   class DeclarationNode : public AST {
   public:
     REF(decl);
+    REF(nested_params);
 
   protected:
     KeyValue m_decl;
+    KeyValue m_nested_params;
   };
 
   class SceneDeclarationNode final : public DeclarationNode {
   public:
-    virtual void exec(ExecutionContext& ctx) override;
-
     virtual bool is_scene_declaration() const override { return true; }
 
-    virtual std::string stringify(int indent = 0) const override {
-      std::stringstream ss;
+    virtual void exec(ExecutionContext& ctx) override;
 
-      ss << get_indent(indent) << "SceneDeclarationNode:\n";
-      for (auto& child : m_children) {
-        ss << get_indent(indent) << child->stringify(indent + 1);
-      }
-      ss << "\n";
-
-      return ss.str();
-    }
+    virtual std::string stringify(int indent = 0) const override;
   };
 
   class TextureDeclarationNode final : public DeclarationNode {
   public:
-    virtual void exec(ExecutionContext& ctx) override;
     virtual bool is_texture_declaration() const override { return true; }
 
-    virtual std::string stringify(int indent = 0) const override {
-      std::stringstream ss;
+    virtual void exec(ExecutionContext& ctx) override;
 
-      ss << get_indent(indent) << "TextureDeclarationNode:\n";
+    virtual std::string stringify(int indent = 0) const override;
 
-      for (auto& [key, value] : m_decl) {
-        ss << get_indent(indent + 1) << key << ": ";
-
-        if (auto pos = contains_newline(value); pos > 0)
-          ss << value.substr(0, pos - 1) << "...";
-        else
-          ss << value;
-
-        ss << "\n";
-      }
-
-      return ss.str();
-    }
+    TextureDeclarationData parse_into_data() const;
   };
 
   class MaterialDeclarationNode final : public DeclarationNode {
   public:
-    virtual void exec(ExecutionContext& ctx) override;
     virtual bool is_material_declaration() const override { return true; }
 
-    virtual std::string stringify(int indent = 0) const override {
-      std::stringstream ss;
+    virtual void        exec(ExecutionContext& ctx) override;
+    virtual std::string stringify(int indent = 0) const override;
 
-      ss << get_indent(indent) << "MaterialDeclarationNode:\n";
-
-      for (auto& [key, value] : m_decl) {
-        ss << get_indent(indent + 1) << key << ": ";
-
-        if (auto pos = contains_newline(value); pos > 0)
-          ss << value.substr(0, pos - 1) << "...";
-        else
-          ss << value;
-
-        ss << "\n";
-      }
-
-      return ss.str();
-    }
+    MaterialDeclarationData parse_into_data() const;
   };
 
   class ObjectDeclarationNode final : public DeclarationNode {
   public:
-    virtual void exec(ExecutionContext& ctx) override;
     virtual bool is_object_declaration() const override { return true; }
 
-    virtual std::string stringify(int indent = 0) const override {
-      std::stringstream ss;
+    virtual void exec(ExecutionContext& ctx) override;
 
-      ss << get_indent(indent) << "ObjectDeclarationNode:\n";
+    virtual std::string stringify(int indent = 0) const override;
 
-      for (auto& [key, value] : m_decl) {
-        ss << get_indent(indent + 1) << key << ": ";
-
-        if (auto pos = contains_newline(value); pos > 0)
-          ss << value.substr(0, pos - 1) << "...";
-        else
-          ss << value;
-
-        ss << "\n";
-      }
-
-      return ss.str();
-    }
+    ObjectDeclarationData parse_into_data() const;
   };
 
 } // namespace Oxy::SDL

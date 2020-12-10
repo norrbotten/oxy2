@@ -36,6 +36,11 @@ namespace Oxy::SDL {
       }
     }
 
+    static KeyValue parse_shallow_keyvals(const std::string& str) {
+      auto parser = Parser(str);
+      return parser.parse_keyvals();
+    }
+
   private:
     bool match_declaration_start(std::string decl);
 
@@ -55,6 +60,7 @@ namespace Oxy::SDL {
     std::string parse_nested_bracket_literal();
 
     SceneDeclarationNode* parse_scene_declaration();
+    KeyValue              parse_keyvals();
 
     TextureDeclarationNode*  parse_texture_declaration();
     MaterialDeclarationNode* parse_material_declaration();
@@ -74,18 +80,18 @@ namespace Oxy::SDL {
         forward();
     }
 
-    void forward(int step = 1) { m_position += step; }
+    void forward(unsigned int step = 1) { m_position += step; }
 
-    bool eof(int offset = 0) { return (m_position + offset) >= m_input.size(); }
+    bool eof(unsigned int offset = 0) { return (m_position + offset) >= m_input.size(); }
 
-    char ch(int offset = 0) {
+    char ch(unsigned int offset = 0) {
       if (eof(offset))
         return '0';
 
       return m_input.at(m_position + offset);
     }
 
-    std::string peek(int offset = 0, int length = 1) {
+    std::string peek(unsigned int offset = 0, unsigned int length = 1) {
       if (eof(offset + length))
         return "";
 
@@ -107,10 +113,10 @@ namespace Oxy::SDL {
   private:
     std::string m_input;
 
-    int m_position, m_consume_ptr;
+    unsigned int m_position, m_consume_ptr;
 
     struct State {
-      int position, consume_ptr;
+      unsigned int position, consume_ptr;
     };
 
     std::vector<State> m_state_stack;
