@@ -1,5 +1,6 @@
 #include <iomanip>
 #include <iostream>
+#include <streambuf>
 #include <string>
 
 #include <omp.h>
@@ -18,11 +19,13 @@
 #include "renderer/tracing/sdf.hpp"
 #include "renderer/tracing/sphere.hpp"
 
+#include "renderer/sdl/parser.hpp"
+
 using namespace Oxy;
 
 static bool break_loop = false;
 
-int main() {
+int main2() {
 
   signal(
       SIGINT, *[](int) {
@@ -89,7 +92,7 @@ int main() {
   timer.start();
 
   while (done < 10) {
-    // cam.for_each_pixel(film, [&](SingleRay ray) { return integrator->radiance(ray); });
+    cam.for_each_pixel(film, [&](SingleRay ray) { return integrator->radiance(ray); });
     done++;
 
     if (done == target) {
@@ -122,4 +125,16 @@ int main() {
   image.extended_reinhard().gamma(2.2).clamp().write_png(ss.str().c_str());
 
   return 0;
+}
+
+int main() {
+  std::ifstream f("data/sdl_example.txt");
+  std::string   str((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+
+  auto parser    = SDL::Parser(str);
+  auto scenedecl = parser.parse();
+
+  if (scenedecl != nullptr) {
+    std::cout << scenedecl->stringify();
+  }
 }
