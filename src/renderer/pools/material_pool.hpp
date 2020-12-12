@@ -38,7 +38,7 @@ namespace Oxy::Pools {
     }
 
     template <typename Derived = Material>
-    std::optional<MaterialRef<Derived>> get(MaterialHandle handle) {
+    std::optional<MaterialRef<Derived>> get(MaterialHandle handle) const {
       if (m_materials.contains(handle))
         return ((Derived*)m_materials.at(handle));
 

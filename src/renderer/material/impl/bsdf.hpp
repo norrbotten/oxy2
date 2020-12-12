@@ -5,6 +5,8 @@
 #include "renderer/material/material.hpp"
 #include "renderer/material/texture.hpp"
 
+#include "renderer/pools/texture_pool.hpp"
+
 #include "renderer/types.hpp"
 
 namespace Oxy {
@@ -21,25 +23,23 @@ namespace Oxy {
   */
   class BSDF final : public Material {
   public:
-    BSDF() {
-      m_texture.make_solid_color();
-      m_albedo = Color(1.0, 1.0, 1.0);
+    BSDF(const Pools::TexturePool& texpool) {
+      m_texture = texpool.get("@default").value();
+      m_albedo  = Color(1.0, 1.0, 1.0);
     }
 
-    BSDF(Color color) {
-      m_texture.make_solid_color(color);
-      m_albedo = Color(1.0, 1.0, 1.0);
+    BSDF(const Pools::TexturePool& texpool, Color color) {
+      m_texture = texpool.get("@default").value();
+      m_albedo  = color;
     }
 
-    BSDF(fs::path texture_path, Color albedo = Color(1.0, 1.0, 1.0)) {
-      if (m_texture.load_from_file(texture_path))
-        m_texture.make_solid_color();
-
-      m_albedo = albedo;
+    void set_texture(const Pools::TexturePool& texpool, Pools::TextureHandle handle) {
+      if (auto tex = texpool.get(handle); tex.has_value())
+        m_texture = tex.value();
     }
 
     Color sample(const IntersectionContext& ctx) const override {
-      return m_texture.sample(ctx.uv.x, ctx.uv.y);
+      return m_texture != nullptr ? m_texture->sample(ctx.uv.x, ctx.uv.y) : Color(1.0);
     }
 
     LightRay scatter(const IntersectionContext& ctx) const override {
@@ -58,7 +58,6 @@ namespace Oxy {
       return result;
     }
 
-    REF(texture);
     REF(roughness);
     REF(clearcoat);
     REF(clearcoat_roughness);
@@ -66,7 +65,7 @@ namespace Oxy {
     REF(transmission);
 
   private:
-    Texture m_texture;
+    const Texture* m_texture;
 
     Color m_albedo;
 
