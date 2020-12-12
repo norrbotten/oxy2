@@ -17,6 +17,8 @@ namespace Oxy {
   */
   class Material {
   public:
+    virtual ~Material() {}
+
     /*
       Samples the materials albedo
     */

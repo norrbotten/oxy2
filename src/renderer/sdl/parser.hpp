@@ -120,6 +120,6 @@ namespace Oxy::SDL {
     };
 
     std::vector<State> m_state_stack;
-  }; // namespace Oxy::SDL
+  };
 
 } // namespace Oxy::SDL

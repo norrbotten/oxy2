@@ -21,6 +21,8 @@
 
 #include "renderer/sdl/parser.hpp"
 
+#include "renderer/pools/material_pool.hpp"
+
 using namespace Oxy;
 
 static bool break_loop = false;
@@ -128,6 +130,7 @@ int main2() {
 }
 
 int main() {
+  /*
   std::ifstream f("data/sdl_example.txt");
   std::string   str((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
 
@@ -140,4 +143,13 @@ int main() {
     auto ctx = SDL::ExecutionContext();
     scenedecl->exec(ctx);
   }
+  */
+
+  auto pool = Pools::MaterialPool();
+  pool.make<Emissive>("lambert01", Color(1.0, 1.0, 1.0));
+
+  auto mater = pool.get<BSDF>("lambert01");
+
+  if (mater.has_value())
+    std::cout << mater.value()->is_emissive() << "\n";
 }
