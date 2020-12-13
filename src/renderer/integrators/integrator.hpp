@@ -19,7 +19,7 @@ namespace Oxy::Integrators {
     REF(world);
 
   protected:
-    World m_world;
+    Tracing::World m_world;
   };
 
 } // namespace Oxy::Integrators

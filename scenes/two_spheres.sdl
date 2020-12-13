@@ -11,7 +11,7 @@ material: {
   name: white lambert
   type: bsdf
   params: {
-    roughness: 0.0
+    roughness: 1.0
   }
 }
 
@@ -45,17 +45,9 @@ object: {
 
 object: {
   type: sphere
-  material: glass
+  material: white lambert
   params: {
     center: [0.0, -1.0, 0.0]
     radius: 1
-  }
-}
-
-object: {
-  type: plane
-  material: white lambert
-  params: {
-
   }
 }

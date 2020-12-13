@@ -16,6 +16,8 @@ namespace Oxy {
   */
   class Emissive final : public Material {
   public:
+    Emissive() {}
+
     Emissive(Color energy)
         : m_energy(energy) {}
 
@@ -37,6 +39,8 @@ namespace Oxy {
     }
 
     virtual bool is_emissive() const override { return true; }
+
+    REF(energy);
 
   private:
     Color m_energy;

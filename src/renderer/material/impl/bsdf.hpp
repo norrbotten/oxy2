@@ -23,6 +23,8 @@ namespace Oxy {
   */
   class BSDF final : public Material {
   public:
+    BSDF() {}
+
     BSDF(const Pools::TexturePool& texpool) {
       m_texture = texpool.get("@default").value();
       m_albedo  = Color(1.0, 1.0, 1.0);
@@ -58,6 +60,7 @@ namespace Oxy {
       return result;
     }
 
+    REF(albedo);
     REF(roughness);
     REF(clearcoat);
     REF(clearcoat_roughness);

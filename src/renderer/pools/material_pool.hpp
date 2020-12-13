@@ -25,7 +25,7 @@ namespace Oxy::Pools {
 
     template <typename Derived, typename... Args>
     MutableMaterialRef<Derived> make(MaterialHandle handle, Args... args) {
-      auto material = new Derived(std::forward<Args...>(args...));
+      auto material = new Derived(args...);
       m_materials.emplace(handle, material);
 
       return ((Derived*)m_materials.at(handle));

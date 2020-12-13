@@ -32,17 +32,17 @@ namespace Oxy::Primitive {
   namespace Traits {
 
     template <>
-    BoundingBox bbox(const SpherePrimitive& sphere) {
+    inline BoundingBox bbox(const SpherePrimitive& sphere) {
       return BoundingBox{sphere.center() - sphere.radius(), sphere.center() + sphere.radius()};
     }
 
     template <>
-    Vec3 midpoint(const SpherePrimitive& sphere) {
+    inline Vec3 midpoint(const SpherePrimitive& sphere) {
       return sphere.center();
     }
 
     template <>
-    IntersectResult intersect_ray(const SpherePrimitive& primitive, const SingleRay& ray) {
+    inline IntersectResult intersect_ray(const SpherePrimitive& primitive, const SingleRay& ray) {
       Vec3 oc = ray.origin - primitive.center();
 
       FloatType a = glm::dot(ray.direction, ray.direction);
@@ -63,7 +63,7 @@ namespace Oxy::Primitive {
     }
 
     template <>
-    Vec3 hitnormal(const SpherePrimitive& primitive, const Vec3& point) {
+    inline Vec3 hitnormal(const SpherePrimitive& primitive, const Vec3& point) {
       return (point - primitive.center()) / primitive.radius();
     }
 

@@ -5,6 +5,8 @@
 #include "renderer/material/material.hpp"
 #include "renderer/utils.hpp"
 
+#include "renderer/pools/material_pool.hpp"
+
 namespace Oxy::Tracing {
 
   /*
@@ -19,7 +21,7 @@ namespace Oxy::Tracing {
     REF(material);
 
   private:
-    std::shared_ptr<Material> m_material;
+    Pools::MaterialRef<Material> m_material;
   };
 
 } // namespace Oxy::Tracing
