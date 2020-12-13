@@ -1,6 +1,7 @@
 #pragma once
 
 #include "renderer/material/color.hpp"
+#include "renderer/sdl/utils.hpp"
 
 #include <exception>
 #include <sstream>
@@ -14,6 +15,17 @@ namespace Oxy::SDL {
   class ExecutionError final : public std::exception {
   public:
     ExecutionError(const std::string& err)
+        : m_error(err) {}
+
+    virtual const char* what() const noexcept { return m_error.c_str(); }
+
+  private:
+    std::string m_error;
+  };
+
+  class ValidationError final : public std::exception {
+  public:
+    ValidationError(const std::string& err)
         : m_error(err) {}
 
     virtual const char* what() const noexcept { return m_error.c_str(); }
@@ -84,8 +96,35 @@ namespace Oxy::SDL {
     SDL execution context struct
   */
   struct ExecutionContext {
+    ExecutionContext() {
+      texture_defs.emplace("@default", TextureDeclarationData{"@default", ""});
+      material_defs.emplace("@default",
+                            MaterialDeclarationData{"@default", MaterialType::BSDF, "@default",
+                                                    MaterialDeclarationData::BSDFParams{
+                                                        {1.0, 1.0, 1.0}, 1.0, 0.0, 0.0, 0.0, 0.0}});
+    }
+
+    void validate() const {
+      // check so all used textures exist
+      for (auto& [name, material] : material_defs) {
+        if (!texture_defs.contains(material.texture))
+          throw ValidationError(fmt([&, name = name, texture = material.texture](auto& ss) {
+            ss << "Material '" << name << "' referencing texture '" << texture
+               << "' that doesn't exist";
+          }));
+      }
+
+      // check so all used materials exist
+      for (auto& object : object_defs) {
+        if (!material_defs.contains(object.material))
+          throw ValidationError(fmt([&, material = object.material](auto& ss) {
+            ss << "Object referencing material '" << material << "' that doesn't exist";
+          }));
+      }
+    }
+
     std::unordered_map<std::string, TextureDeclarationData>  texture_defs;
-    std::unordered_map<std::string, MaterialDeclarationData> materials_defs;
+    std::unordered_map<std::string, MaterialDeclarationData> material_defs;
     std::vector<ObjectDeclarationData>                       object_defs;
   };
 

@@ -26,15 +26,7 @@ namespace Oxy::SDL {
         , m_position(0)
         , m_consume_ptr(0) {}
 
-    SceneDeclarationNode* parse() {
-      try {
-        return parse_scene_declaration();
-      }
-      catch (const ParsingError& e) {
-        std::cout << e.what() << "\n";
-        return nullptr;
-      }
-    }
+    SceneDeclarationNode* parse() { return parse_scene_declaration(); }
 
     static KeyValue parse_shallow_keyvals(const std::string& str) {
       auto parser = Parser(str);

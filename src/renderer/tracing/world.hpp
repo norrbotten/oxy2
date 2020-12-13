@@ -4,9 +4,10 @@
 #include <numeric>
 #include <vector>
 
+#include "renderer/sdl/execution.hpp"
 #include "renderer/tracing/object.hpp"
 
-namespace Oxy {
+namespace Oxy::Tracing {
 
   /*
     World is a class which holds pointers to all of the objects in the scene
@@ -61,4 +62,4 @@ namespace Oxy {
     std::vector<std::unique_ptr<TracableObject>> m_objects;
   };
 
-} // namespace Oxy
+} // namespace Oxy::Tracing

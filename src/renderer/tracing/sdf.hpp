@@ -4,7 +4,7 @@
 
 #include "renderer/tracing/object.hpp"
 
-namespace Oxy {
+namespace Oxy::Tracing {
 
   using SDF = FloatType (*)(const Vec3&);
 
@@ -230,4 +230,4 @@ namespace Oxy {
 
   } // namespace SDFPos
 
-} // namespace Oxy
+} // namespace Oxy::Tracing

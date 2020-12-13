@@ -6,23 +6,14 @@
 #include <omp.h>
 #include <signal.h>
 
-#include "renderer/timer.hpp"
+#include "renderer/renderer.hpp"
 
-#include "renderer/camera.hpp"
-#include "renderer/image.hpp"
-#include "renderer/sample_film.hpp"
+int main() {
 
-#include "renderer/integrators/naive.hpp"
-#include "renderer/integrators/preview.hpp"
+  Oxy::Renderer renderer;
 
-#include "renderer/material/materials.hpp"
-#include "renderer/tracing/sdf.hpp"
-#include "renderer/tracing/sphere.hpp"
+  auto error = renderer.load_file("scenes/two_spheres.sdl");
 
-#include "renderer/sdl/parser.hpp"
-
-#include "renderer/pools/material_pool.hpp"
-
-using namespace Oxy;
-
-int main() {}
+  if (error.has_value())
+    std::cout << error.value() << "\n";
+}

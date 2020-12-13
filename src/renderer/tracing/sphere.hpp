@@ -3,7 +3,7 @@
 #include "renderer/primitives/sphere.hpp"
 #include "renderer/tracing/object.hpp"
 
-namespace Oxy {
+namespace Oxy::Tracing {
 
   /*
     Sphere implementation
@@ -37,4 +37,4 @@ namespace Oxy {
     Primitive::SpherePrimitive m_sphere;
   };
 
-} // namespace Oxy
+} // namespace Oxy::Tracing

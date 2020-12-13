@@ -5,7 +5,7 @@
 #include "renderer/material/material.hpp"
 #include "renderer/utils.hpp"
 
-namespace Oxy {
+namespace Oxy::Tracing {
 
   /*
     Abstract tracable class
@@ -22,4 +22,4 @@ namespace Oxy {
     std::shared_ptr<Material> m_material;
   };
 
-} // namespace Oxy
+} // namespace Oxy::Tracing

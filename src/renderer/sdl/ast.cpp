@@ -24,6 +24,9 @@ namespace Oxy::SDL {
   void TextureDeclarationNode::exec(ExecutionContext& ctx) {
     auto data = this->parse_into_data();
 
+    if (data.name == "")
+      throw ExecutionError(fmt([&](auto& ss) { ss << "Texture has unset name"; }));
+
     if (ctx.texture_defs.contains(data.name))
       throw ExecutionError(
           fmt([&](auto& ss) { ss << "Texture '" << data.name << "' is already declared"; }));
@@ -80,13 +83,13 @@ namespace Oxy::SDL {
 
     if (data.type == MaterialType::Unset)
       throw ExecutionError(
-          fmt([&](auto& ss) { ss << "Material '" << data.name << "' has unset type"; }));
+          fmt([&](auto& ss) { ss << "Material '" << data.name << "' has unset or unknown type"; }));
 
-    if (ctx.materials_defs.contains(data.name))
+    if (ctx.material_defs.contains(data.name))
       throw ExecutionError(
           fmt([&](auto& ss) { ss << "Material '" << data.name << "' is already declared"; }));
 
-    ctx.materials_defs.emplace(data.name, data);
+    ctx.material_defs.emplace(data.name, data);
   }
 
   std::string MaterialDeclarationNode::stringify(int indent) const {
@@ -125,7 +128,7 @@ namespace Oxy::SDL {
     data.name = m_decl.contains("name") ? m_decl.at("name") : "";
     auto type = m_decl.contains("type") ? m_decl.at("type") : "";
 
-    data.texture = m_decl.contains("texture") ? m_decl.at("texture") : "";
+    data.texture = m_decl.contains("texture") ? m_decl.at("texture") : "@default";
 
     if (type == "")
       data.type = MaterialType::Unset;
@@ -186,7 +189,7 @@ namespace Oxy::SDL {
     auto data = this->parse_into_data();
 
     if (data.type == ObjectType::Unset)
-      throw ExecutionError(fmt([&](auto& ss) { ss << "Object with unset type"; }));
+      throw ExecutionError(fmt([&](auto& ss) { ss << "Object with unset or unknown type"; }));
 
     ctx.object_defs.push_back(data);
   }
@@ -232,7 +235,7 @@ namespace Oxy::SDL {
 
     auto type = m_decl.contains("type") ? m_decl.at("type") : "";
 
-    data.material = m_decl.contains("material") ? m_decl.at("material") : "";
+    data.material = m_decl.contains("material") ? m_decl.at("material") : "@default";
 
     if (type == "sphere") {
       data.type   = ObjectType::Sphere;

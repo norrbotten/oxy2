@@ -6,7 +6,9 @@
 
 namespace Oxy {
 
-  class TracableObject;
+  namespace Tracing {
+    class TracableObject;
+  }
 
   /*
     IntersectionContext is returned by tracables,
@@ -23,7 +25,7 @@ namespace Oxy {
     Vec3 hitpos;
     Vec3 hitnormal;
 
-    TracableObject* object = nullptr;
+    Tracing::TracableObject* object = nullptr;
   };
 
   // https://stackoverflow.com/questions/2704521/generate-random-double-numbers-in-c
@@ -69,7 +71,7 @@ namespace Oxy {
   /*
     Returns a normalized vector distributed uniformly on a sphere of radius 1
   */
-  Vec3 random_vector_on_unit_sphere() {
+  inline Vec3 random_vector_on_unit_sphere() {
     auto theta  = random<FloatType>(0, 2 * M_PI);
     auto phi    = glm::acos(1 - 2 * random<FloatType>(0, 1));
     auto sinphi = glm::sin(phi);
@@ -83,7 +85,7 @@ namespace Oxy {
   /*
     Returns a normalized vector distributed uniformly on a hemisphere of radius 1
   */
-  Vec3 random_vector_on_hemisphere(const Vec3& normal) {
+  inline Vec3 random_vector_on_hemisphere(const Vec3& normal) {
     auto vec = random_vector_on_unit_sphere();
 
     if (glm::dot(vec, normal) < 0)
@@ -97,7 +99,7 @@ namespace Oxy {
     Cones have a normal vector representing their forward direction and thete
     is its half-angle
   */
-  Vec3 random_vector_on_cone(const Vec3& normal, FloatType theta) {
+  inline Vec3 random_vector_on_cone(const Vec3& normal, FloatType theta) {
     // from the ipython notebook in trash/
     // there werent any real method in coming up with this,
     // but it seems to work and i THINK it gives a uniform dist
@@ -129,7 +131,8 @@ namespace Oxy {
   /*
     Estimates the number of seconds to render Y samples when we've done X samples
   */
-  double estimate_seconds_left(int num_samples_done, double seconds_passed, int sample_target) {
+  inline double estimate_seconds_left(int num_samples_done, double seconds_passed,
+                                      int sample_target) {
     auto samples_per_second = num_samples_done / seconds_passed;
     return (sample_target - num_samples_done) / samples_per_second;
   }
@@ -137,7 +140,7 @@ namespace Oxy {
   /*
     Gets the next sample target
   */
-  int next_sample_target(int current_samples) {
+  inline int next_sample_target(int current_samples) {
     if (current_samples == 0)
       return 10;
 
