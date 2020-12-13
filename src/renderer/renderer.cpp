@@ -95,6 +95,17 @@ namespace Oxy {
         m_integrator->world().add_object(obj);
       } break;
 
+      case SDL::ObjectType::Plane: {
+        auto& params = std::get<SDL::ObjectDeclarationData::PlaneParams>(object.params);
+        auto  obj =
+            new Tracing::TracablePlane(Vec3(params.point[0], params.point[1], params.point[2]),
+                                       Vec3(params.normal[0], params.normal[1], params.normal[2]));
+
+        obj->material() = m_material_pool.get<Material>(object.material).value();
+
+        m_integrator->world().add_object(obj);
+      } break;
+
       case SDL::ObjectType::Unset: assert(false); break;
       }
     }

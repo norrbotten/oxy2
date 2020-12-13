@@ -75,6 +75,7 @@ namespace Oxy::SDL {
   enum class ObjectType {
     Unset,
     Sphere,
+    Plane,
   };
 
   struct ObjectDeclarationData {
@@ -87,7 +88,12 @@ namespace Oxy::SDL {
       double radius;
     };
 
-    std::variant<SphereParams> params;
+    struct PlaneParams {
+      double point[3];
+      double normal[3];
+    };
+
+    std::variant<SphereParams, PlaneParams> params;
   };
 
   using KeyValue = std::unordered_map<std::string, std::string>;

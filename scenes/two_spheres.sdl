@@ -60,3 +60,12 @@ object: {
     radius: 1
   }
 }
+
+object: {
+  type: plane
+  material: white lambert
+  params: {
+    point: [0.0, 0.0, -1.0]
+    normal: [0.0, 0.0, 1.0]
+  }
+}

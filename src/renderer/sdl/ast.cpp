@@ -254,6 +254,26 @@ namespace Oxy::SDL {
 
       data.params = sphere;
     }
+    else if (type == "plane") {
+      data.type  = ObjectType::Plane;
+      auto plane = ObjectDeclarationData::PlaneParams();
+
+      if (!(m_nested_params.contains("point") &&
+            parse_float_triplet(plane.point, m_nested_params.at("point")))) {
+        plane.point[0] = 0.0;
+        plane.point[1] = 0.0;
+        plane.point[2] = 0.0;
+      }
+
+      if (!(m_nested_params.contains("normal") &&
+            parse_float_triplet(plane.normal, m_nested_params.at("normal")))) {
+        plane.normal[0] = 0.0;
+        plane.normal[1] = 0.0;
+        plane.normal[2] = 1.0;
+      }
+
+      data.params = plane;
+    }
     else {
       data.type = ObjectType::Unset;
     }

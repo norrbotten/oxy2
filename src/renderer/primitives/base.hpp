@@ -10,6 +10,7 @@ namespace Oxy::Primitive {
   */
   enum class PrimitiveType {
     Sphere,
+    Plane,
   };
 
   template <PrimitiveType Type>
