@@ -39,7 +39,7 @@ namespace Oxy::SDL {
   }
 
   inline int contains_newline(const std::string& str) {
-    if (int pos = str.find('\n'); pos != std::string::npos)
+    if (auto pos = str.find('\n'); pos != std::string::npos)
       return pos;
 
     return -1;

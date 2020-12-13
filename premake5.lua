@@ -35,7 +35,7 @@ newaction {
     description = "build",
     execute = function()
         os.execute("rm -rf build")
-        os.execute("premake5 gmake2 && cd build && make -j")
+        os.execute("premake5 gmake2 && cd build && make -j config=release")
     end
 }
 
