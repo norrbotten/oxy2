@@ -25,8 +25,8 @@ int main() {
   renderer.camera().aim(Oxy::Vec3(0));
   renderer.camera().set_fov(60);
 
-  for (int i = 0; i < 512; i++)
+  for (int i = 0; i < 2048; i++)
     renderer.sample_once();
 
-  renderer.save_png("data/two_spheres.png");
+  renderer.save_png("images/two_spheres.png");
 }
