@@ -16,6 +16,15 @@ material: {
 }
 
 material: {
+  name: red lambert
+  type: bsdf
+  params: {
+    roughness: 1.0
+    albedo: [1.0, 0.0, 0.0]
+  }
+}
+
+material: {
   name: glass
   type: bsdf
   params: {
@@ -45,7 +54,7 @@ object: {
 
 object: {
   type: sphere
-  material: white lambert
+  material: red lambert
   params: {
     center: [0.0, -1.0, 0.0]
     radius: 1

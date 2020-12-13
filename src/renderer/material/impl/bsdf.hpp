@@ -41,7 +41,7 @@ namespace Oxy {
     }
 
     Color sample(const IntersectionContext& ctx) const override {
-      return m_texture != nullptr ? m_texture->sample(ctx.uv.x, ctx.uv.y) : Color(1.0);
+      return m_texture != nullptr ? m_texture->sample(ctx.uv.x, ctx.uv.y) * m_albedo : m_albedo;
     }
 
     LightRay scatter(const IntersectionContext& ctx) const override {
