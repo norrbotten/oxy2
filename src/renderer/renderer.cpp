@@ -109,6 +109,11 @@ namespace Oxy {
       case SDL::ObjectType::Unset: assert(false); break;
       }
     }
+
+    auto& cam = ctx.camera;
+    m_camera.set_pos(Vec3(cam.position[0], cam.position[1], cam.position[2]));
+    m_camera.aim(Vec3(cam.aim[0], cam.aim[1], cam.aim[2]));
+    m_camera.set_fov(cam.fov);
   }
 
 } // namespace Oxy

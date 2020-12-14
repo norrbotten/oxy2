@@ -281,4 +281,47 @@ namespace Oxy::SDL {
     return data;
   }
 
+  void CameraDeclarationNode::exec(ExecutionContext& ctx) { ctx.camera = this->parse_into_data(); }
+
+  std::string CameraDeclarationNode::stringify(int indent) const {
+    std::stringstream ss;
+
+    ss << get_indent(indent) << "ObjectDeclarationNode:\n";
+
+    for (auto& [key, value] : m_decl) {
+      ss << get_indent(indent + 1) << key << ": ";
+
+      if (auto pos = contains_newline(value); pos > 0)
+        ss << value.substr(0, pos - 1) << "...";
+      else
+        ss << value;
+
+      ss << "\n";
+    }
+
+    return ss.str();
+  }
+
+  CameraDeclarationData CameraDeclarationNode::parse_into_data() const {
+    CameraDeclarationData data;
+
+    if (!(m_decl.contains("position") &&
+          parse_float_triplet(data.position, m_decl.at("position")))) {
+      data.position[0] = 0.0;
+      data.position[1] = 0.0;
+      data.position[2] = 0.0;
+    }
+
+    if (!(m_decl.contains("aim") && parse_float_triplet(data.aim, m_decl.at("aim")))) {
+      data.aim[0] = 0.0;
+      data.aim[1] = 0.0;
+      data.aim[2] = 0.0;
+    }
+
+    if (!(m_decl.contains("fov") && parse_float(&data.fov, m_decl.at("fov"))))
+      data.fov = 60.0;
+
+    return data;
+  }
+
 } // namespace Oxy::SDL

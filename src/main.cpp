@@ -21,11 +21,7 @@ int main() {
 
   renderer.film().resize(1024, 1024);
 
-  renderer.camera().set_pos(Oxy::Vec3(-6, 0, 4));
-  renderer.camera().aim(Oxy::Vec3(0));
-  renderer.camera().set_fov(60);
-
-  for (int i = 0; i < 2048; i++)
+  for (int i = 0; i < 4096; i++)
     renderer.sample_once();
 
   renderer.save_png("images/two_spheres.png");

@@ -1,4 +1,10 @@
 
+camera: {
+  position: [-6.0, 3.0, 3.0]
+  aim: [0.0, 0.0, 0.0]
+  fov: 40
+}
+
 material: {
   name: light
   type: emissive
@@ -21,16 +27,6 @@ material: {
   params: {
     roughness: 1.0
     albedo: [1.0, 0.0, 0.0]
-  }
-}
-
-material: {
-  name: glass
-  type: bsdf
-  params: {
-    albedo: [1.0, 0.0, 0.0]
-    ior: 1.45
-    transmission: 1.0
   }
 }
 

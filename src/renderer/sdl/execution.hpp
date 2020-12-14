@@ -96,6 +96,12 @@ namespace Oxy::SDL {
     std::variant<SphereParams, PlaneParams> params;
   };
 
+  struct CameraDeclarationData {
+    double position[3];
+    double aim[3];
+    double fov;
+  };
+
   using KeyValue = std::unordered_map<std::string, std::string>;
 
   /*
@@ -132,6 +138,8 @@ namespace Oxy::SDL {
     std::unordered_map<std::string, TextureDeclarationData>  texture_defs;
     std::unordered_map<std::string, MaterialDeclarationData> material_defs;
     std::vector<ObjectDeclarationData>                       object_defs;
+
+    CameraDeclarationData camera;
   };
 
 } // namespace Oxy::SDL

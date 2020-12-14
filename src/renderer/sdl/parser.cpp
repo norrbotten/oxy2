@@ -1,5 +1,7 @@
 #include "renderer/sdl/parser.hpp"
 
+// TODO: refactor.
+
 namespace Oxy::SDL {
 
   bool Parser::match_declaration_start(std::string decl) {
@@ -239,6 +241,56 @@ namespace Oxy::SDL {
     return node;
   }
 
+  CameraDeclarationNode* Parser::parse_camera_declaration() {
+    KeyValue parsed_vals;
+
+    while (unexpected_eof("parsing camera declaration") || true) {
+      skip_whitespace();
+
+      if (ch() == '}') {
+        forward();
+        break;
+      }
+      else {
+        consume();
+        auto key_name = parse_key_name();
+
+        if (key_name.size() == 0)
+          throw ParsingError(fmt([&](auto& ss) {
+            ss << "Expected key name, got ";
+            ss << ch();
+          }));
+
+        skip_whitespace();
+
+        if (ch() != ':')
+          throw ParsingError(fmt([&](auto& ss) {
+            ss << "Expected ':' after key name, got ";
+            ss << ch();
+          }));
+
+        forward(1);
+        skip_whitespace();
+
+        if (ch() == '{') {
+          throw ParsingError(
+              fmt([&](auto& ss) { ss << "Unexpected nested params in camera declaration"; }));
+        }
+        else {
+          consume();
+          auto value_literal = parse_value_literal();
+          parsed_vals.emplace(key_name, value_literal);
+        }
+      }
+    }
+
+    auto node = new CameraDeclarationNode();
+
+    node->decl() = parsed_vals;
+
+    return node;
+  }
+
   SceneDeclarationNode* Parser::parse_scene_declaration() {
     auto root = new SceneDeclarationNode();
 
@@ -259,6 +311,16 @@ namespace Oxy::SDL {
       else if (match_declaration_start("object")) {
         if (auto node = parse_object_declaration(); node != nullptr) {
           root->push(node);
+        }
+      }
+      else if (match_declaration_start("camera")) {
+        if (m_parsed_camera_decl)
+          throw ParsingError(fmt(
+              [&](auto& ss) { ss << "Unexpected camera declaration, one was already parsed"; }));
+
+        if (auto node = parse_camera_declaration(); node != nullptr) {
+          root->push(node);
+          m_parsed_camera_decl = true;
         }
       }
       else {

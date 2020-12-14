@@ -32,6 +32,8 @@ namespace Oxy::SDL {
     virtual bool is_object_declaration() const { return false; }
     virtual bool is_params_declaration() const { return false; }
 
+    virtual bool is_camera_declaration() const { return false; }
+
     virtual bool is_type_reference() const { return false; }
     virtual bool is_constant_reference() const { return true; }
 
@@ -98,6 +100,22 @@ namespace Oxy::SDL {
     virtual std::string stringify(int indent = 0) const override;
 
     ObjectDeclarationData parse_into_data() const;
+  };
+
+  class CameraDeclarationNode final : public AST {
+  public:
+    virtual bool is_camera_declaration() const override { return true; }
+
+    virtual void exec(ExecutionContext& ctx) override;
+
+    virtual std::string stringify(int indent = 0) const override;
+
+    CameraDeclarationData parse_into_data() const;
+
+    REF(decl);
+
+  private:
+    KeyValue m_decl;
   };
 
 } // namespace Oxy::SDL
