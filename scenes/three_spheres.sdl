@@ -1,0 +1,109 @@
+
+render: {
+  width: 1024
+  height: 512
+  samples: 4096
+}
+
+camera: {
+  position: [-8, 0.0, 8]
+  aim: [0.0, 0.0, -5.0]
+  fov: 65
+}
+
+material: {
+  name: light
+  type: emissive
+  params: {
+    energy: [5.0]
+  }
+}
+
+material: {
+  name: white lambert
+  type: bsdf
+  params: {
+    roughness: 1.0
+  }
+}
+
+material: {
+  name: green
+  type: bsdf
+  params: {
+    roughness: 0.0
+    albedo: [0.1, 1.0, 0.1]
+  }
+}
+
+material: {
+  name: yellow
+  type: bsdf
+  params: {
+    roughness: 0.7
+    albedo: [1.0, 1.0, 0.1]
+  }
+}
+
+material: {
+  name: cyan
+  type: bsdf
+  params: {
+    roughness: 1.0
+    albedo: [0.1, 1.0, 1.0]
+  }
+}
+
+material: {
+  name: blue lambert
+  type: bsdf
+  params: {
+    roughness: 1.0
+    albedo: [0.1, 0.1, 1.0]
+  }
+}
+
+object: {
+  type: plane
+  material: white lambert
+  params: {
+    point: [0.0, 0.0, -5.0]
+    normal: [0.0, 0.0, 1.0]
+  }
+}
+
+object: {
+  type: sphere
+  material: light
+  params: {
+    center: [0.0, 0.0, 5]
+    radius: 2
+  }
+}
+
+object: {
+  type: sphere
+  material: yellow
+  params: {
+    center: [-2.0, -2.0, -3.0]
+    radius: 2
+  }
+}
+
+object: {
+  type: sphere
+  material: green
+  params: {
+    center: [1.3333, 0.0, -3.0]
+    radius: 2
+  }
+}
+
+object: {
+  type: sphere
+  material: cyan
+  params: {
+    center: [-2.0, 2.0, -3.0]
+    radius: 2
+  }
+}
