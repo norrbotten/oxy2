@@ -114,6 +114,13 @@ namespace Oxy {
     m_camera.set_pos(Vec3(cam.position[0], cam.position[1], cam.position[2]));
     m_camera.aim(Vec3(cam.aim[0], cam.aim[1], cam.aim[2]));
     m_camera.set_fov(cam.fov);
+
+    auto& render  = ctx.render;
+    m_width       = render.width;
+    m_height      = render.height;
+    m_max_samples = render.samples;
+
+    m_film.resize(render.width, render.height);
   }
 
 } // namespace Oxy

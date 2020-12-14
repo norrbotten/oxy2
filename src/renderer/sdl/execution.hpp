@@ -102,6 +102,12 @@ namespace Oxy::SDL {
     double fov;
   };
 
+  struct RenderDeclarationData {
+    int width;
+    int height;
+    int samples;
+  };
+
   using KeyValue = std::unordered_map<std::string, std::string>;
 
   /*
@@ -140,6 +146,7 @@ namespace Oxy::SDL {
     std::vector<ObjectDeclarationData>                       object_defs;
 
     CameraDeclarationData camera;
+    RenderDeclarationData render;
   };
 
 } // namespace Oxy::SDL

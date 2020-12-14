@@ -47,6 +47,8 @@ namespace Oxy {
     REF(film);
     REF(camera);
 
+    CREF(max_samples);
+
   private:
     void build_scene_from_valid_ctx(const SDL::ExecutionContext& ctx);
 
@@ -58,6 +60,10 @@ namespace Oxy {
 
     Pools::TexturePool  m_texture_pool;
     Pools::MaterialPool m_material_pool;
+
+    int m_width       = 1024;
+    int m_height      = 1024;
+    int m_max_samples = 128;
   };
 
 } // namespace Oxy

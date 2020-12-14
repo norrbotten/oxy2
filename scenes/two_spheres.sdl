@@ -1,7 +1,13 @@
 
+render: {
+  width: 2048
+  height: 1024
+  samples: 128
+}
+
 camera: {
   position: [-6.0, 3.0, 3.0]
-  aim: [0.0, 0.0, 0.0]
+  aim: [0.0, 0.0, -0.1]
   fov: 40
 }
 

@@ -59,6 +59,7 @@ namespace Oxy::SDL {
     ObjectDeclarationNode*   parse_object_declaration();
 
     CameraDeclarationNode* parse_camera_declaration();
+    RenderDeclarationNode* parse_render_declaration();
 
   private:
     void pop_state() {
@@ -116,6 +117,7 @@ namespace Oxy::SDL {
     std::vector<State> m_state_stack;
 
     bool m_parsed_camera_decl = false;
+    bool m_parsed_render_decl = false;
   };
 
 } // namespace Oxy::SDL

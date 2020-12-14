@@ -119,4 +119,18 @@ namespace Oxy::SDL {
     }
   }
 
+  inline bool parse_int(int* result, const std::string& str) {
+    std::stringstream ss;
+    ss << str;
+
+    int val;
+
+    if (!(ss >> val))
+      return false;
+
+    *result = val;
+
+    return true;
+  }
+
 } // namespace Oxy::SDL

@@ -19,9 +19,7 @@ int main() {
     return 1;
   }
 
-  renderer.film().resize(1024, 1024);
-
-  for (int i = 0; i < 4096; i++)
+  for (int i = 0; i < renderer.max_samples(); i++)
     renderer.sample_once();
 
   renderer.save_png("images/two_spheres.png");

@@ -291,6 +291,56 @@ namespace Oxy::SDL {
     return node;
   }
 
+  RenderDeclarationNode* Parser::parse_render_declaration() {
+    KeyValue parsed_vals;
+
+    while (unexpected_eof("parsing render declaration") || true) {
+      skip_whitespace();
+
+      if (ch() == '}') {
+        forward();
+        break;
+      }
+      else {
+        consume();
+        auto key_name = parse_key_name();
+
+        if (key_name.size() == 0)
+          throw ParsingError(fmt([&](auto& ss) {
+            ss << "Expected key name, got ";
+            ss << ch();
+          }));
+
+        skip_whitespace();
+
+        if (ch() != ':')
+          throw ParsingError(fmt([&](auto& ss) {
+            ss << "Expected ':' after key name, got ";
+            ss << ch();
+          }));
+
+        forward(1);
+        skip_whitespace();
+
+        if (ch() == '{') {
+          throw ParsingError(
+              fmt([&](auto& ss) { ss << "Unexpected nested params in render declaration"; }));
+        }
+        else {
+          consume();
+          auto value_literal = parse_value_literal();
+          parsed_vals.emplace(key_name, value_literal);
+        }
+      }
+    }
+
+    auto node = new RenderDeclarationNode();
+
+    node->decl() = parsed_vals;
+
+    return node;
+  }
+
   SceneDeclarationNode* Parser::parse_scene_declaration() {
     auto root = new SceneDeclarationNode();
 
@@ -321,6 +371,16 @@ namespace Oxy::SDL {
         if (auto node = parse_camera_declaration(); node != nullptr) {
           root->push(node);
           m_parsed_camera_decl = true;
+        }
+      }
+      else if (match_declaration_start("render")) {
+        if (m_parsed_render_decl)
+          throw ParsingError(fmt(
+              [&](auto& ss) { ss << "Unexpected render declaration, one was already parsed"; }));
+
+        if (auto node = parse_render_declaration(); node != nullptr) {
+          root->push(node);
+          m_parsed_render_decl = true;
         }
       }
       else {

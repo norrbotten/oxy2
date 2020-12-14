@@ -286,7 +286,7 @@ namespace Oxy::SDL {
   std::string CameraDeclarationNode::stringify(int indent) const {
     std::stringstream ss;
 
-    ss << get_indent(indent) << "ObjectDeclarationNode:\n";
+    ss << get_indent(indent) << "CameraDeclarationNode:\n";
 
     for (auto& [key, value] : m_decl) {
       ss << get_indent(indent + 1) << key << ": ";
@@ -320,6 +320,42 @@ namespace Oxy::SDL {
 
     if (!(m_decl.contains("fov") && parse_float(&data.fov, m_decl.at("fov"))))
       data.fov = 60.0;
+
+    return data;
+  }
+
+  void RenderDeclarationNode::exec(ExecutionContext& ctx) { ctx.render = this->parse_into_data(); }
+
+  std::string RenderDeclarationNode::stringify(int indent) const {
+    std::stringstream ss;
+
+    ss << get_indent(indent) << "RenderDeclarationNode:\n";
+
+    for (auto& [key, value] : m_decl) {
+      ss << get_indent(indent + 1) << key << ": ";
+
+      if (auto pos = contains_newline(value); pos > 0)
+        ss << value.substr(0, pos - 1) << "...";
+      else
+        ss << value;
+
+      ss << "\n";
+    }
+
+    return ss.str();
+  }
+
+  RenderDeclarationData RenderDeclarationNode::parse_into_data() const {
+    RenderDeclarationData data;
+
+    if (!(m_decl.contains("width") && parse_int(&data.width, m_decl.at("width"))))
+      data.width = 1024;
+
+    if (!(m_decl.contains("height") && parse_int(&data.height, m_decl.at("height"))))
+      data.height = 1024;
+
+    if (!(m_decl.contains("samples") && parse_int(&data.samples, m_decl.at("samples"))))
+      data.samples = 128;
 
     return data;
   }
