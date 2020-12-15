@@ -28,7 +28,7 @@ namespace Oxy::Integrators {
 
         case PreviewMode::Albedo:
           return isect.object->material()->sample(isect) *
-                 glm::dot(ray.direction, -isect.hitnormal);
+                 glm::abs(glm::dot(ray.direction, -isect.hitnormal));
 
         case PreviewMode::Flashlight: return Color(glm::dot(ray.direction, -isect.hitnormal));
 

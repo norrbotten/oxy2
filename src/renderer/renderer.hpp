@@ -3,6 +3,7 @@
 #include "renderer/sdl/parser.hpp"
 
 #include "renderer/integrators/naive.hpp"
+#include "renderer/integrators/preview.hpp"
 
 #include "renderer/tracing/objects.hpp"
 

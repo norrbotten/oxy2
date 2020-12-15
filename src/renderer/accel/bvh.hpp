@@ -122,9 +122,9 @@ namespace Oxy::Accel {
   }
 
   struct BVHTraverseResult {
-    bool      hit = false;
-    FloatType t   = std::numeric_limits<FloatType>::max();
-    Vec3      hitnormal;
+    bool      hit   = false;
+    FloatType t     = std::numeric_limits<FloatType>::max();
+    size_t    index = -1;
   };
 
   template <typename T>
@@ -144,17 +144,19 @@ namespace Oxy::Accel {
         bool is_leaf = (node->left_node == nullptr) && (node->right_node == nullptr);
 
         if (is_leaf) {
-          auto beg = node->primitives.begin();
+          auto   beg = node->primitives.begin();
+          size_t idx = 0;
 
           for (auto it = beg + node->left_index; it != beg + node->right_index; it++) {
             if (auto dist = Primitive::Traits::intersect_ray(*it, ray); dist.has_value()) {
               if (dist.value() < res.t) {
-                res.hit = true;
-                res.t   = dist.value();
-                res.hitnormal =
-                    Primitive::Traits::hitnormal(*it, ray.origin + ray.direction * dist.value());
+                res.hit   = true;
+                res.t     = dist.value();
+                res.index = node->left_index + idx;
               }
             }
+
+            idx++;
           }
         }
         else {

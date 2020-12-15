@@ -1,0 +1,74 @@
+
+render: {
+  width: 1024
+  height: 512
+  samples: 8192
+}
+
+camera: {
+  position: [-5, 3, 3]
+  aim: [0.0, 0.0, 0.8]
+  fov: 52
+}
+
+material: {
+  name: light
+  type: emissive
+  params: {
+    energy: [5.0]
+  }
+}
+
+material: {
+  name: red light
+  type: emissive
+  params: {
+    energy: [25.0, 0.3, 0.05]
+  }
+}
+
+material: {
+  name: white lambert
+  type: bsdf
+  params: {
+    roughness: 1.0
+  }
+}
+
+material: {
+  name: frosted glass
+  type: bsdf
+  params: {
+    albedo: [0.9, 0.9, 1.0]
+    roughness: 0.1
+    transmission: 0.8
+    ior: 1.45
+  }
+}
+
+object: {
+  type: sphere
+  material: light
+  params: {
+    center: [0.0, 0.0, 7.0]
+    radius: 2
+  }
+}
+
+object: {
+  type: sphere
+  material: red light
+  params: {
+    center: [-0.13, 1.1, 1.6]
+    radius: 0.1
+  }
+}
+
+object: {
+  type: plane
+  material: white lambert
+  params: {
+    point: [0.0, 0.0, -0.1]
+    normal: [0.0, 0.0, 1.0]
+  }
+}
