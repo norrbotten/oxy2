@@ -49,13 +49,28 @@ namespace Oxy {
 
       result.energy = this->sample(ctx);
 
-      auto reflected =
-          m_roughness == 0.0
-              ? reflect(ctx.ray.direction, ctx.hitnormal)
-              : (m_roughness == 1.0 ? random_vector_on_hemisphere(ctx.hitnormal)
+      if (random<FloatType>(0, 1) < m_transmission) {
+        auto entering_solid = glm::dot(ctx.hitnormal, ctx.ray.direction) < 0;
+        auto ior1           = entering_solid ? 1.0 : m_ior;
+        auto ior2           = entering_solid ? m_ior : 1.0;
+
+        auto reflection = schlick(ctx.ray.direction, ctx.hitnormal, ior1 / ior2);
+
+        auto refracted = random<FloatType>(0, 1) < reflection
+                             ? reflect(ctx.ray.direction, ctx.hitnormal)
+                             : refract(ctx.ray.direction, ctx.hitnormal, ior1, ior2);
+
+        result.ray = SingleRay{ctx.hitpos + refracted * 1e-6, refracted};
+      }
+      else {
+        auto reflected = m_roughness == 0.0
+                             ? reflect(ctx.ray.direction, ctx.hitnormal)
+                             : (m_roughness == 1.0
+                                    ? random_vector_on_hemisphere(ctx.hitnormal)
                                     : random_vector_on_cone(ctx.hitnormal, m_roughness * M_PI / 4));
 
-      result.ray = SingleRay{ctx.hitpos + ctx.hitnormal * 1e-6, reflected};
+        result.ray = SingleRay{ctx.hitpos + ctx.hitnormal * 1e-6, reflected};
+      }
 
       return result;
     }

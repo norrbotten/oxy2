@@ -55,8 +55,8 @@ namespace Oxy {
     Refracts a vector around a normal
   */
   template <typename Vector>
-  Vector refract(const Vector& incident, const Vector& normal, FloatType ior) {
-    auto n = 1.0 / ior;
+  Vector refract(const Vector& incident, const Vector& normal, FloatType ior1, FloatType ior2) {
+    auto n = ior1 / ior2;
 
     auto cos = -glm::dot(incident, normal);
     auto sin = n * n * (1.0 - cos * cos);
@@ -65,7 +65,19 @@ namespace Oxy {
       return reflect(incident, -normal); // total internal reflection
 
     auto cos2 = glm::sqrt(1.0 - sin);
-    return n * incident + (n * cos * cos2) * normal;
+    return n * incident + (n * cos - cos2) * normal;
+  }
+
+  /*
+    Returns the probability of a ray reflecting instead of refracting
+  */
+  template <typename Vector>
+  FloatType schlick(const Vector& incident, const Vector& normal, FloatType ior) {
+    auto r0 = (1.0 - ior) / (1.0 + ior);
+    r0 *= r0;
+
+    auto cos = -glm::dot(incident, normal);
+    return r0 + (1.0 - r0) * glm::pow(1.0 - cos, 5);
   }
 
   /*

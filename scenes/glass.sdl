@@ -1,0 +1,80 @@
+
+render: {
+  width: 1024
+  height: 1024
+  samples: 1024
+}
+
+camera: {
+  position: [-2.5, 6.0, 1.0]
+  aim: [0.0, 0.0, -0.1]
+  fov: 40
+}
+
+material: {
+  name: light
+  type: emissive
+  params: {
+    energy: [5.0]
+  }
+}
+
+material: {
+  name: white lambert
+  type: bsdf
+  params: {
+    roughness: 1.0
+  }
+}
+
+material: {
+  name: red lambert
+  type: bsdf
+  params: {
+    albedo: [1.0, 0.0, 0.0]
+    roughness: 1.0
+  }
+}
+
+material: {
+  name: glass
+  type: bsdf
+  params: {
+    ior: 1.45
+    transmission: 1.0
+  }
+}
+
+object: {
+  type: sphere
+  material: light
+  params: {
+    center: [0.0, 0.0, 7.0]
+    radius: 2
+  }
+}
+
+object: {
+  type: sphere
+  material: glass
+  params: {
+    center: [0.0, 1.0, 0.0]
+  }
+}
+
+object: {
+  type: sphere
+  material: red lambert
+  params: {
+    center: [0.0, -1.0, 0.0]
+  }
+}
+
+object: {
+  type: plane
+  material: white lambert
+  params: {
+    point: [0.0, 0.0, -1.0]
+    normal: [0.0, 0.0, 1.0]
+  }
+}
