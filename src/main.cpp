@@ -14,7 +14,7 @@ int main() {
 
   Renderer renderer;
 
-  auto error = renderer.load_file("scenes/triangle.sdl");
+  auto error = renderer.load_file("scenes/caustic.sdl");
 
   if (error.has_value()) {
     std::cout << error.value() << "\n";
@@ -26,5 +26,5 @@ int main() {
     renderer.sample_once();
   }
 
-  renderer.save_png("images/triangle_test.png");
+  renderer.save_png("images/caustic.png");
 }

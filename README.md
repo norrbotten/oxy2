@@ -1,7 +1,7 @@
 # Oxy 2
 
-![Three spheres](/images/three_spheres.png)
-Three spheres with varying colors and roughness
+![Caustic](/images/caustic.png)
+Different colored lights mixing through a sphere
 
 ## Features:
 
