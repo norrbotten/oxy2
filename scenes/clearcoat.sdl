@@ -6,8 +6,8 @@ render: {
 }
 
 camera: {
-  position: [-2.5, 6.0, 1.5]
-  aim: [0.0, 0.0, -0.1]
+  position: [-3, 5, 1.5]
+  aim: [0.0, 0.75, 0.0]
   fov: 40
 }
 
@@ -28,21 +28,14 @@ material: {
 }
 
 material: {
-  name: red lambert
+  name: clearcoat
   type: bsdf
   params: {
     albedo: [1.0, 0.0, 0.0]
-    roughness: 0.1
-  }
-}
+    roughness: 1.0
 
-material: {
-  name: glass
-  type: bsdf
-  params: {
-    ior: 1.45
-    transmission: 1.0
-    albedo: [1.0, 1.0, 1.0]
+    clearcoat: 0.1
+    clearcoat_roughness: 0.01
   }
 }
 
@@ -57,18 +50,7 @@ object: {
 
 object: {
   type: sphere
-  material: glass
-  params: {
-    center: [0.0, 1.0, 0.0]
-  }
-}
-
-object: {
-  type: sphere
-  material: red lambert
-  params: {
-    center: [0.0, -1.0, 0.0]
-  }
+  material: clearcoat
 }
 
 object: {

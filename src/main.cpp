@@ -12,7 +12,7 @@ int main() {
 
   Oxy::Renderer renderer;
 
-  auto error = renderer.load_file("scenes/glass.sdl");
+  auto error = renderer.load_file("scenes/clearcoat.sdl");
 
   if (error.has_value()) {
     std::cout << error.value() << "\n";
@@ -24,5 +24,5 @@ int main() {
     renderer.sample_once();
   }
 
-  renderer.save_png("images/glass2.png");
+  renderer.save_png("images/clearcoat.png");
 }

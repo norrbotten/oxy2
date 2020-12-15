@@ -13,7 +13,9 @@ namespace Oxy::SDL {
     return ss.str();
   }
 
-  inline bool is_alpha(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
+  inline bool is_alpha(char c) {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '-';
+  }
 
   inline bool is_alphanumeric(char c) {
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9');
