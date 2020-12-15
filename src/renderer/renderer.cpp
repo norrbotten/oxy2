@@ -58,7 +58,7 @@ namespace Oxy {
       switch (material.type) {
       case SDL::MaterialType::BSDF: {
         auto& params = std::get<SDL::MaterialDeclarationData::BSDFParams>(material.params);
-        auto  mater  = m_material_pool.make<BSDF>(name);
+        auto  mater  = (BSDF*)m_material_pool.make<BSDF>(name);
 
         mater->set_texture(m_texture_pool, material.texture);
 
@@ -73,7 +73,7 @@ namespace Oxy {
 
       case SDL::MaterialType::Emission: {
         auto& params = std::get<SDL::MaterialDeclarationData::EmissiveParams>(material.params);
-        auto  mater  = m_material_pool.make<Emissive>(name);
+        auto  mater  = (Emissive*)m_material_pool.make<Emissive>(name);
 
         mater->energy() = Color(params.energy[0], params.energy[1], params.energy[2]);
 
@@ -90,7 +90,7 @@ namespace Oxy {
         auto  obj    = new Tracing::TracableSphere(
             Vec3(params.center[0], params.center[1], params.center[2]), params.radius);
 
-        obj->material() = m_material_pool.get<Material>(object.material).value();
+        obj->material() = m_material_pool.get(object.material).value();
 
         m_integrator->world().add_object(obj);
       } break;
@@ -101,7 +101,7 @@ namespace Oxy {
             new Tracing::TracablePlane(Vec3(params.point[0], params.point[1], params.point[2]),
                                        Vec3(params.normal[0], params.normal[1], params.normal[2]));
 
-        obj->material() = m_material_pool.get<Material>(object.material).value();
+        obj->material() = m_material_pool.get(object.material).value();
 
         m_integrator->world().add_object(obj);
       } break;
@@ -112,7 +112,7 @@ namespace Oxy {
                                                  Vec3(params.p1[0], params.p1[1], params.p1[2]),
                                                  Vec3(params.p2[0], params.p2[1], params.p2[2]));
 
-        obj->material() = m_material_pool.get<Material>(object.material).value();
+        obj->material() = m_material_pool.get(object.material).value();
 
         m_integrator->world().add_object(obj);
       } break;

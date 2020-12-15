@@ -57,7 +57,7 @@ namespace Oxy {
     */
     template <typename Callable>
     void for_each_pixel(SampleFilm& film, Callable callback) {
-      //#pragma omp parallel for
+#pragma omp parallel for
       for (int y = 0; y < film.height(); y++)
         for (int x = 0; x < film.width(); x++)
           film.splat(x, y, callback(get_ray(x, y, film.width(), film.height())));

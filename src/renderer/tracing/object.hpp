@@ -21,7 +21,7 @@ namespace Oxy::Tracing {
     REF(material);
 
   private:
-    Pools::MaterialRef<Material> m_material;
+    Pools::MaterialRef m_material;
   };
 
 } // namespace Oxy::Tracing

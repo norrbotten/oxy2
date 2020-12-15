@@ -5,6 +5,8 @@
 #include "renderer/primitives/base.hpp"
 #include "renderer/primitives/traits.hpp"
 
+#include "renderer/material/color.hpp"
+
 namespace Oxy::Primitive {
 
   /*
@@ -71,7 +73,7 @@ namespace Oxy::Primitive {
 
       auto det = glm::dot(v0v1, pvec);
 
-      if (std::fabs(det) < 1e-9)
+      if (std::fabs(det) < 1e-6)
         return {};
 
       auto inv_det = 1.0 / det;
@@ -85,7 +87,12 @@ namespace Oxy::Primitive {
       if ((u < 0) | (u > 1) | (v < 0) | (u + v > 1))
         return {};
 
-      return glm::dot(v0v2, qvec) * inv_det;
+      auto t = glm::dot(v0v2, qvec) * inv_det;
+
+      if (t < 1e-6)
+        return {};
+
+      return t;
     }
 
     template <>

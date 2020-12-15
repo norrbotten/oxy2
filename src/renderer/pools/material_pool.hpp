@@ -10,11 +10,9 @@ namespace Oxy::Pools {
 
   using MaterialHandle = std::string;
 
-  template <typename Derived = Material>
-  using MutableMaterialRef = Derived*;
+  using MutableMaterialRef = Material*;
 
-  template <typename Derived = Material>
-  using MaterialRef = const Derived*;
+  using MaterialRef = Material*;
 
   class MaterialPool {
   public:
@@ -24,23 +22,21 @@ namespace Oxy::Pools {
     }
 
     template <typename Derived, typename... Args>
-    MutableMaterialRef<Derived> make(MaterialHandle handle, Args... args) {
+    MutableMaterialRef make(MaterialHandle handle, Args... args) {
       auto material = new Derived(args...);
       m_materials.emplace(handle, material);
 
-      return ((Derived*)m_materials.at(handle));
+      return ((Material*)m_materials.at(handle));
     }
 
-    template <typename Derived = Material>
-    MutableMaterialRef<Derived> make(MaterialHandle handle, Material* material) {
+    MutableMaterialRef make(MaterialHandle handle, Material* material) {
       m_materials.emplace(handle, material);
       return m_materials.at(handle);
     }
 
-    template <typename Derived = Material>
-    std::optional<MaterialRef<Derived>> get(MaterialHandle handle) const {
+    std::optional<MaterialRef> get(MaterialHandle handle) const {
       if (m_materials.contains(handle))
-        return ((Derived*)m_materials.at(handle));
+        return ((Material*)m_materials.at(handle));
 
       return {};
     }

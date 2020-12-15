@@ -2,7 +2,7 @@
 render: {
   width: 1024
   height: 1024
-  samples: 1
+  samples: 128
 }
 
 camera: {
@@ -37,6 +37,14 @@ material: {
   }
 }
 
+material: {
+  name: blue lambert
+  type: bsdf
+  params: {
+    roughness: 1.0
+    albedo: [0, 0, 1]
+  }
+}
 
 object: {
   type: sphere
@@ -58,10 +66,18 @@ object: {
 
 object: {
   type: triangle
-  material: red lambert
+  material: blue lambert
   params: {
     p0: [-0.5, -2, -0.5]
     p1: [-0.5, 2, -0.5]
     p2: [1, 0, 1]
+  }
+}
+
+object: {
+  type: sphere
+  material: red lambert
+  params: {
+    center: [0, 0, -1.0]
   }
 }
