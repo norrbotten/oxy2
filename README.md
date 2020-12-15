@@ -1,10 +1,11 @@
 # Oxy 2
 
 ![Dragon](images/dragon_8192.png)
-Transmissive Stanford Dragon, 8192 samples, 871k triangles, 21 minute render on 24 threads
+Transmissive Stanford Dragon, 8192 samples, 871k triangles, 17 minute render on 24 threads
 
 ## Features:
 
+* AVX2 / BVH accelerator for meshes
 * SDL (Scene description language) for defining scenes
 * Shitty rectilinear camera model with a tent filter
 * Crappy naive pathtracing with russian roulette pruning
@@ -24,7 +25,6 @@ Transmissive Stanford Dragon, 8192 samples, 871k triangles, 21 minute render on 
   * HDRi textures
   * Atmospheric scattering models
 * Mesh instancing
-* AVX/SSE for triangle BVH
 * Lens model for the camera
 * Generative textures
 * Extended SDL

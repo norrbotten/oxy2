@@ -39,5 +39,5 @@ int main() {
     renderer.sample_once();
   }
 
-  renderer.save_png("images/dragon_8192.png");
+  renderer.save_png("images/avx2_test.png");
 }

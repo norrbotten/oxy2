@@ -11,7 +11,7 @@ namespace Oxy::Tracing {
   public:
     TracableMesh(const std::vector<Primitive::TrianglePrimitive>& tris)
         : m_triangles(tris)
-        , m_bvh(Accel::build_bvh(m_triangles, 0, m_triangles.size())) {}
+        , m_bvh(Accel::build_bvh(m_triangles, m_packed_triangles, 0, m_triangles.size())) {}
 
     virtual IntersectionContext intersect_ray(const SingleRay& ray) override {
       IntersectionContext ctx;
@@ -37,7 +37,9 @@ namespace Oxy::Tracing {
     }
 
   private:
-    std::vector<Primitive::TrianglePrimitive>     m_triangles;
+    std::vector<Primitive::TrianglePrimitive> m_triangles;
+    std::vector<Accel::AVX2PackedTriangles>   m_packed_triangles;
+
     Accel::BVHNode<Primitive::TrianglePrimitive>* m_bvh;
   };
 

@@ -5,6 +5,8 @@
 #include "renderer/primitives/plane.hpp"
 #include "renderer/primitives/traits.hpp"
 
+#include "renderer/accel/avx.hpp"
+
 namespace Oxy::Accel {
 
   inline bool ray_vs_aabb(const Vec3& orig, const Vec3& dir, const Vec3& vmin, const Vec3& vmax,
@@ -34,8 +36,9 @@ namespace Oxy::Accel {
 
   template <typename T>
   struct BVHNode {
-    BVHNode(std::vector<T>& prims)
-        : primitives(prims) {
+    BVHNode(std::vector<T>& prims, std::vector<AVX2PackedTriangles>& ptris)
+        : primitives(prims)
+        , packed_triangles(ptris) {
       // cant build bvh of planes, they dont have a valid bbox
       static_assert(!std::is_same<T, Primitive::PlanePrimitive>::value);
     }
@@ -49,6 +52,9 @@ namespace Oxy::Accel {
     }
 
     std::vector<T>& primitives;
+
+    std::vector<AVX2PackedTriangles>& packed_triangles;
+    size_t                            packed_triangles_index;
 
     BoundingBox bbox;
 
@@ -76,8 +82,10 @@ namespace Oxy::Accel {
   }
 
   template <typename T>
-  BVHNode<T>* build_bvh(std::vector<T>& primitives, size_t left, size_t right) {
-    auto* node = new BVHNode<T>(primitives);
+  BVHNode<T>* build_bvh(std::vector<T>& primitives, std::vector<AVX2PackedTriangles>& ptris,
+                        size_t left, size_t right) {
+
+    auto* node = new BVHNode<T>(primitives, ptris);
 
     node->left_index  = left;
     node->right_index = right;
@@ -86,8 +94,12 @@ namespace Oxy::Accel {
 
     node->bbox = {min_bbox, max_bbox};
 
-    if (right - left <= 8) // 8 or less primitives in each leaf
+    if (right - left <= 8) { // 8 or less primitives in each leaf
+      node->packed_triangles_index = node->packed_triangles.size();
+      node->packed_triangles.push_back(get_packed_tris(primitives, left, right));
+
       return node;
+    }
 
     const auto begin = primitives.begin() + left;
     const auto end   = primitives.begin() + right;
@@ -115,8 +127,8 @@ namespace Oxy::Accel {
 
     auto middle = (left + right) / 2;
 
-    node->left_node  = build_bvh<T>(primitives, left, middle);
-    node->right_node = build_bvh<T>(primitives, middle, right);
+    node->left_node  = build_bvh<T>(primitives, ptris, left, middle);
+    node->right_node = build_bvh<T>(primitives, ptris, middle, right);
 
     return node;
   }
@@ -131,6 +143,8 @@ namespace Oxy::Accel {
   BVHTraverseResult traverse_bvh(BVHNode<T>* bvh, const SingleRay& ray) {
     BVHTraverseResult res;
 
+    auto pray = get_packed_ray(ray);
+
     static thread_local BVHNode<T>* stack[1024] = {0};
     int                             stack_ptr   = 0;
 
@@ -144,9 +158,19 @@ namespace Oxy::Accel {
         bool is_leaf = (node->left_node == nullptr) && (node->right_node == nullptr);
 
         if (is_leaf) {
-          auto   beg = node->primitives.begin();
-          size_t idx = 0;
+          // auto   beg = node->primitives.begin();
+          // size_t idx = 0;
 
+          auto avx_res = avx2_ray_triangle_intersect(
+              node->packed_triangles.at(node->packed_triangles_index), pray);
+
+          if (avx_res.index != (size_t)-1 && avx_res.t < res.t) {
+            res.hit   = true;
+            res.t     = avx_res.t;
+            res.index = node->left_index + avx_res.index;
+          }
+
+          /*
           for (auto it = beg + node->left_index; it != beg + node->right_index; it++) {
             if (auto dist = Primitive::Traits::intersect_ray(*it, ray); dist.has_value()) {
               if (dist.value() < res.t) {
@@ -158,6 +182,7 @@ namespace Oxy::Accel {
 
             idx++;
           }
+          */
         }
         else {
           if (node->left_node != nullptr)
