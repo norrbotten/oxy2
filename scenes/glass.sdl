@@ -2,7 +2,7 @@
 render: {
   width: 1024
   height: 1024
-  samples: 1024
+  samples: 8192
 }
 
 camera: {
@@ -42,6 +42,7 @@ material: {
   params: {
     ior: 1.45
     transmission: 1.0
+    albedo: [0.5, 1.0, 0.5]
   }
 }
 

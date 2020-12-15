@@ -34,5 +34,10 @@ Three spheres with varying colors and roughness
 <img src=/images/spheres_20000.png width=512>
 Repeated spheres defined with SDF, light source in the center
 
+
 <img src=/images/cornell1.png width=512>
 Torus with a transform
+
+
+<img src=/images/glass.png width=512>
+Slightly green glass sphere
