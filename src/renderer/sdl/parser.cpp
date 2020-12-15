@@ -39,10 +39,10 @@ namespace Oxy::SDL {
   }
 
   std::string Parser::parse_key_name() {
-    if (unexpected_eof("parsing key name") || !is_alpha(ch()))
+    if (unexpected_eof("parsing key name") || !is_alphanumeric(ch()))
       return "";
 
-    while (unexpected_eof("parsing key name") || is_alpha(ch()))
+    while (unexpected_eof("parsing key name") || is_alphanumeric(ch()))
       forward();
 
     return consume();

@@ -76,6 +76,7 @@ namespace Oxy::SDL {
     Unset,
     Sphere,
     Plane,
+    Triangle,
   };
 
   struct ObjectDeclarationData {
@@ -93,7 +94,13 @@ namespace Oxy::SDL {
       double normal[3];
     };
 
-    std::variant<SphereParams, PlaneParams> params;
+    struct TriangleParams {
+      double p0[3];
+      double p1[3];
+      double p2[3];
+    };
+
+    std::variant<SphereParams, PlaneParams, TriangleParams> params;
   };
 
   struct CameraDeclarationData {

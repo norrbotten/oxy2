@@ -10,9 +10,11 @@
 
 int main() {
 
-  Oxy::Renderer renderer;
+  using namespace Oxy;
 
-  auto error = renderer.load_file("scenes/clearcoat.sdl");
+  Renderer renderer;
+
+  auto error = renderer.load_file("scenes/triangle.sdl");
 
   if (error.has_value()) {
     std::cout << error.value() << "\n";
@@ -24,5 +26,5 @@ int main() {
     renderer.sample_once();
   }
 
-  renderer.save_png("images/clearcoat.png");
+  renderer.save_png("images/triangle_test.png");
 }

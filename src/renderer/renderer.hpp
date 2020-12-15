@@ -47,7 +47,11 @@ namespace Oxy {
     REF(film);
     REF(camera);
 
+    auto& world() { return m_integrator->world(); }
+
     CREF(max_samples);
+    CREF(texture_pool);
+    CREF(material_pool);
 
   private:
     void build_scene_from_valid_ctx(const SDL::ExecutionContext& ctx);

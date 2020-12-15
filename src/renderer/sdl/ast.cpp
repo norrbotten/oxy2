@@ -274,6 +274,33 @@ namespace Oxy::SDL {
 
       data.params = plane;
     }
+    else if (type == "triangle") {
+      data.type     = ObjectType::Triangle;
+      auto triangle = ObjectDeclarationData::TriangleParams();
+
+      if (!(m_nested_params.contains("p0") &&
+            parse_float_triplet(triangle.p0, m_nested_params.at("p0")))) {
+        triangle.p0[0] = 0.0;
+        triangle.p0[1] = -2.0;
+        triangle.p0[2] = 0.0;
+      }
+
+      if (!(m_nested_params.contains("p1") &&
+            parse_float_triplet(triangle.p1, m_nested_params.at("p1")))) {
+        triangle.p1[0] = 0.0;
+        triangle.p1[1] = 2.0;
+        triangle.p1[2] = 0.0;
+      }
+
+      if (!(m_nested_params.contains("p2") &&
+            parse_float_triplet(triangle.p2, m_nested_params.at("p2")))) {
+        triangle.p2[0] = 0.0;
+        triangle.p2[1] = 0.0;
+        triangle.p2[2] = 2.0;
+      }
+
+      data.params = triangle;
+    }
     else {
       data.type = ObjectType::Unset;
     }

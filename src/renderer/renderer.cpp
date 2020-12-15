@@ -106,6 +106,17 @@ namespace Oxy {
         m_integrator->world().add_object(obj);
       } break;
 
+      case SDL::ObjectType::Triangle: {
+        auto& params = std::get<SDL::ObjectDeclarationData::TriangleParams>(object.params);
+        auto  obj    = new Tracing::TracableTriangle(Vec3(params.p0[0], params.p0[1], params.p0[2]),
+                                                 Vec3(params.p1[0], params.p1[1], params.p1[2]),
+                                                 Vec3(params.p2[0], params.p2[1], params.p2[2]));
+
+        obj->material() = m_material_pool.get<Material>(object.material).value();
+
+        m_integrator->world().add_object(obj);
+      } break;
+
       case SDL::ObjectType::Unset: assert(false); break;
       }
     }

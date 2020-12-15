@@ -17,8 +17,6 @@ namespace Oxy {
     Generic BSDF material, not fully implemented yet
 
     TODO:
-    Clearcoat
-    Transmission
     Probability distribution function (importance sampling related thing)
   */
   class BSDF final : public Material {
@@ -64,6 +62,7 @@ namespace Oxy {
       }
       else if (random<FloatType>(0, 1) < m_clearcoat) {
         Vec3 reflected;
+
         if (m_clearcoat_roughness == 0.0)
           reflected = reflect(ctx.ray.direction, ctx.hitnormal);
         else if (m_clearcoat_roughness == 1.0)

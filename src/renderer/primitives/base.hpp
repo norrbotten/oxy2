@@ -11,6 +11,7 @@ namespace Oxy::Primitive {
   enum class PrimitiveType {
     Sphere,
     Plane,
+    Triangle,
   };
 
   template <PrimitiveType Type>
