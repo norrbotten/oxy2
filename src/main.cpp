@@ -24,5 +24,5 @@ int main() {
     renderer.sample_once();
   }
 
-  renderer.save_png("images/glass.png");
+  renderer.save_png("images/glass2.png");
 }

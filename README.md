@@ -31,6 +31,10 @@ Three spheres with varying colors and roughness
 * Extended SDL
 
 ## More renders
+
+<img src=/images/glass2.png width=512>
+Glass and a glossy red sphere, light source up top and some ambient lighting
+
 <img src=/images/spheres_20000.png width=512>
 Repeated spheres defined with SDF, light source in the center
 

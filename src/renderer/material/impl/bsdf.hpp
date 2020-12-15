@@ -63,11 +63,23 @@ namespace Oxy {
         result.ray = SingleRay{ctx.hitpos + refracted * 1e-6, refracted};
       }
       else {
+        /*
         auto reflected = m_roughness == 0.0
                              ? reflect(ctx.ray.direction, ctx.hitnormal)
                              : (m_roughness == 1.0
                                     ? random_vector_on_hemisphere(ctx.hitnormal)
                                     : random_vector_on_cone(ctx.hitnormal, m_roughness * M_PI / 4));
+                                    */
+
+        Vec3 reflected;
+
+        if (m_roughness == 0.0)
+          reflected = reflect(ctx.ray.direction, ctx.hitnormal);
+        else if (m_roughness == 1.0)
+          reflected = random_vector_on_hemisphere(ctx.hitnormal);
+        else
+          reflected = glm::normalize(reflect(ctx.ray.direction, ctx.hitnormal) +
+                                     random_vector_on_unit_sphere() * m_roughness);
 
         result.ray = SingleRay{ctx.hitpos + ctx.hitnormal * 1e-6, reflected};
       }

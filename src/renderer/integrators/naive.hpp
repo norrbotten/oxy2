@@ -17,14 +17,18 @@ namespace Oxy::Integrators {
     virtual Color radiance(const SingleRay& ray) override {
       SingleRay current_ray = ray;
 
+      const static auto ambient_energy = Color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0) * 0.05;
+
       Color color(0.0);
       Color throughput(1.0);
 
       for (int n = 0; n < m_max_bounces; n++) {
         auto isect = m_world.intersect_ray(current_ray);
 
-        if (!isect.hit)
+        if (!isect.hit) {
+          color += throughput * ambient_energy;
           break;
+        }
 
         auto& obj   = isect.object;
         auto& mater = obj->material();
