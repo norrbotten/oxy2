@@ -24,9 +24,7 @@ project "oxy2"
 
     includedirs { "src/", "ext/glm", "ext/lodepng" }
 
-    excludes { "src/oldrenderer/**.*" }
-
-    buildoptions { "-march=native", "-std=c++2a", "-fopenmp" }
+    buildoptions { "-march=znver2", "-mtune=znver2", "-std=c++2a", "-fopenmp" }
 
     links { "pthread", "gomp" }
 

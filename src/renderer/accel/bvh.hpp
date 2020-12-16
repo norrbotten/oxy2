@@ -164,7 +164,7 @@ namespace Oxy::Accel {
           auto avx_res = avx2_ray_triangle_intersect(
               node->packed_triangles.at(node->packed_triangles_index), pray);
 
-          if (avx_res.index != (size_t)-1 && avx_res.t < res.t) {
+          if (avx_res.t < __FLT_MAX__ && avx_res.t < res.t) {
             res.hit   = true;
             res.t     = avx_res.t;
             res.index = node->left_index + avx_res.index;

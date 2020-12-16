@@ -163,21 +163,41 @@ namespace Oxy::Accel {
     // get failed isect mask as bitset in an int
     int mask = _mm256_movemask_ps(t_results);
 
-    float  max   = std::numeric_limits<float>::max();
+    float  min   = std::numeric_limits<float>::max();
     size_t index = -1;
+
+    float vals[8];
+    _mm256_store_ps(vals, t_results);
 
     if (mask != 0xFF) {
       for (int n = 0; n < 8; n++) {
-        float val = avx2_extract(t_results, n);
-
-        if (val > 0.f && val < max) {
-          max   = val;
+        if (vals[n] > 0.f && vals[n] < min) {
+          min   = vals[n];
           index = 7 - n; // avx2 is stored in the reverse order, so 7 - idx to get the correct value
         }
       }
     }
 
-    return {max, index};
+    return {min, index};
+
+    /*
+    // find the minimum index
+    __m256 v1    = _mm256_permute_ps(t_results, 0b10110001);
+    __m256 v2    = _mm256_min_ps(t_results, v1);
+    __m256 v3    = _mm256_permute_ps(v2, 0b01001110);
+    __m256 v4    = _mm256_min_ps(v2, v3);
+    __m256 v5    = _mm256_castpd_ps(_mm256_permute4x64_pd(_mm256_castps_pd(v4), 0b01001110));
+    __m256 v_min = _mm256_min_ps(v4, v5);
+    __m256 mask  = _mm256_cmp_ps(t_results, v_min, 0);
+
+    auto index = _tzcnt_u32(_mm256_movemask_ps(mask));
+
+    // get the value
+    float vals[8];
+    _mm256_store_ps(vals, t_results);
+
+    return {vals[index], index};
+    */
   }
 
 } // namespace Oxy::Accel
