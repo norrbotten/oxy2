@@ -1,6 +1,6 @@
 # Oxy 2
 
-![Dragon](images/dragon_8192.png)
+![Dragon](images/dragon.png)
 Transmissive Stanford Dragon, 8192 samples, 871k triangles, 16 minute render on 24 threads
 
 ## Features:
