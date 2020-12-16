@@ -4,15 +4,15 @@
 #include <string>
 #include <unordered_map>
 
-#include "renderer/material/material.hpp"
+#include "renderer/material/bsdf.hpp"
 
 namespace Oxy::Pools {
 
   using MaterialHandle = std::string;
 
-  using MutableMaterialRef = Material*;
+  using MutableMaterialRef = BSDF*;
 
-  using MaterialRef = Material*;
+  using MaterialRef = BSDF*;
 
   class MaterialPool {
   public:
@@ -21,28 +21,28 @@ namespace Oxy::Pools {
         delete material.second;
     }
 
-    template <typename Derived, typename... Args>
+    template <typename... Args>
     MutableMaterialRef make(MaterialHandle handle, Args... args) {
-      auto material = new Derived(args...);
+      auto material = new BSDF(args...);
       m_materials.emplace(handle, material);
 
-      return ((Material*)m_materials.at(handle));
+      return m_materials.at(handle);
     }
 
-    MutableMaterialRef make(MaterialHandle handle, Material* material) {
+    MutableMaterialRef make(MaterialHandle handle, BSDF* material) {
       m_materials.emplace(handle, material);
       return m_materials.at(handle);
     }
 
     std::optional<MaterialRef> get(MaterialHandle handle) const {
       if (m_materials.contains(handle))
-        return ((Material*)m_materials.at(handle));
+        return m_materials.at(handle);
 
       return {};
     }
 
   private:
-    std::unordered_map<MaterialHandle, Material*> m_materials;
+    std::unordered_map<MaterialHandle, BSDF*> m_materials;
   };
 
 } // namespace Oxy::Pools

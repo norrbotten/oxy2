@@ -10,8 +10,7 @@ Transmissive Stanford Dragon, 8192 samples, 871k triangles, 16 minute render on 
 * Shitty rectilinear camera model with a tent filter
 * Crappy naive pathtracing with russian roulette pruning
 * Materials
-  * General purpose BSDF'ish thing which isnt even done yet
-  * Emissive with output energy
+  * General purpose BSDF'ish thing
 * Textures
   * Images
   * Solid color

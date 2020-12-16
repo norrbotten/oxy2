@@ -13,23 +13,20 @@ camera: {
 
 material: {
   name: light
-  type: emissive
   params: {
-    energy: [5.0]
+    emission: [5.0]
   }
 }
 
 material: {
   name: red light
-  type: emissive
   params: {
-    energy: [25.0, 0.3, 0.05]
+    emission: [25.0, 0.3, 0.05]
   }
 }
 
 material: {
   name: white lambert
-  type: bsdf
   params: {
     roughness: 1.0
   }
@@ -37,7 +34,6 @@ material: {
 
 material: {
   name: frosted glass
-  type: bsdf
   params: {
     albedo: [0.9, 0.9, 1.0]
     roughness: 0.1

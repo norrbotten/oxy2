@@ -55,32 +55,18 @@ namespace Oxy {
     }
 
     for (auto& [name, material] : ctx.material_defs) {
-      switch (material.type) {
-      case SDL::MaterialType::BSDF: {
-        auto& params = std::get<SDL::MaterialDeclarationData::BSDFParams>(material.params);
-        auto  mater  = (BSDF*)m_material_pool.make<BSDF>(name);
+      auto& params = material.params;
+      auto  mater  = m_material_pool.make(name);
 
-        mater->set_texture(m_texture_pool, material.texture);
+      mater->set_texture(m_texture_pool, material.texture);
 
-        mater->albedo()              = Color(params.albedo[0], params.albedo[1], params.albedo[2]);
-        mater->roughness()           = params.roughness;
-        mater->clearcoat()           = params.clearcoat;
-        mater->clearcoat_roughness() = params.clearcoat_roughness;
-        mater->ior()                 = params.ior;
-        mater->transmission()        = params.transmission;
-
-      } break;
-
-      case SDL::MaterialType::Emission: {
-        auto& params = std::get<SDL::MaterialDeclarationData::EmissiveParams>(material.params);
-        auto  mater  = (Emissive*)m_material_pool.make<Emissive>(name);
-
-        mater->energy() = Color(params.energy[0], params.energy[1], params.energy[2]);
-
-      } break;
-
-      case SDL::MaterialType::Unset: assert(false); break;
-      }
+      mater->albedo()              = Color(params.albedo[0], params.albedo[1], params.albedo[2]);
+      mater->roughness()           = params.roughness;
+      mater->clearcoat()           = params.clearcoat;
+      mater->clearcoat_roughness() = params.clearcoat_roughness;
+      mater->ior()                 = params.ior;
+      mater->transmission()        = params.transmission;
+      mater->emission_energy() = Color(params.emission[0], params.emission[1], params.emission[2]);
     }
 
     for (auto& object : ctx.object_defs) {

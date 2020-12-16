@@ -11,8 +11,6 @@
 #include "renderer/pools/mesh_pool.hpp"
 #include "renderer/pools/texture_pool.hpp"
 
-#include "renderer/material/materials.hpp"
-
 #include "renderer/timer.hpp"
 
 #include "renderer/camera.hpp"

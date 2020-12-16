@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "renderer/material/material.hpp"
+#include "renderer/material/bsdf.hpp"
 #include "renderer/utils.hpp"
 
 #include "renderer/pools/material_pool.hpp"

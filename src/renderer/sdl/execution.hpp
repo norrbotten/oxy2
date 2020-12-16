@@ -51,14 +51,8 @@ namespace Oxy::SDL {
   };
 
   struct MaterialDeclarationData {
-    std::string  name;
-    MaterialType type;
-
+    std::string name;
     std::string texture;
-
-    struct EmissiveParams {
-      double energy[3];
-    };
 
     struct BSDFParams {
       double albedo[3];
@@ -67,9 +61,10 @@ namespace Oxy::SDL {
       double clearcoat_roughness;
       double ior;
       double transmission;
+      double emission[3];
     };
 
-    std::variant<EmissiveParams, BSDFParams> params;
+    BSDFParams params;
   };
 
   enum class ObjectType {
@@ -123,10 +118,11 @@ namespace Oxy::SDL {
   struct ExecutionContext {
     ExecutionContext() {
       texture_defs.emplace("@default", TextureDeclarationData{"@default", ""});
-      material_defs.emplace("@default",
-                            MaterialDeclarationData{"@default", MaterialType::BSDF, "@default",
-                                                    MaterialDeclarationData::BSDFParams{
-                                                        {1.0, 1.0, 1.0}, 1.0, 0.0, 0.0, 0.0, 0.0}});
+      material_defs.emplace(
+          "@default",
+          MaterialDeclarationData{"@default", "@default",
+                                  MaterialDeclarationData::BSDFParams{
+                                      {1.0, 1.0, 1.0}, 1.0, 0.0, 0.0, 0.0, 0.0, {0.0, 0.0, 0.0}}});
     }
 
     void validate() const {

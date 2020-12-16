@@ -35,10 +35,9 @@ namespace Oxy::Integrators {
 
         auto scatter = mater->scatter(isect);
 
-        if (mater->is_emissive())
-          color += throughput * scatter.energy;
+        color += throughput * scatter.energy;
 
-        throughput *= scatter.energy;
+        throughput *= scatter.absorption;
         current_ray = scatter.ray;
 
         // russian roulette ray termination

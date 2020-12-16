@@ -81,10 +81,6 @@ namespace Oxy::SDL {
     if (data.name == "")
       throw ExecutionError(fmt([&](auto& ss) { ss << "Material has unset name"; }));
 
-    if (data.type == MaterialType::Unset)
-      throw ExecutionError(
-          fmt([&](auto& ss) { ss << "Material '" << data.name << "' has unset or unknown type"; }));
-
     if (ctx.material_defs.contains(data.name))
       throw ExecutionError(
           fmt([&](auto& ss) { ss << "Material '" << data.name << "' is already declared"; }));
@@ -130,55 +126,42 @@ namespace Oxy::SDL {
 
     data.texture = m_decl.contains("texture") ? m_decl.at("texture") : "@default";
 
-    if (type == "")
-      data.type = MaterialType::Unset;
-    else {
-      if (type == "bsdf") {
-        data.type = MaterialType::BSDF;
-        auto bsdf = MaterialDeclarationData::BSDFParams();
+    auto bsdf = MaterialDeclarationData::BSDFParams();
 
-        if (!(m_nested_params.contains("albedo") &&
-              parse_float_triplet(bsdf.albedo, m_nested_params.at("albedo")))) {
-          bsdf.albedo[0] = 1.0;
-          bsdf.albedo[1] = 1.0;
-          bsdf.albedo[2] = 1.0;
-        }
-
-        if (!(m_nested_params.contains("roughness") &&
-              parse_float(&bsdf.roughness, m_nested_params.at("roughness"))))
-          bsdf.roughness = 1.0;
-
-        if (!(m_nested_params.contains("clearcoat") &&
-              parse_float(&bsdf.clearcoat, m_nested_params.at("clearcoat"))))
-          bsdf.clearcoat = 0.0;
-
-        if (!(m_nested_params.contains("clearcoat_roughness") &&
-              parse_float(&bsdf.clearcoat_roughness, m_nested_params.at("clearcoat_roughness"))))
-          bsdf.clearcoat_roughness = 0.0;
-
-        if (!(m_nested_params.contains("ior") && parse_float(&bsdf.ior, m_nested_params.at("ior"))))
-          bsdf.ior = 0.0;
-
-        if (!(m_nested_params.contains("transmission") &&
-              parse_float(&bsdf.transmission, m_nested_params.at("transmission"))))
-          bsdf.transmission = 0.0;
-
-        data.params = bsdf;
-      }
-      else if (type == "emissive") {
-        data.type     = MaterialType::Emission;
-        auto emissive = MaterialDeclarationData::EmissiveParams();
-
-        if (!(m_nested_params.contains("energy") &&
-              parse_float_triplet(emissive.energy, m_nested_params.at("energy")))) {
-          emissive.energy[0] = 1.0;
-          emissive.energy[1] = 1.0;
-          emissive.energy[2] = 1.0;
-        }
-
-        data.params = emissive;
-      }
+    if (!(m_nested_params.contains("albedo") &&
+          parse_float_triplet(bsdf.albedo, m_nested_params.at("albedo")))) {
+      bsdf.albedo[0] = 1.0;
+      bsdf.albedo[1] = 1.0;
+      bsdf.albedo[2] = 1.0;
     }
+
+    if (!(m_nested_params.contains("roughness") &&
+          parse_float(&bsdf.roughness, m_nested_params.at("roughness"))))
+      bsdf.roughness = 1.0;
+
+    if (!(m_nested_params.contains("clearcoat") &&
+          parse_float(&bsdf.clearcoat, m_nested_params.at("clearcoat"))))
+      bsdf.clearcoat = 0.0;
+
+    if (!(m_nested_params.contains("clearcoat_roughness") &&
+          parse_float(&bsdf.clearcoat_roughness, m_nested_params.at("clearcoat_roughness"))))
+      bsdf.clearcoat_roughness = 0.0;
+
+    if (!(m_nested_params.contains("ior") && parse_float(&bsdf.ior, m_nested_params.at("ior"))))
+      bsdf.ior = 0.0;
+
+    if (!(m_nested_params.contains("transmission") &&
+          parse_float(&bsdf.transmission, m_nested_params.at("transmission"))))
+      bsdf.transmission = 0.0;
+
+    if (!(m_nested_params.contains("emission") &&
+          parse_float_triplet(bsdf.emission, m_nested_params.at("emission")))) {
+      bsdf.emission[0] = 0.0;
+      bsdf.emission[1] = 0.0;
+      bsdf.emission[2] = 0.0;
+    }
+
+    data.params = bsdf;
 
     return data;
   }

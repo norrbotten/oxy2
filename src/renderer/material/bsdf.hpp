@@ -1,17 +1,21 @@
 #pragma once
 
-#include <filesystem>
-
-#include "renderer/material/material.hpp"
 #include "renderer/material/texture.hpp"
 
 #include "renderer/pools/texture_pool.hpp"
 
 #include "renderer/types.hpp"
+#include "renderer/utils.hpp"
 
 namespace Oxy {
 
   namespace fs = std::filesystem;
+
+  struct LightRay {
+    SingleRay ray;
+    Color     energy;
+    Color     absorption;
+  };
 
   /*
     Generic BSDF material, not fully implemented yet
@@ -19,7 +23,7 @@ namespace Oxy {
     TODO:
     Probability distribution function (importance sampling related thing)
   */
-  class BSDF final : public Material {
+  class BSDF final {
   public:
     BSDF() {}
 
@@ -38,14 +42,15 @@ namespace Oxy {
         m_texture = tex.value();
     }
 
-    Color sample(const IntersectionContext& ctx) const override {
+    Color sample(const IntersectionContext& ctx) const {
       return m_texture != nullptr ? m_texture->sample(ctx.uv.x, ctx.uv.y) * m_albedo : m_albedo;
     }
 
-    LightRay scatter(const IntersectionContext& ctx) const override {
+    LightRay scatter(const IntersectionContext& ctx) const {
       LightRay result;
 
-      result.energy = this->sample(ctx);
+      result.energy     = m_emission_energy;
+      result.absorption = this->sample(ctx);
 
       if (random<FloatType>(0, 1) < m_transmission) {
         auto entering_solid = glm::dot(ctx.hitnormal, ctx.ray.direction) < 0;
@@ -96,6 +101,7 @@ namespace Oxy {
     REF(clearcoat_roughness);
     REF(ior);
     REF(transmission);
+    REF(emission_energy);
 
   private:
     const Texture* m_texture;
@@ -109,6 +115,8 @@ namespace Oxy {
 
     FloatType m_ior;
     FloatType m_transmission;
+
+    Color m_emission_energy;
   };
 
 } // namespace Oxy
