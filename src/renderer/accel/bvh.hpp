@@ -94,7 +94,7 @@ namespace Oxy::Accel {
 
     node->bbox = {min_bbox, max_bbox};
 
-    if (right - left <= 8) { // 8 or less primitives in each leaf
+    if (right - left <= 4) {
       node->packed_triangles_index = node->packed_triangles.size();
       node->packed_triangles.push_back(get_packed_tris(primitives, left, right));
 

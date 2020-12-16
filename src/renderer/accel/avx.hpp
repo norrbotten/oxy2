@@ -8,23 +8,23 @@
 
 namespace Oxy::Accel {
 
-  static const __m256 one_m256       = _mm256_set1_ps(1.0f);
-  static const __m256 minus_one_m256 = _mm256_set1_ps(-1.0f);
-  static const __m256 pos_eps_m256   = _mm256_set1_ps(1e-6f);
-  static const __m256 neg_eps_m256   = _mm256_set1_ps(-1e-6f);
-  static const __m256 zero_m256      = _mm256_set1_ps(0.0f);
-  static const __m256 fmax_m256      = _mm256_set1_ps(std::numeric_limits<float>::max());
+  static const __m256d one_m256       = _mm256_set1_pd(1.0);
+  static const __m256d minus_one_m256 = _mm256_set1_pd(-1.0);
+  static const __m256d pos_eps_m256   = _mm256_set1_pd(1e-6);
+  static const __m256d neg_eps_m256   = _mm256_set1_pd(-1e-6);
+  static const __m256d zero_m256      = _mm256_set1_pd(0.0);
+  static const __m256d fmax_m256      = _mm256_set1_pd(std::numeric_limits<double>::max());
 
   struct AVX2PackedTriangles {
-    __m256 edge1[3];
-    __m256 edge2[3];
-    __m256 vert0[3];
-    __m256 inactive;
+    __m256d edge1[3];
+    __m256d edge2[3];
+    __m256d vert0[3];
+    __m256d inactive;
   };
 
   struct AVX2SingleRay {
-    __m256 origin[3];
-    __m256 direction[3];
+    __m256d origin[3];
+    __m256d direction[3];
   };
 
   inline AVX2PackedTriangles
@@ -35,29 +35,30 @@ namespace Oxy::Accel {
 
     AVX2PackedTriangles ptris;
 
-    Vec3  edge1[8];
-    Vec3  edge2[8];
-    Vec3  vert0[8];
-    float inactive[8];
+    Vec3  edge1[4];
+    Vec3  edge2[4];
+    Vec3  vert0[4];
+    float inactive[4];
 
-    for (int n = 0; n < 8; n++) {
+    for (int n = 0; n < 4; n++) {
       if ((left + n) < right) {
         auto& tri = triangles.at(left + n);
 
         edge1[n]    = tri.p1() - tri.p0();
         edge2[n]    = tri.p2() - tri.p0();
         vert0[n]    = tri.p0();
-        inactive[n] = 0.f;
+        inactive[n] = 0.0;
       }
       else {
         edge1[n]    = Vec3();
         edge2[n]    = Vec3();
         vert0[n]    = Vec3();
-        inactive[n] = 1.f;
+        inactive[n] = 1.0;
       }
     }
 
     for (int n = 0; n < 3; n++) {
+      /*
       ptris.edge1[n] = _mm256_set_ps(edge1[0][n], edge1[1][n], edge1[2][n], edge1[3][n],
                                      edge1[4][n], edge1[5][n], edge1[6][n], edge1[7][n]);
 
@@ -66,10 +67,20 @@ namespace Oxy::Accel {
 
       ptris.vert0[n] = _mm256_set_ps(vert0[0][n], vert0[1][n], vert0[2][n], vert0[3][n],
                                      vert0[4][n], vert0[5][n], vert0[6][n], vert0[7][n]);
+                                     */
+
+      ptris.edge1[n] = _mm256_set_pd(edge1[0][n], edge1[1][n], edge1[2][n], edge1[3][n]);
+
+      ptris.edge2[n] = _mm256_set_pd(edge2[0][n], edge2[1][n], edge2[2][n], edge2[3][n]);
+
+      ptris.vert0[n] = _mm256_set_pd(vert0[0][n], vert0[1][n], vert0[2][n], vert0[3][n]);
     }
 
-    ptris.inactive = _mm256_set_ps(inactive[0], inactive[1], inactive[2], inactive[3], inactive[4],
-                                   inactive[5], inactive[6], inactive[7]);
+    // ptris.inactive = _mm256_set_ps(inactive[0], inactive[1], inactive[2], inactive[3],
+    // inactive[4],
+    //                               inactive[5], inactive[6], inactive[7]);
+
+    ptris.inactive = _mm256_set_pd(inactive[0], inactive[1], inactive[2], inactive[3]);
 
     return ptris;
   }
@@ -78,33 +89,31 @@ namespace Oxy::Accel {
     AVX2SingleRay pray;
 
     for (int n = 0; n < 3; n++) {
-      pray.origin[n]    = _mm256_set1_ps(ray.origin[n]);
-      pray.direction[n] = _mm256_set1_ps(ray.direction[n]);
+      pray.origin[n]    = _mm256_set1_pd(ray.origin[n]);
+      pray.direction[n] = _mm256_set1_pd(ray.direction[n]);
     }
 
     return pray;
   }
 
-  inline void avx2_cross(__m256 result[3], const __m256 a[3], const __m256 b[3]) {
-    result[0] = _mm256_fmsub_ps(a[1], b[2], _mm256_mul_ps(b[1], a[2]));
-    result[1] = _mm256_fmsub_ps(a[2], b[0], _mm256_mul_ps(b[2], a[0]));
-    result[2] = _mm256_fmsub_ps(a[0], b[1], _mm256_mul_ps(b[0], a[1]));
+  inline void avx2_cross(__m256d result[3], const __m256d a[3], const __m256d b[3]) {
+    result[0] = _mm256_fmsub_pd(a[1], b[2], _mm256_mul_pd(b[1], a[2]));
+    result[1] = _mm256_fmsub_pd(a[2], b[0], _mm256_mul_pd(b[2], a[0]));
+    result[2] = _mm256_fmsub_pd(a[0], b[1], _mm256_mul_pd(b[0], a[1]));
   }
 
-  inline __m256 avx2_dot(const __m256 a[3], const __m256 b[3]) {
-    return _mm256_fmadd_ps(a[2], b[2], _mm256_fmadd_ps(a[1], b[1], _mm256_mul_ps(a[0], b[0])));
+  inline __m256d avx2_dot(const __m256d a[3], const __m256d b[3]) {
+    return _mm256_fmadd_pd(a[2], b[2], _mm256_fmadd_pd(a[1], b[1], _mm256_mul_pd(a[0], b[0])));
   }
 
-  inline void avx2_sub(__m256 result[3], const __m256 a[3], const __m256 b[3]) {
-    result[0] = _mm256_sub_ps(a[0], b[0]);
-    result[1] = _mm256_sub_ps(a[1], b[1]);
-    result[2] = _mm256_sub_ps(a[2], b[2]);
+  inline void avx2_sub(__m256d result[3], const __m256d a[3], const __m256d b[3]) {
+    result[0] = _mm256_sub_pd(a[0], b[0]);
+    result[1] = _mm256_sub_pd(a[1], b[1]);
+    result[2] = _mm256_sub_pd(a[2], b[2]);
   }
-
-  inline float avx2_extract(const __m256 x, const int n) { return ((float*)(&x))[n]; }
 
   struct AVX2TriangleIntersectResult {
-    float  t;
+    double t;
     size_t index;
   };
 
@@ -112,68 +121,68 @@ namespace Oxy::Accel {
                                                                  const AVX2SingleRay&       ray) {
 
     // q = cross(ray.dir, v0v2)
-    __m256 q[3];
+    __m256d q[3];
     avx2_cross(q, ray.direction, tris.edge2);
 
     // a = dot(v0v1, q)
-    __m256 a = avx2_dot(tris.edge1, q);
+    __m256d a = avx2_dot(tris.edge1, q);
 
     // f = 1 / a
-    __m256 f = _mm256_div_ps(one_m256, a);
+    __m256d f = _mm256_div_pd(one_m256, a);
 
     // s = ray.origin - v0
-    __m256 s[3];
+    __m256d s[3];
     avx2_sub(s, ray.origin, tris.vert0);
 
     // u = f * dot(s, q)
-    __m256 u = _mm256_mul_ps(f, avx2_dot(s, q));
+    __m256d u = _mm256_mul_pd(f, avx2_dot(s, q));
 
     // r = cross(s, edge1)
-    __m256 r[3];
+    __m256d r[3];
     avx2_cross(r, s, tris.edge1);
 
     // v = f * dot(ray.dir, r)
-    __m256 v = _mm256_mul_ps(f, avx2_dot(ray.direction, r));
+    __m256d v = _mm256_mul_pd(f, avx2_dot(ray.direction, r));
 
     // t = f * dot(v0v2, r)
-    __m256 t = _mm256_mul_ps(f, avx2_dot(tris.edge2, r));
+    __m256d t = _mm256_mul_pd(f, avx2_dot(tris.edge2, r));
 
     // mask of failed intersections
-    __m256 failed;
+    __m256d failed;
 
     // t > eps && t < -eps
-    failed = _mm256_and_ps(_mm256_cmp_ps(a, neg_eps_m256, _CMP_GT_OQ),
-                           _mm256_cmp_ps(a, pos_eps_m256, _CMP_LT_OQ));
+    failed = _mm256_and_pd(_mm256_cmp_pd(a, neg_eps_m256, _CMP_GT_OQ),
+                           _mm256_cmp_pd(a, pos_eps_m256, _CMP_LT_OQ));
 
     // u > 0
-    failed = _mm256_or_ps(failed, _mm256_cmp_ps(u, zero_m256, _CMP_LT_OQ));
+    failed = _mm256_or_pd(failed, _mm256_cmp_pd(u, zero_m256, _CMP_LT_OQ));
 
     // v > 0
-    failed = _mm256_or_ps(failed, _mm256_cmp_ps(v, zero_m256, _CMP_LT_OQ));
+    failed = _mm256_or_pd(failed, _mm256_cmp_pd(v, zero_m256, _CMP_LT_OQ));
 
     // (u + v) < 1
-    failed = _mm256_or_ps(failed, _mm256_cmp_ps(_mm256_add_ps(u, v), one_m256, _CMP_GT_OQ));
+    failed = _mm256_or_pd(failed, _mm256_cmp_pd(_mm256_add_pd(u, v), one_m256, _CMP_GT_OQ));
 
     // tri.inactive == false
-    failed = _mm256_or_ps(failed, tris.inactive);
+    failed = _mm256_or_pd(failed, tris.inactive);
 
     // set failed ones to -1
-    __m256 t_results = _mm256_blendv_ps(t, minus_one_m256, failed);
+    __m256d t_results = _mm256_blendv_pd(t, minus_one_m256, failed);
 
     // get failed isect mask as bitset in an int
-    int mask = _mm256_movemask_ps(t_results);
+    int mask = _mm256_movemask_pd(t_results);
 
-    float  min   = std::numeric_limits<float>::max();
+    double min   = std::numeric_limits<double>::max();
     size_t index = -1;
 
-    float vals[8];
-    _mm256_store_ps(vals, t_results);
+    double vals[4];
+    _mm256_store_pd(vals, t_results);
 
     if (mask != 0xFF) {
-      for (int n = 0; n < 8; n++) {
+      for (int n = 0; n < 4; n++) {
         if (vals[n] > 0.f && vals[n] < min) {
           min   = vals[n];
-          index = 7 - n; // avx2 is stored in the reverse order, so 7 - idx to get the correct value
+          index = 3 - n; // avx2 is stored in the reverse order, so 7 - idx to get the correct value
         }
       }
     }
