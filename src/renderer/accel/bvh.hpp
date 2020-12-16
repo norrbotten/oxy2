@@ -140,56 +140,53 @@ namespace Oxy::Accel {
   };
 
   template <typename T>
-  BVHTraverseResult traverse_bvh(BVHNode<T>* bvh, const SingleRay& ray) {
+  BVHTraverseResult traverse_bvh(BVHNode<T>* bvh, const SingleRay& ray) noexcept {
     BVHTraverseResult res;
 
     auto pray = get_packed_ray(ray);
 
-    static thread_local BVHNode<T>* stack[1024] = {0};
-    int                             stack_ptr   = 0;
+    static thread_local BVHNode<T>* stack[64];
+    int                             stack_ptr = 0;
 
     stack[stack_ptr++] = bvh;
 
     while (stack_ptr > 0) {
       auto node = stack[--stack_ptr];
 
-      FloatType dummy;
-      if (ray_vs_aabb(ray.origin, ray.direction, node->bbox.min, node->bbox.max, dummy)) {
-        bool is_leaf = (node->left_node == nullptr) && (node->right_node == nullptr);
+      if (node->left_node == nullptr) {
+        auto avx_res =
+            avx2_ray_triangle_intersect(node->packed_triangles[node->packed_triangles_index], pray);
 
-        if (is_leaf) {
-          // auto   beg = node->primitives.begin();
-          // size_t idx = 0;
-
-          auto avx_res = avx2_ray_triangle_intersect(
-              node->packed_triangles.at(node->packed_triangles_index), pray);
-
-          if (avx_res.t < __FLT_MAX__ && avx_res.t < res.t) {
-            res.hit   = true;
-            res.t     = avx_res.t;
-            res.index = node->left_index + avx_res.index;
-          }
-
-          /*
-          for (auto it = beg + node->left_index; it != beg + node->right_index; it++) {
-            if (auto dist = Primitive::Traits::intersect_ray(*it, ray); dist.has_value()) {
-              if (dist.value() < res.t) {
-                res.hit   = true;
-                res.t     = dist.value();
-                res.index = node->left_index + idx;
-              }
-            }
-
-            idx++;
-          }
-          */
+        if (avx_res.t < __FLT_MAX__ && avx_res.t < res.t) {
+          res.hit   = true;
+          res.t     = avx_res.t;
+          res.index = node->left_index + avx_res.index;
         }
-        else {
-          if (node->left_node != nullptr)
-            stack[stack_ptr++] = node->left_node;
+      }
+      else {
+        double left_dist, right_dist;
 
-          if (node->right_node != nullptr)
+        bool hit_left = ray_vs_aabb(ray.origin, ray.direction, node->left_node->bbox.min,
+                                    node->left_node->bbox.max, left_dist);
+
+        bool hit_right = ray_vs_aabb(ray.origin, ray.direction, node->right_node->bbox.min,
+                                     node->right_node->bbox.max, right_dist);
+
+        if (hit_left && hit_right) {
+          if (left_dist < right_dist) {
             stack[stack_ptr++] = node->right_node;
+            stack[stack_ptr++] = node->left_node;
+          }
+          else {
+            stack[stack_ptr++] = node->right_node;
+            stack[stack_ptr++] = node->left_node;
+          }
+        }
+        else if (hit_left) {
+          stack[stack_ptr++] = node->left_node;
+        }
+        else if (hit_right) {
+          stack[stack_ptr++] = node->right_node;
         }
       }
     }

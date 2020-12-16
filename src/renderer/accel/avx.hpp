@@ -108,8 +108,8 @@ namespace Oxy::Accel {
     size_t index;
   };
 
-  AVX2TriangleIntersectResult avx2_ray_triangle_intersect(const AVX2PackedTriangles& tris,
-                                                          const AVX2SingleRay&       ray) {
+  inline AVX2TriangleIntersectResult avx2_ray_triangle_intersect(const AVX2PackedTriangles& tris,
+                                                                 const AVX2SingleRay&       ray) {
 
     // q = cross(ray.dir, v0v2)
     __m256 q[3];

@@ -16,6 +16,10 @@ namespace Oxy::Tracing {
     virtual IntersectionContext intersect_ray(const SingleRay& ray) override {
       IntersectionContext ctx;
 
+      FloatType dummy;
+      if (!Accel::ray_vs_aabb(ray.origin, ray.direction, m_bvh->bbox.min, m_bvh->bbox.max, dummy))
+        return ctx;
+
       if (auto bvh_res = Accel::traverse_bvh(m_bvh, ray); bvh_res.hit) {
         auto& tri = m_triangles.at(bvh_res.index);
 
