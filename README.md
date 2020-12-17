@@ -19,6 +19,8 @@ Transmissive Stanford Dragon, 8192 samples, 871k triangles, 16 minute render on 
 
 ## To-do:
 
+* Better surface normal calculation
+* Smooth hitnormals for meshes
 * Subsurface scattering
 * Environment spheres
   * HDRi textures
@@ -29,6 +31,9 @@ Transmissive Stanford Dragon, 8192 samples, 871k triangles, 16 minute render on 
 * Extended SDL
 
 ## More renders
+
+![More caustics](images/caustic3.png)
+Version of above image with some extra lights, rendered in 4K
 
 ![Caustic](images/caustic.png)
 Different colored lights mixing through a sphere

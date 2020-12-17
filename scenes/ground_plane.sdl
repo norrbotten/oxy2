@@ -1,12 +1,12 @@
 
 render: {
-  width: 1024
-  height: 512
+  width: 4096
+  height: 2048
   samples: 8192
 }
 
 camera: {
-  position: [-5, 3, 3]
+  position: [-5, 3, 3.5]
   aim: [0.0, 0.0, 0.8]
   fov: 52
 }
@@ -14,14 +14,28 @@ camera: {
 material: {
   name: light
   params: {
-    emission: [5.0]
+    emission: [15.0]
   }
 }
 
 material: {
   name: red light
   params: {
-    emission: [25.0, 0.3, 0.05]
+    emission: [45.0, 0.7, 0.15]
+  }
+}
+
+material: {
+  name: green light
+  params: {
+    emission: [0.7, 25.0, 0.15]
+  }
+}
+
+material: {
+  name: blue light
+  params: {
+    emission: [0.7, 0.15, 25.0]
   }
 }
 
@@ -46,8 +60,8 @@ object: {
   type: sphere
   material: light
   params: {
-    center: [0.0, 0.0, 7.0]
-    radius: 2
+    center: [0.0, 0.0, 4.0]
+    radius: 0.25
   }
 }
 
@@ -56,7 +70,25 @@ object: {
   material: red light
   params: {
     center: [-0.13, 1.1, 1.6]
-    radius: 0.1
+    radius: 0.15
+  }
+}
+
+object: {
+  type: sphere
+  material: green light
+  params: {
+    center: [-2, 0, 1.6]
+    radius: 0.07
+  }
+}
+
+object: {
+  type: sphere
+  material: blue light
+  params: {
+    center: [2, 0, 1.6]
+    radius: 0.07
   }
 }
 
