@@ -19,6 +19,7 @@ Transmissive Stanford Dragon, 8192 samples, 871k triangles, 16 minute render on 
 
 ## To-do:
 
+* Distributed rendering over the network
 * Better surface normal calculation
 * Smooth hitnormals for meshes
 * Subsurface scattering

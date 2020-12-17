@@ -11,9 +11,23 @@
 #include "renderer/parsers/stl.hpp"
 #include "renderer/tracing/mesh.hpp"
 
+#include "renderer/netrender/httplib/http_server.hpp"
+
 int main() {
 
   using namespace Oxy;
+
+  NetRender::HTTP::HTTPServer server(8080);
+
+  server.set_404_handler([](auto, auto res) {
+    std::cout << "404\n";
+    res.write_body("404").finalize().send();
+  });
+
+  server.get("/", [](auto, auto res) {
+    res.write_body("it works");
+    res.finalize().send();
+  });
 
   Renderer renderer;
 
@@ -40,4 +54,6 @@ int main() {
   }
 
   renderer.save_png("images/avx2_test.png");
+
+  server.block();
 }
