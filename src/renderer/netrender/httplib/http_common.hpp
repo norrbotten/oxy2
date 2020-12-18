@@ -7,7 +7,7 @@ namespace Oxy::NetRender::HTTP {
 
   constexpr auto HTTP_VERSION_STRING = "HTTP/1.1";
 
-  struct status_code {
+  struct StatusCode {
     ssize_t     code     = 200;
     const char* code_str = "OK";
   };
@@ -15,10 +15,10 @@ namespace Oxy::NetRender::HTTP {
   /* clang - format off */
 #define HTTP_STATUS(code, str)                                                                     \
   {                                                                                                \
-    code, status_code { code, str }                                                                \
+    code, StatusCode { code, str }                                                                 \
   }
 
-  const std::unordered_map<ssize_t, status_code> STATUS_CODES = {
+  const std::unordered_map<ssize_t, StatusCode> STATUS_CODES = {
       HTTP_STATUS(100, "Continue"),
       HTTP_STATUS(101, "Switching Protocols"),
       HTTP_STATUS(102, "Processing"),

@@ -31,8 +31,8 @@ namespace Oxy::NetRender::TCP {
 
   class Connection;
 
-  typedef std::function<void(Connection*, const void*, std::size_t)> ReceiveCallback;
-  typedef std::function<void(CloseReason)>                           ClosedCallback;
+  using ReceiveCallback = std::function<void(Connection*, const void*, std::size_t)>;
+  using ClosedCallback  = std::function<void(CloseReason)>;
 
   constexpr std::size_t CLIENT_BUFFER_SIZE = 16 * 1024;
 

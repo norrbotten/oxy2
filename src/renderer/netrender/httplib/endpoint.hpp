@@ -13,7 +13,7 @@
 
 namespace Oxy::NetRender::HTTP {
 
-  typedef std::function<void(const HTTPRequest&, HTTPResponse&)> EndpointFunctor;
+  using EndpointFunctor = std::function<void(const HTTPRequest&, HTTPResponse&)>;
 
   class Endpoint {
   public:

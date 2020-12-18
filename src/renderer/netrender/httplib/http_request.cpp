@@ -26,6 +26,9 @@ namespace Oxy::NetRender::HTTP {
     return tokens;
   }
 
+  HTTPRequest::HTTPRequest()
+      : m_parse_failed(false) {}
+
   HTTPRequest::HTTPRequest(const void* request, std::size_t len)
       : m_parse_failed(false) {
 
@@ -78,7 +81,8 @@ namespace Oxy::NetRender::HTTP {
           name_value[1] = name_value[1].substr(1);
         }
 
-        m_request_headers[canonicalize(name_value[0])] = HTTPHeader(name_value[0], name_value[1]);
+        m_request_headers[HTTP::canonicalize(name_value[0])] =
+            HTTPHeader(name_value[0], name_value[1]);
       }
     }
 
@@ -119,6 +123,23 @@ namespace Oxy::NetRender::HTTP {
     }
 
     return true;
+  }
+
+  std::string HTTPRequest::format_into_request_str() const {
+    std::stringstream ss;
+
+    ss << m_method << " ";
+    ss << m_uri << " ";
+    ss << HTTP_VERSION_STRING << "\r\n";
+
+    for (auto& [name, header] : m_request_headers)
+      ss << name << ":" << header.content() << "\r\n";
+
+    ss << "\r\n";
+
+    ss << m_request_body;
+
+    return ss.str();
   }
 
 } // namespace Oxy::NetRender::HTTP

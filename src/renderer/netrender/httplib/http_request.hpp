@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <sstream>
 #include <string>
 
 #include "renderer/netrender/httplib/tcp_server.hpp"
@@ -14,6 +15,7 @@ namespace Oxy::NetRender::HTTP {
 
   class HTTPRequest {
   public:
+    HTTPRequest();
     HTTPRequest(const void* request, std::size_t len);
 
     auto& method() const { return m_method; }
@@ -27,6 +29,23 @@ namespace Oxy::NetRender::HTTP {
     HTTPHeader header(const std::string& name) const;
 
     std::size_t num_headers() const { return m_request_headers.size(); }
+
+    void set_header(const std::string& name, const std::string& content) {
+      m_request_headers.emplace(name, HTTPHeader(name, content));
+    }
+
+    void set_method(Method method) {
+      m_method      = STRINGIFY_METHOD[method];
+      m_method_enum = method;
+    }
+
+    void set_uri(const std::string& uri) { m_uri = uri; }
+
+    void set_body(const std::string& body) { m_request_body = body; }
+
+    void append_body(const std::string& content) { m_request_body += content; }
+
+    std::string format_into_request_str() const;
 
   private:
     bool parse(const void* request, std::size_t len);

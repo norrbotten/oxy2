@@ -1,7 +1,5 @@
 #include "renderer/netrender/httplib/tcp_server.hpp"
 
-#include <algorithm>
-
 namespace Oxy::NetRender::TCP {
 
   std::string get_uuid() {

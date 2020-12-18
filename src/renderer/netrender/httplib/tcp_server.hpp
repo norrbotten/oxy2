@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <chrono>
 #include <mutex>
 #include <optional>
@@ -20,7 +21,7 @@ namespace Oxy::NetRender::TCP {
     CLOSED,
   };
 
-  typedef std::function<void(TCP::Connection*)> ConnectionCallback;
+  using ConnectionCallback = std::function<void(TCP::Connection*)>;
 
   class TCPServer final {
   public:

@@ -50,7 +50,7 @@ namespace Oxy::NetRender::HTTP {
     bool m_finalized;
     bool m_sent;
 
-    status_code m_status;
+    StatusCode m_status;
 
     std::unordered_map<std::string, HTTPHeader> m_response_headers;
     std::string                                 m_response_body;
