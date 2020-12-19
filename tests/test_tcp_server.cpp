@@ -7,6 +7,8 @@ int main() {
 
   TCP::TCPServer server(8080);
 
+  std::cout << "brumm\n";
+
   server.on_connection([](TCP::Connection* conn) {
     std::cout << "New connection fd=" << conn->fd() << "\n";
 
@@ -17,5 +19,6 @@ int main() {
     });
   });
 
+  server.start_listen();
   server.block();
 }

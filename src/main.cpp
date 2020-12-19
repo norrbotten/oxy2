@@ -3,7 +3,6 @@
 #include <streambuf>
 #include <string>
 
-#include <omp.h>
 #include <signal.h>
 
 #include "renderer/renderer.hpp"

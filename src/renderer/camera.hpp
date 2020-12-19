@@ -2,6 +2,8 @@
 
 #include <random>
 
+#include <omp.h>
+
 #include "renderer/sample_film.hpp"
 #include "renderer/types.hpp"
 

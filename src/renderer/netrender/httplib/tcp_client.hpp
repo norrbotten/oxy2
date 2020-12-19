@@ -32,8 +32,7 @@ namespace Oxy::NetRender::TCP {
 
   class TCPClient {
   public:
-    TCPClient(const std::string& ip_or_hostname, int port);
-    ~TCPClient();
+    TCPClient(const std::string& ip, int port);
 
     void block() {
       if (m_client_thread.joinable())

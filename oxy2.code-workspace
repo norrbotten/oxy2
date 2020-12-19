@@ -85,7 +85,9 @@
 			"valarray": "cpp",
 			"variant": "cpp",
 			"codecvt": "cpp",
-			"*.ipp": "cpp"
+			"*.ipp": "cpp",
+			"regex": "cpp",
+			"shared_mutex": "cpp"
 		},
 		"jupyter.jupyterServerType": "local"
 	}

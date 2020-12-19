@@ -1,5 +1,7 @@
 #include "renderer/netrender/httplib/tcp_server.hpp"
 
+#include <iostream>
+
 namespace Oxy::NetRender::TCP {
 
   std::string get_uuid() {
@@ -90,8 +92,7 @@ namespace Oxy::NetRender::TCP {
           auto uuid = get_uuid();
 
           // set nonblocking flag
-          int flags = fcntl(newsock, F_GETFL, 0);
-          fcntl(newsock, F_SETFL, flags | O_NONBLOCK);
+          fcntl(newsock, F_SETFL, fcntl(newsock, F_GETFL, 0) | O_NONBLOCK);
 
           std::lock_guard g(m_connections_mtx);
           auto            connection = new Connection(newsock);

@@ -28,6 +28,19 @@ project "oxy2"
 
     links { "pthread", "gomp" }
 
+local function test(name)
+    project(name)
+    kind "ConsoleApp"
+    files { "tests/" .. name .. ".cpp", "src/**.cpp", "ext/lodepng/lodepng.cpp" }
+    excludes "src/main.cpp"
+    includedirs { "src/", "ext/glm", "ext/lodepng" }
+    buildoptions { "-march=znver2", "-mtune=znver2", "-std=c++2a", "-fopenmp" }
+    links { "pthread" }
+end
+
+test("test_tcp_client")
+test("test_tcp_server")
+
 newaction {
     trigger = "build",
     description = "build",
@@ -50,5 +63,23 @@ newaction {
     description = "run",
     execute = function()
         os.execute("(premake5 gmake2 && cd build && make -j config=release) && time -p ./build/bin/release/oxy2")
+    end
+}
+
+newoption {
+    trigger = "test",
+    description = "specify what test to run",
+    allowed = {
+        { "tcp_client", "TCP Client" },
+        { "tcp_server", "TCP Server" }
+    }
+}
+
+newaction {
+    trigger = "test",
+    description = "run a test",
+    execute = function()
+        local test = _OPTIONS["test"]
+        os.execute("premake5 gmake2 && cd build && make -j -f test_" .. test .. ".make && ./bin/debug/test_" .. test)
     end
 }
