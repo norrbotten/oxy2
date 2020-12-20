@@ -20,7 +20,8 @@ namespace Oxy::NetRender::HTTP {
 
     auto& method() const { return m_method; }
     auto  method_enum() const { return m_method_enum; };
-    auto& uri() const { return m_uri; }
+    auto& url() const { return m_uri; }
+    auto& path() const { return m_path; }
     auto& query_str() const { return m_query_string; }
     auto& http_version() const { return m_http_version; }
     auto& body() const { return m_request_body; }
@@ -39,8 +40,8 @@ namespace Oxy::NetRender::HTTP {
       m_method_enum = method;
     }
 
-    void set_uri(const std::string& uri) { m_uri = uri; }
-
+    void set_url(const std::string& uri) { m_uri = uri; }
+    void set_path(const std::string& path) { m_path = path; }
     void set_body(const std::string& body) { m_request_body = body; }
 
     void append_body(const std::string& content) { m_request_body += content; }
@@ -57,6 +58,7 @@ namespace Oxy::NetRender::HTTP {
     Method      m_method_enum;
 
     std::string m_uri;
+    std::string m_path;
     std::string m_query_string;
     std::string m_http_version;
 

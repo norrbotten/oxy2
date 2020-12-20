@@ -5,7 +5,7 @@
 
 namespace Oxy::NetRender::HTTP {
 
-  constexpr auto HTTP_VERSION_STRING = "HTTP/1.1";
+  constexpr auto HTTP_VERSION_STRING = "HTTP/1.0";
 
   struct StatusCode {
     ssize_t     code     = 200;

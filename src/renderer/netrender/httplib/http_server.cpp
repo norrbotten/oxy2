@@ -54,7 +54,7 @@ namespace Oxy::NetRender::HTTP {
       session->force_done();
     }
     else {
-      auto endpoint = m_root_namespace.match(split_uri(req.uri()));
+      auto endpoint = m_root_namespace.match(split_uri(req.url()));
 
       if (!endpoint.is_valid()) {
         if (m_404_handler) {

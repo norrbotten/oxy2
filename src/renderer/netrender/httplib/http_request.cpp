@@ -129,7 +129,7 @@ namespace Oxy::NetRender::HTTP {
     std::stringstream ss;
 
     ss << m_method << " ";
-    ss << m_uri << " ";
+    ss << m_path << " ";
     ss << HTTP_VERSION_STRING << "\r\n";
 
     for (auto& [name, header] : m_request_headers)

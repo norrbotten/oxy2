@@ -40,6 +40,7 @@ end
 
 test("test_tcp_client")
 test("test_tcp_server")
+test("test_http_client")
 
 newaction {
     trigger = "build",
@@ -69,10 +70,6 @@ newaction {
 newoption {
     trigger = "test",
     description = "specify what test to run",
-    allowed = {
-        { "tcp_client", "TCP Client" },
-        { "tcp_server", "TCP Server" },
-    }
 }
 
 newoption {
