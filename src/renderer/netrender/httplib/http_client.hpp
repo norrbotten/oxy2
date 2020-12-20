@@ -3,6 +3,7 @@
 #include "renderer/types.hpp"
 
 #include "renderer/netrender/httplib/http_request.hpp"
+#include "renderer/netrender/httplib/tcp_client.hpp"
 
 namespace Oxy::NetRender::HTTP {
 

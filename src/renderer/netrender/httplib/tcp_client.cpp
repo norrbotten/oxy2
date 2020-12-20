@@ -16,17 +16,16 @@ namespace Oxy::NetRender::TCP {
     return "";
   }
 
-  TCPClient::TCPClient(const std::string& ip, int port = 80) {
+  TCPClient::TCPClient(const std::string& ip_or_hostname, int port = 80) {
     static std::regex match_ipv4("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$");
 
-    m_client_thread = std::thread([this, &ip, port = port] {
+    m_client_thread = std::thread([this, ip = ip_or_hostname, port = port] {
       m_state = ClientState::CONNECTING;
 
-      /*
-      if (std::regex_match(ip_or_hostname, match_ipv4))
-        m_ip = ip_or_hostname;
+      if (std::regex_match(ip, match_ipv4))
+        m_ip = ip;
       else {
-        auto resolve = resolve_hostname(ip_or_hostname);
+        auto resolve = resolve_hostname(ip);
         std::cout << resolve << "\n";
 
         if (resolve == "") {
@@ -36,9 +35,6 @@ namespace Oxy::NetRender::TCP {
 
         m_ip = resolve;
       }
-      */
-
-      m_ip = ip;
 
       if (m_fd = socket(AF_INET, SOCK_STREAM, 0); m_fd < 0) {
         m_state = ClientState::ERROR;
@@ -74,6 +70,8 @@ namespace Oxy::NetRender::TCP {
         if (m_to_be_sent.size() > 0) {
           // i am pretty sure this is safe...
 
+          std::lock_guard g{m_to_be_sent_mtx};
+
           auto len = std::min((std::size_t)16384, m_to_be_sent.size());
           for (decltype(len) i = 0; i < len; i++)
             m_send_buf[i] = m_to_be_sent[i];
@@ -96,7 +94,7 @@ namespace Oxy::NetRender::TCP {
       delete[] m_send_buf;
       delete[] m_recv_buf;
 
-      close(m_fd);
+      ::close(m_fd);
 
       if (m_state == ClientState::CLOSING) {
         m_state = ClientState::CLOSED;

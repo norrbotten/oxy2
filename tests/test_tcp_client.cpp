@@ -6,12 +6,11 @@ int main() {
 
   using namespace Oxy::NetRender;
 
-  TCP::TCPClient client("127.0.0.1", 8080);
+  TCP::TCPClient client("localhost", 8080);
 
-  std::cout << "bigbong\n";
-
-  client.on_receive([](const char* data, std::size_t len) {
+  client.on_receive([&](const char* data, std::size_t len) {
     std::cout << "Client received " << len << " bytes\n";
+    client.close();
   });
 
   while (true) {
@@ -22,6 +21,9 @@ int main() {
 
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(1s);
+
+    if (client.state() == TCP::ClientState::CLOSED)
+      break;
   }
 
   client.block();

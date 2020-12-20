@@ -71,8 +71,13 @@ newoption {
     description = "specify what test to run",
     allowed = {
         { "tcp_client", "TCP Client" },
-        { "tcp_server", "TCP Server" }
+        { "tcp_server", "TCP Server" },
     }
+}
+
+newoption {
+    trigger = "debug",
+    description = "run the test in gdb",
 }
 
 newaction {
@@ -80,6 +85,11 @@ newaction {
     description = "run a test",
     execute = function()
         local test = _OPTIONS["test"]
-        os.execute("premake5 gmake2 && cd build && make -j -f test_" .. test .. ".make && ./bin/debug/test_" .. test)
+
+        if _OPTIONS["debug"] then
+            os.execute("premake5 gmake2 && cd build && make -j -f test_" .. test .. ".make && gdb ./bin/debug/test_" .. test)
+        else
+            os.execute("premake5 gmake2 && cd build && make -j -f test_" .. test .. ".make && ./bin/debug/test_" .. test)
+        end
     end
 }
