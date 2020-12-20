@@ -54,6 +54,14 @@ namespace Oxy::NetRender::HTTP {
     if (!m_finalized)
       finalize();
 
+    unfinalize(); // janky
+
+    if (!header("Content-Length").valid()) {
+      write_header("Content-Length", std::to_string(body_length()));
+    }
+
+    finalize();
+
     std::stringstream response;
 
     response << HTTP_VERSION_STRING << " ";

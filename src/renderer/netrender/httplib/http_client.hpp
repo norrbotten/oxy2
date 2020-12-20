@@ -5,6 +5,7 @@
 #include "renderer/types.hpp"
 
 #include "renderer/netrender/httplib/http_request.hpp"
+#include "renderer/netrender/httplib/incoming_http_response.hpp"
 #include "renderer/netrender/httplib/tcp_client.hpp"
 
 namespace Oxy::NetRender::HTTP {
@@ -60,27 +61,40 @@ namespace Oxy::NetRender::HTTP {
     return {};
   }
 
-  using ResponseCallback = std::function<void()>;
+  using ResponseCallback = std::function<void(const IncomingHTTPResponse&)>;
 
   class HTTPClient {
   public:
     explicit HTTPClient(Method method, const std::string& uri)
         : m_uri(parse_uri(uri).value_or(URI{}))
         , m_request()
+        , m_response_dirty(false)
         , m_tcp_client(m_uri.host, m_uri.port) {
 
       m_request.set_method(method);
       m_request.set_path(m_uri.path);
-    }
 
-    void on_response(ResponseCallback callback) {
-      m_callback = callback;
       m_tcp_client.on_receive([this](const char* data, std::size_t len) {
-        std::cout << std::string(data, len) << "\n";
-        if (m_callback)
-          m_callback();
+        // this is shitty and inefficient but idc rn
+        // need something smarter to build it from the stream
+        // but that would mean implementing a decent parser
+        m_received_data += std::string(data, len);
+        m_response       = IncomingHTTPResponse(m_received_data);
+        m_response_dirty = true;
+
+        if (m_response.done()) {
+          m_response_dirty = false;
+
+          if (m_callback) {
+            m_callback(m_response);
+          }
+
+          m_tcp_client.close();
+        }
       });
     }
+
+    void on_response(ResponseCallback callback) { m_callback = callback; }
 
     void set_header(const std::string& name, const std::string& content) {
       m_request.set_header(name, content);
@@ -96,7 +110,13 @@ namespace Oxy::NetRender::HTTP {
       m_tcp_client.send(req.c_str(), req.size());
     }
 
-    void block() { m_tcp_client.block(); }
+    void block() {
+      m_tcp_client.block();
+      if (m_response_dirty && m_response.done() && m_callback) {
+        m_response_dirty = false;
+        m_callback(m_response);
+      }
+    }
 
   public:
     REF(request);
@@ -105,6 +125,10 @@ namespace Oxy::NetRender::HTTP {
     URI            m_uri;
     HTTPRequest    m_request;
     TCP::TCPClient m_tcp_client;
+
+    IncomingHTTPResponse m_response;
+    bool                 m_response_dirty;
+    std::string          m_received_data;
 
     ResponseCallback m_callback;
   };

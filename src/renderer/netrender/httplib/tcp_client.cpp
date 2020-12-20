@@ -103,8 +103,7 @@ namespace Oxy::NetRender::TCP {
             m_receive_callback(m_recv_buf, numread);
         }
 
-        using namespace std::chrono_literals;
-        std::this_thread::sleep_for(0.5s); // breath my dear
+        std::this_thread::yield(); // breath my dear
       }
 
       delete[] m_send_buf;

@@ -6,9 +6,9 @@ int main() {
 
   HTTP::HTTPClient client(HTTP::Method::GET, "http://localhost:8080/");
 
-  client.on_response([] { std::cout << "brumm\n"; });
+  client.on_response(
+      [](const HTTP::IncomingHTTPResponse& res) { std::cout << res.body() << "\n"; });
+
   client.send();
   client.block();
-
-  std::cout << "fucked\n";
 }
