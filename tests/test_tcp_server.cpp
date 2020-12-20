@@ -14,9 +14,8 @@ int main() {
 
     conn->write("hawwo uwu", 9);
 
-    conn->on_receive([](TCP::Connection* client, const void* data, std::size_t len) {
-      client->write(data, len);
-    });
+    conn->on_receive(
+        [](TCP::Connection* client, const void* data, std::size_t len) { client->close_async(); });
 
     conn->on_closed([](TCP::CloseReason) { std::cout << "client closed\n"; });
   });

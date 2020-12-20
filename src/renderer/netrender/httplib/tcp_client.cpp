@@ -83,10 +83,30 @@ namespace Oxy::NetRender::TCP {
           }
         }
 
-        if (auto numread = recv(m_fd, m_recv_buf, sizeof(m_recv_buf), 0); numread > 0) {
+        auto numread = recv(m_fd, m_recv_buf, sizeof(m_recv_buf), 0);
+
+        if (numread == -1) {
+          if (errno != EWOULDBLOCK) {
+            std::cout << strerror(errno) << "\n";
+            m_state = ClientState::ERROR;
+          }
+        }
+        else {
           if (m_receive_callback)
             m_receive_callback(m_recv_buf, numread);
         }
+
+        /*
+        if (auto numread = recv(m_fd, m_recv_buf, sizeof(m_recv_buf), 0);
+            numread < 0 && errno != EWOULDBLOCK) {
+
+          m_state = ClientState::ERROR;
+        }
+        else {
+          if (errno != EWOULDBLOCK && m_receive_callback)
+            m_receive_callback(m_recv_buf, numread);
+        }
+        */
 
         std::this_thread::yield(); // breath my dear
       }
