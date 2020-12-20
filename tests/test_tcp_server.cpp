@@ -17,8 +17,12 @@ int main() {
     conn->on_receive([](TCP::Connection* client, const void* data, std::size_t len) {
       client->write(data, len);
     });
+
+    conn->on_closed([](TCP::CloseReason) { std::cout << "client closed\n"; });
   });
 
   server.start_listen();
   server.block();
+
+  std::cout << "server finished\n";
 }

@@ -19,7 +19,7 @@ namespace Oxy::NetRender::TCP {
   TCPClient::TCPClient(const std::string& ip, int port = 80) {
     static std::regex match_ipv4("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$");
 
-    m_client_thread = std::thread([&] {
+    m_client_thread = std::thread([this, &ip, port = port] {
       m_state = ClientState::CONNECTING;
 
       /*
@@ -46,19 +46,20 @@ namespace Oxy::NetRender::TCP {
         return;
       }
 
+      std::cout << port << "\n";
+
       sockaddr_in server_addr;
-      server_addr.sin_family      = AF_INET;
-      server_addr.sin_port        = htonl(port);
-      server_addr.sin_addr.s_addr = inet_addr(m_ip.c_str());
+      bzero(&server_addr, sizeof(server_addr));
+
+      server_addr.sin_family = AF_INET;
+      server_addr.sin_port   = htons(port);
+      inet_aton(m_ip.c_str(), &server_addr.sin_addr);
 
       // set nonblocking flag
       fcntl(m_fd, F_SETFL, fcntl(m_fd, F_GETFL) | O_NONBLOCK);
 
-      std::cout << m_fd << "\n";
-
       if (connect(m_fd, (sockaddr*)&server_addr, sizeof(server_addr)) != 0 &&
           errno != EINPROGRESS) {
-
         m_state = ClientState::ERROR;
         return;
       }
@@ -69,7 +70,6 @@ namespace Oxy::NetRender::TCP {
       m_recv_buf = new char[16384]();
 
       while (m_state == ClientState::CONNECTED) {
-        std::cout << strerror(errno) << "\n";
 
         if (m_to_be_sent.size() > 0) {
           // i am pretty sure this is safe...
@@ -85,12 +85,9 @@ namespace Oxy::NetRender::TCP {
           }
         }
 
-        if (auto numread = recv(m_fd, m_recv_buf, sizeof(m_recv_buf), 0);
-            numread > 0 && errno != EWOULDBLOCK) {
-
-          if (m_receive_callback) {
+        if (auto numread = recv(m_fd, m_recv_buf, sizeof(m_recv_buf), 0); numread > 0) {
+          if (m_receive_callback)
             m_receive_callback(m_recv_buf, numread);
-          }
         }
 
         std::this_thread::yield(); // breath my dear

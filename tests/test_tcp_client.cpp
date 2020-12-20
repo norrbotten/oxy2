@@ -15,7 +15,11 @@ int main() {
   });
 
   while (true) {
-    std::cout << "sending\n";
+    if (client.state() == TCP::ClientState::CONNECTED) {
+      std::cout << "sending\n";
+      client.send("abcd", 4);
+    }
+
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(1s);
   }
