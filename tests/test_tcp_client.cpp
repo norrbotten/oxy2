@@ -10,7 +10,6 @@ int main() {
 
   client.on_receive([&](const char* data, std::size_t len) {
     std::cout << "Client received " << len << " bytes\n";
-    client.close();
   });
 
   while (true) {
@@ -22,8 +21,10 @@ int main() {
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(1s);
 
-    if (client.state() == TCP::ClientState::CLOSED)
+    if (client.state() == TCP::ClientState::CLOSED) {
+      std::cout << "closed\n";
       break;
+    }
   }
 
   client.block();

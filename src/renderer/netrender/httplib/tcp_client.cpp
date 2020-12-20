@@ -56,6 +56,8 @@ namespace Oxy::NetRender::TCP {
 
       if (connect(m_fd, (sockaddr*)&server_addr, sizeof(server_addr)) != 0 &&
           errno != EINPROGRESS) {
+
+        std::cout << strerror(errno) << "\n";
         m_state = ClientState::ERROR;
         return;
       }
@@ -78,35 +80,32 @@ namespace Oxy::NetRender::TCP {
 
           m_to_be_sent.erase(m_to_be_sent.begin(), m_to_be_sent.begin() + len);
 
-          if (::send(m_fd, m_send_buf, len, 0) < 0 && errno != EWOULDBLOCK) {
-            m_state = ClientState::ERROR;
+          if (::send(m_fd, m_send_buf, len, MSG_NOSIGNAL) < 0) {
+            if (errno == EPIPE) {
+              m_state = ClientState::CLOSING;
+            }
+            else if (errno != EWOULDBLOCK) {
+              std::cout << "send: " << strerror(errno) << "\n";
+              m_state = ClientState::ERROR;
+            }
           }
         }
 
-        auto numread = recv(m_fd, m_recv_buf, sizeof(m_recv_buf), 0);
+        auto numread = recv(m_fd, m_recv_buf, sizeof(m_recv_buf), MSG_NOSIGNAL);
 
         if (numread == -1) {
-          if (errno != EWOULDBLOCK) {
-            std::cout << strerror(errno) << "\n";
+          if (errno == EPIPE) {
+            m_state = ClientState::CLOSING;
+          }
+          else if (errno != EWOULDBLOCK) {
+            std::cout << "recv: " << strerror(errno) << "\n";
             m_state = ClientState::ERROR;
           }
         }
         else {
-          if (m_receive_callback)
+          if (numread > 0 && m_receive_callback)
             m_receive_callback(m_recv_buf, numread);
         }
-
-        /*
-        if (auto numread = recv(m_fd, m_recv_buf, sizeof(m_recv_buf), 0);
-            numread < 0 && errno != EWOULDBLOCK) {
-
-          m_state = ClientState::ERROR;
-        }
-        else {
-          if (errno != EWOULDBLOCK && m_receive_callback)
-            m_receive_callback(m_recv_buf, numread);
-        }
-        */
 
         std::this_thread::yield(); // breath my dear
       }
