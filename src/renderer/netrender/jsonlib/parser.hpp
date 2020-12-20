@@ -72,6 +72,7 @@ namespace Oxy::NetRender::JSON {
       });
     }
 
+  public:
     bool match_number_sign() {
       return match([&] {
         if (ch() == '-')
@@ -83,16 +84,19 @@ namespace Oxy::NetRender::JSON {
 
     bool match_number_fraction() {
       return match([&] {
-        if (ch() == '.')
+        if (ch() == '.') {
           forward();
 
-        if (!is_digit(ch()))
-          return false;
+          if (!is_digit(ch()))
+            return false;
 
-        while (is_digit(ch()))
-          forward();
+          while (is_digit(ch()))
+            forward();
 
-        return true;
+          return true;
+        }
+        else
+          return true;
       });
     }
 
@@ -115,7 +119,7 @@ namespace Oxy::NetRender::JSON {
           return true;
         }
         else
-          return false;
+          return true;
       });
     }
 
@@ -146,24 +150,14 @@ namespace Oxy::NetRender::JSON {
         if (!match_number_pre_fraction())
           return false;
 
-        optional([&] { return match_number_fraction(); });
-        optional([&] { return match_number_exponent(); });
-
-        return true;
+        return match_number_fraction() && match_number_exponent();
       });
-    }
-
-  public:
-    void parse() {
-      auto matched = match_number();
-      std::cout << matched << "\n";
-      std::cout << consume() << "\n";
     }
 
   private:
     std::string m_input;
 
     int m_position, m_consume_ptr;
-  };
+  }; // namespace Oxy::NetRender::JSON
 
 } // namespace Oxy::NetRender::JSON
