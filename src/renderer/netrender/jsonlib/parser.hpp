@@ -7,6 +7,26 @@ namespace Oxy::NetRender::JSON {
   inline bool is_digit_1_to_9(char ch) { return ch >= '1' && ch <= '9'; }
   inline bool is_digit(char ch) { return ch >= '0' && ch <= '9'; }
 
+  inline bool is_hex_digit(char ch) {
+    return (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F');
+  }
+
+  inline bool is_control_char(char ch) { return ch < 32; }
+
+  inline bool is_valid_escape(char ch) {
+    switch (ch) {
+    case '\\':
+    case '"':
+    case 'b':
+    case 'f':
+    case 'n':
+    case 'r':
+    case 't':
+    case 'u': return true;
+    default: return false;
+    }
+  }
+
   class Parser {
   public:
     Parser(const std::string& input)
@@ -154,10 +174,78 @@ namespace Oxy::NetRender::JSON {
       });
     }
 
+    bool match_4_hex_digits() {
+      return match([&] {
+        for (int i = 0; i < 4; i++) {
+          if (!is_hex_digit(ch()))
+            return false;
+
+          forward();
+        }
+
+        return true;
+      });
+    }
+
+    bool match_escape_sequence() {
+      return match([&] {
+        if (ch() == '\\') {
+          forward();
+
+          if (ch() == 'u') {
+            forward();
+            return match_4_hex_digits();
+          }
+          else if (is_valid_escape(ch())) {
+            forward();
+            return true;
+          }
+
+          return false;
+        }
+        else
+          return false;
+      });
+    }
+
+    bool match_noncontrol_char() {
+      return match([&] {
+        if (is_control_char(ch()) || ch() == '"' || ch() == '\\')
+          return false;
+
+        forward();
+
+        return true;
+      });
+    }
+
+    bool match_string_character() {
+      return match([&] { return match_escape_sequence() || match_noncontrol_char(); });
+    }
+
+    bool match_string() {
+      return match([&] {
+        if (ch() != '"')
+          return false;
+
+        forward();
+
+        while (match_string_character())
+          ;
+
+        if (ch() != '"')
+          return false;
+
+        forward();
+
+        return true;
+      });
+    }
+
   private:
     std::string m_input;
 
     int m_position, m_consume_ptr;
-  }; // namespace Oxy::NetRender::JSON
+  };
 
 } // namespace Oxy::NetRender::JSON

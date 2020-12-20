@@ -13,6 +13,8 @@
 
 #define CASE_NUMBER(input, expected_output) CASE(input, match_number, expected_output)
 
+#define CASE_STRING(input, expected_output) CASE(input, match_string, expected_output)
+
 int main() {
   using namespace Oxy::NetRender;
 
@@ -25,4 +27,11 @@ int main() {
   CASE_NUMBER("3.14", 1);
   CASE_NUMBER("314e-2", 1);
   CASE_NUMBER("0.314e2", 1);
+
+  CASE_STRING("\"abc\"", 1);
+  CASE_STRING("\"abc", 0);
+  CASE_STRING("abc\"", 0);
+  CASE_STRING("\"a\\nc\"", 1);
+  CASE_STRING("\"\\u0000\"", 1);
+  CASE_STRING("\"\\u00\"  ", 0);
 }
