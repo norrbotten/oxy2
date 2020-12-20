@@ -22,8 +22,6 @@ namespace Oxy::NetRender::TCP {
     m_client_thread = std::thread([this, ip = ip_or_hostname, port = port] {
       m_state = ClientState::CONNECTING;
 
-      std::cout << "connecting... ip=" << ip << ", port=" << port << "\n";
-
       if (std::regex_match(ip, match_ipv4))
         m_ip = ip;
       else {
@@ -34,8 +32,6 @@ namespace Oxy::NetRender::TCP {
           return;
         }
 
-        std::cout << "resolved " << ip << " to " << resolve << "\n";
-
         m_ip = resolve;
       }
 
@@ -43,8 +39,6 @@ namespace Oxy::NetRender::TCP {
         m_state = ClientState::ERROR;
         return;
       }
-
-      std::cout << "made socket\n";
 
       sockaddr_in server_addr;
       bzero(&server_addr, sizeof(server_addr));
@@ -55,8 +49,6 @@ namespace Oxy::NetRender::TCP {
 
       // set nonblocking flag
       fcntl(m_fd, F_SETFL, fcntl(m_fd, F_GETFL) | O_NONBLOCK);
-
-      std::cout << "calling connect\n";
 
       if (connect(m_fd, (sockaddr*)&server_addr, sizeof(server_addr)) != 0 &&
           errno != EINPROGRESS) {
@@ -71,10 +63,7 @@ namespace Oxy::NetRender::TCP {
       m_send_buf = new char[16384]();
       m_recv_buf = new char[16384]();
 
-      std::cout << "connected!\n";
-
       while (m_state == ClientState::CONNECTED) {
-        std::cout << "polling\n";
 
         if (m_to_be_sent.size() > 0) {
           // i am pretty sure this is safe...
@@ -86,8 +75,6 @@ namespace Oxy::NetRender::TCP {
             m_send_buf[i] = m_to_be_sent[i];
 
           m_to_be_sent.erase(m_to_be_sent.begin(), m_to_be_sent.begin() + len);
-
-          std::cout << "send() " << len << "\n";
 
           if (::send(m_fd, m_send_buf, len, MSG_NOSIGNAL) < 0) {
             if (errno == EPIPE) {
@@ -112,7 +99,6 @@ namespace Oxy::NetRender::TCP {
           }
         }
         else {
-          std::cout << "recv " << numread << "\n";
           if (numread > 0 && m_receive_callback)
             m_receive_callback(m_recv_buf, numread);
         }

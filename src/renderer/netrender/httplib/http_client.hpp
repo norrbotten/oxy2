@@ -75,7 +75,8 @@ namespace Oxy::NetRender::HTTP {
 
     void on_response(ResponseCallback callback) {
       m_callback = callback;
-      m_tcp_client.on_receive([this](const char*, std::size_t) {
+      m_tcp_client.on_receive([this](const char* data, std::size_t len) {
+        std::cout << std::string(data, len) << "\n";
         if (m_callback)
           m_callback();
       });
@@ -90,8 +91,8 @@ namespace Oxy::NetRender::HTTP {
     void append_body(const std::string& content) { m_request.append_body(content); }
 
     void send() {
+      set_header("Content-Length", std::to_string(m_request.body().size()));
       auto req = m_request.format_into_request_str();
-      std::cout << req << "\n";
       m_tcp_client.send(req.c_str(), req.size());
     }
 

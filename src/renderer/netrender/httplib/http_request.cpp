@@ -133,7 +133,7 @@ namespace Oxy::NetRender::HTTP {
     ss << HTTP_VERSION_STRING << "\r\n";
 
     for (auto& [name, header] : m_request_headers)
-      ss << name << ":" << header.content() << "\r\n";
+      ss << name << ": " << header.content() << "\r\n";
 
     ss << "\r\n";
 
