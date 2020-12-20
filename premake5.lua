@@ -42,6 +42,7 @@ test("test_tcp_client")
 test("test_tcp_server")
 test("test_http_client")
 test("test_http_server")
+test("test_json_parser")
 
 newaction {
     trigger = "build",
