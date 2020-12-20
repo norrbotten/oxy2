@@ -41,6 +41,7 @@ end
 test("test_tcp_client")
 test("test_tcp_server")
 test("test_http_client")
+test("test_http_server")
 
 newaction {
     trigger = "build",

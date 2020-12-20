@@ -76,7 +76,6 @@ namespace Oxy::NetRender::HTTP {
     void on_response(ResponseCallback callback) {
       m_callback = callback;
       m_tcp_client.on_receive([this](const char*, std::size_t) {
-        std::cout << "tcp callback\n";
         if (m_callback)
           m_callback();
       });

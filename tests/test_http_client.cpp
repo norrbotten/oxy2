@@ -4,7 +4,7 @@
 int main() {
   using namespace Oxy::NetRender;
 
-  HTTP::HTTPClient client(HTTP::Method::GET, "http://google.com/");
+  HTTP::HTTPClient client(HTTP::Method::GET, "http://localhost:8080/");
 
   client.on_response([] { std::cout << "brumm\n"; });
   client.send();
