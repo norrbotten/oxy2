@@ -49,9 +49,6 @@ namespace Oxy::NetRender::JSON {
     }
 
     std::string peek(unsigned int offset = 0, unsigned int length = 1) {
-      if (eof(offset + length))
-        return "";
-
       return m_input.substr(m_position + offset, length);
     }
 
@@ -81,17 +78,10 @@ namespace Oxy::NetRender::JSON {
       return matcher();
     }
 
-    bool match_whitespace() {
-      return match([&] {
-        auto moved = false;
-
-        while (ch() == ' ' || ch() == '\n' || ch() == '\r' || ch() == '\t') {
-          forward();
-          moved = true;
-        }
-
-        return moved;
-      });
+    void skip_whitespace() {
+      while (ch() == ' ' || ch() == '\n' || ch() == '\r' || ch() == '\t') {
+        forward();
+      }
     }
 
   public:
@@ -271,18 +261,98 @@ namespace Oxy::NetRender::JSON {
       });
     }
 
-    bool match_object() { return false; }
+    bool match_object_keyvalue_separator() {
+      return match([&] {
+        if (ch() == ',') {
+          forward();
+          return true;
+        }
+
+        return false;
+      });
+    }
+
+    bool match_object_string_value_separator() {
+      return match([&] {
+        if (ch() == ':') {
+          forward();
+          return true;
+        }
+
+        return false;
+      });
+    }
+
+    bool match_object_string_value() {
+      return match([&] {
+        skip_whitespace();
+
+        if (!match_string())
+          return false;
+
+        skip_whitespace();
+
+        if (!match_object_string_value_separator())
+          return false;
+
+        if (!match_value())
+          return false;
+
+        return true;
+      });
+    }
+
+    bool match_object() {
+      return match([&] {
+        if (ch() != '{')
+          return false;
+
+        forward();
+
+        skip_whitespace();
+
+        if (ch() == '}') {
+          forward();
+          return true;
+        }
+
+        bool trailing_comma = false;
+
+        while (true) {
+          if (match_object_string_value()) {
+            trailing_comma = false;
+
+            if (match_object_keyvalue_separator())
+              trailing_comma = true;
+          }
+          else
+            break;
+        }
+
+        if (trailing_comma)
+          return false;
+
+        skip_whitespace();
+
+        if (ch() != '}')
+          return false;
+
+        forward();
+
+        return true;
+      });
+    }
 
     bool match_value() {
       return match([&] {
-        match_whitespace();
+        skip_whitespace();
 
         if (!(match_string() || match_number() || match_object() || match_array() ||
               match_boolean() || match_null())) {
           return false;
         }
 
-        match_whitespace();
+        skip_whitespace();
 
         return true;
       });
@@ -322,7 +392,7 @@ namespace Oxy::NetRender::JSON {
         if (trailing_comma)
           return false;
 
-        match_whitespace();
+        skip_whitespace();
 
         if (ch() != ']')
           return false;
@@ -342,6 +412,6 @@ namespace Oxy::NetRender::JSON {
     int         m_position, m_consume_ptr;
 
     ASTBuilder m_ast;
-  }; // namespace Oxy::NetRender::JSON
+  };
 
 } // namespace Oxy::NetRender::JSON
