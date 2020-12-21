@@ -9,6 +9,11 @@ namespace Oxy::NetRender::JSON {
 
   class JSONArray final : public JSONValue {
   public:
+    virtual ~JSONArray() {
+      for (auto& [key, value] : m_hashmap)
+        delete value;
+    }
+
     virtual bool is_object() const override { return true; }
 
     virtual std::string stringify() const override {

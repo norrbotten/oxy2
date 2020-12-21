@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "renderer/netrender/jsonlib/ast_builder.hpp"
+
 namespace Oxy::NetRender::JSON {
 
   inline bool is_digit_1_to_9(char ch) { return ch >= '1' && ch <= '9'; }
@@ -242,10 +244,104 @@ namespace Oxy::NetRender::JSON {
       });
     }
 
+    bool match_null() {
+      return match([&] {
+        if (peek(0, 4) == "null") {
+          forward(4);
+          return true;
+        }
+
+        return false;
+      });
+    }
+
+    bool match_boolean() {
+      return match([&] {
+        if (peek(0, 4) == "true") {
+          forward(4);
+          return true;
+        }
+
+        if (peek(0, 5) == "false") {
+          forward(5);
+          return true;
+        }
+
+        return false;
+      });
+    }
+
+    bool match_object() { return false; }
+
+    bool match_value() {
+      return match([&] {
+        match_whitespace();
+
+        if (!(match_string() || match_number() || match_object() || match_array() ||
+              match_boolean() || match_null())) {
+          return false;
+        }
+
+        match_whitespace();
+
+        return true;
+      });
+    }
+
+    bool match_array_separator() {
+      return match([&] {
+        if (ch() == ',') {
+          forward();
+          return true;
+        }
+
+        return false;
+      });
+    }
+
+    bool match_array() {
+      return match([&] {
+        if (ch() != '[')
+          return false;
+
+        forward();
+
+        bool trailing_comma = false;
+
+        while (true) {
+          if (match_value()) {
+            trailing_comma = false;
+
+            if (match_array_separator())
+              trailing_comma = true;
+          }
+          else
+            break;
+        }
+
+        if (trailing_comma)
+          return false;
+
+        match_whitespace();
+
+        if (ch() != ']')
+          return false;
+
+        forward();
+
+        return true;
+      });
+    }
+
+    bool parse() {
+      return match([&] { return false; });
+    }
+
   private:
     std::string m_input;
+    int         m_position, m_consume_ptr;
 
-    int m_position, m_consume_ptr;
-  };
+    ASTBuilder m_ast;
+  }; // namespace Oxy::NetRender::JSON
 
 } // namespace Oxy::NetRender::JSON
