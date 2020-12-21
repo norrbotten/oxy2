@@ -31,7 +31,7 @@ namespace Oxy::NetRender::HTTP {
         if (STATUS_CODES.contains(status_num))
           m_status = STATUS_CODES.at(status_num);
 
-        for (int i = 1; i < crap.size(); i++) {
+        for (std::size_t i = 1; i < crap.size(); i++) {
           if (crap.at(i).size() == 0) {
             pos += 2;
             break;
@@ -56,7 +56,7 @@ namespace Oxy::NetRender::HTTP {
         int i = 0;
         sscanf(head.content().c_str(), "%d", &i);
 
-        if (i <= m_body.size())
+        if ((std::size_t)i <= m_body.size())
           m_done = true;
       }
     }

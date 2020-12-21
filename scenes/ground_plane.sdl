@@ -1,7 +1,7 @@
 
 render: {
-  width: 4096
-  height: 2048
+  width: 1024
+  height: 512
   samples: 8192
 }
 

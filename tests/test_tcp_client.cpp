@@ -8,9 +8,8 @@ int main() {
 
   TCP::TCPClient client("localhost", 8080);
 
-  client.on_receive([&](const char* data, std::size_t len) {
-    std::cout << "Client received " << len << " bytes\n";
-  });
+  client.on_receive(
+      [&](const char*, std::size_t len) { std::cout << "Client received " << len << " bytes\n"; });
 
   while (true) {
     if (client.state() == TCP::ClientState::CONNECTED) {

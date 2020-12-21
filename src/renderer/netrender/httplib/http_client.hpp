@@ -122,13 +122,14 @@ namespace Oxy::NetRender::HTTP {
     REF(request);
 
   private:
-    URI            m_uri;
-    HTTPRequest    m_request;
-    TCP::TCPClient m_tcp_client;
+    URI         m_uri;
+    HTTPRequest m_request;
 
     IncomingHTTPResponse m_response;
     bool                 m_response_dirty;
     std::string          m_received_data;
+
+    TCP::TCPClient m_tcp_client;
 
     ResponseCallback m_callback;
   };
