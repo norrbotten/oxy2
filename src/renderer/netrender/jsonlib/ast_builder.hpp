@@ -21,6 +21,11 @@ namespace Oxy::NetRender::JSON {
       m_stack.pop_back();
     }
 
+    void swap(int offset = 0) {
+      auto n = m_stack.size() - 1;
+      std::swap(m_stack.at(n - 1 + offset), m_stack.at(n + offset));
+    }
+
     void push(ASTNode* node) { m_stack.push_back(node); }
 
     void reject() {

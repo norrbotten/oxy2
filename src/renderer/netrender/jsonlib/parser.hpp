@@ -358,6 +358,7 @@ namespace Oxy::NetRender::JSON {
 
         if (ch() == '}') {
           forward();
+          m_ast.node()->assign_value_type(JSONType::Object);
           return true;
         }
 
@@ -368,6 +369,7 @@ namespace Oxy::NetRender::JSON {
             trailing_comma = false;
 
 #ifndef TEST_JSON_NON_AST
+            m_ast.swap();
             m_ast.bubble(-1); // value, -1 to go past the key thats above on the stack
             m_ast.bubble();   // key
 #endif
