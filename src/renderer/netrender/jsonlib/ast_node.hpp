@@ -16,16 +16,6 @@
 
 namespace Oxy::NetRender::JSON {
 
-  enum class JSONType {
-    Value, // only used and is valid briefly in the parsing stage
-    Number,
-    String,
-    Array,
-    Object,
-    Boolean,
-    Null,
-  };
-
   using JSONLiteral = std::string;
 
   class ASTNode {

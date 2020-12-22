@@ -29,4 +29,12 @@ namespace Oxy::NetRender::JSON {
     bool m_value;
   };
 
+  template <typename Ret>
+  struct json_get<JSONType::Boolean, Ret> {
+    Ret operator()(const JSONValue* val) {
+      JSONBoolean* boolean = (JSONBoolean*)val;
+      return boolean->value();
+    }
+  };
+
 } // namespace Oxy::NetRender::JSON

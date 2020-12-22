@@ -25,4 +25,12 @@ namespace Oxy::NetRender::JSON {
     std::string m_value;
   };
 
+  template <typename Ret>
+  struct json_get<JSONType::String, Ret> {
+    Ret operator()(const JSONValue* val) {
+      JSONString* string = (JSONString*)val;
+      return string->value();
+    }
+  };
+
 } // namespace Oxy::NetRender::JSON
