@@ -275,6 +275,8 @@ namespace Oxy::NetRender::JSON {
 
     bool match_boolean() {
       return match([&] {
+        discard();
+
         if (peek(0, 4) == "true") {
           forward(4);
 

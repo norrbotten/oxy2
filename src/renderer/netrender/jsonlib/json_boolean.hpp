@@ -15,14 +15,14 @@ namespace Oxy::NetRender::JSON {
     static bool parse_literal(const std::string& literal, JSONBoolean* res) {
       if (literal == "true") {
         res->value() = true;
-        return false;
+        return true;
       }
       else if (literal == "false") {
         res->value() = false;
-        return false;
+        return true;
       }
 
-      return true;
+      return false;
     }
 
   private:

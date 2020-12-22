@@ -17,6 +17,24 @@ int main() {
     }
   }
 
+  std::cout << "\n";
+
+  {
+    JSONParser parser("[true, false, true, false, false]");
+
+    if (parser.success()) {
+      auto value = parser.json();
+      if (value->is_array()) {
+        auto arr = ((JSONArray*)value)->to_vector<bool>();
+
+        for (auto val : arr)
+          std::cout << val << "\n";
+      }
+    }
+  }
+
+  std::cout << "\n";
+
   {
     JSONParser parser(R"""(["a", "b", "c", "d", "e"])""");
     if (parser.success()) {
