@@ -171,7 +171,7 @@ namespace Oxy::NetRender::JSON {
 
         if (match_number_fraction() && match_number_exponent()) {
 #ifndef TEST_JSON_NON_AST
-          m_ast.node()->assign_value_type(JSONType::NUMBER);
+          m_ast.node()->assign_value_type(JSONType::Number);
           m_ast.node()->assign_value_literal(consume());
 #endif
 
@@ -249,7 +249,7 @@ namespace Oxy::NetRender::JSON {
         forward();
 
 #ifndef TEST_JSON_NON_AST
-        m_ast.node()->assign_value_type(JSONType::STRING);
+        m_ast.node()->assign_value_type(JSONType::String);
         m_ast.node()->assign_value_literal(consume());
 #endif
 
@@ -263,7 +263,7 @@ namespace Oxy::NetRender::JSON {
           forward(4);
 
 #ifndef TEST_JSON_NON_AST
-          m_ast.node()->assign_value_type(JSONType::NOLL);
+          m_ast.node()->assign_value_type(JSONType::Null);
 #endif
 
           return true;
@@ -279,7 +279,7 @@ namespace Oxy::NetRender::JSON {
           forward(4);
 
 #ifndef TEST_JSON_NON_AST
-          m_ast.node()->assign_value_type(JSONType::BOOLEAN);
+          m_ast.node()->assign_value_type(JSONType::Boolean);
           m_ast.node()->assign_value_literal(consume());
 #endif
 
@@ -290,7 +290,7 @@ namespace Oxy::NetRender::JSON {
           forward(5);
 
 #ifndef TEST_JSON_NON_AST
-          m_ast.node()->assign_value_type(JSONType::BOOLEAN);
+          m_ast.node()->assign_value_type(JSONType::Boolean);
           m_ast.node()->assign_value_literal(consume());
 #endif
 
@@ -368,8 +368,8 @@ namespace Oxy::NetRender::JSON {
             trailing_comma = false;
 
 #ifndef TEST_JSON_NON_AST
-            m_ast.bubble(); // key
-            m_ast.bubble(); // value
+            m_ast.bubble(-1); // value, -1 to go past the key thats above on the stack
+            m_ast.bubble();   // key
 #endif
 
             if (match_object_keyvalue_separator())
@@ -393,6 +393,8 @@ namespace Oxy::NetRender::JSON {
           return false;
 
         forward();
+
+        m_ast.node()->assign_value_type(JSONType::Object);
 
         return true;
       });
@@ -465,6 +467,8 @@ namespace Oxy::NetRender::JSON {
           return false;
 
         forward();
+
+        m_ast.node()->assign_value_type(JSONType::Array);
 
         return true;
       });

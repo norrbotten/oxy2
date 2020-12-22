@@ -6,18 +6,18 @@
 
 namespace Oxy::NetRender::JSON {
 
+  // TODO: some kind of preallocated pool of nodes to speed up ma dynamic memory
+
   class ASTBuilder {
   public:
-    ASTBuilder() {}
-
     auto& node() {
       assert(m_stack.size() > 0);
       return m_stack.back();
     }
 
-    void bubble() {
+    void bubble(int offset = 0) {
       assert(m_stack.size() > 1);
-      m_stack.at(m_stack.size() - 2)->push(m_stack.back());
+      m_stack.at(m_stack.size() - 2 + offset)->push(m_stack.back());
       m_stack.pop_back();
     }
 

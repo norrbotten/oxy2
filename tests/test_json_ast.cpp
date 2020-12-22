@@ -17,4 +17,23 @@ int main() {
   CASE_JSON(R"""({})""", 1);
   CASE_JSON(R"""({"a": 10})""", 1);
   CASE_JSON(R"""({"a": {"a": {"a": {"a": {"a": {"a": {"a": {"a": {"a": {"a": 10}}}}}}}}}})""", 1);
+
+  CASE_JSON(R"""([1, 2, 3, 4, 5, 6, 7, "8"])""", 1);
+  CASE_JSON(R"""([1, 2, 3, [4, -4], 5, 6, 7, "8"])""", 1);
+
+  {
+    JSON::Parser parser(R"""([1, 2, [10, 11], {"a": 3, "b": 4}, 5, 6])""");
+    if (parser.parse()) {
+      std::cout << parser.ast()->dump() << "\n";
+    }
+  }
+
+  /*
+  {
+    JSON::Parser parser("[1, 2, 3, {}, 5, 6]");
+    if (parser.parse()) {
+      std::cout << parser.ast()->stringify() << "\n";
+    }
+  }
+  */
 }
