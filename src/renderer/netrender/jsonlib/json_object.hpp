@@ -3,15 +3,17 @@
 #include <sstream>
 #include <unordered_map>
 
-#include "renderer/netrender/jsonlib/json_value.hpp"
+#include "renderer/netrender/jsonlib/json_string.hpp"
 
 namespace Oxy::NetRender::JSON {
 
-  class JSONArray final : public JSONValue {
+  class JSONObject final : public JSONValue {
   public:
-    virtual ~JSONArray() {
-      for (auto& [key, value] : m_hashmap)
+    virtual ~JSONObject() {
+      for (auto& [key, value] : m_hashmap) {
+        delete key;
         delete value;
+      }
     }
 
     virtual bool is_object() const override { return true; }
@@ -38,10 +40,12 @@ namespace Oxy::NetRender::JSON {
       return ss.str();
     }
 
+    void append(JSONString* key, JSONValue* value) { m_hashmap[key] = value; }
+
     auto& hashmap() { return m_hashmap; }
 
   private:
-    std::unordered_map<std::string, JSONValue*> m_hashmap;
+    std::unordered_map<JSONString*, JSONValue*> m_hashmap;
   };
 
 } // namespace Oxy::NetRender::JSON

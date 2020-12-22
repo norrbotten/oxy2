@@ -25,6 +25,11 @@ int main() {
     JSON::Parser parser(R"""([1, 2, [10, 11], {"a": 3, "b": {"a": [1, 2, 3]}}, 5, 6])""");
     if (parser.parse()) {
       std::cout << parser.ast()->dump() << "\n";
+
+      auto json = parser.ast()->to_json_value();
+      std::cout << json << "\n";
+
+      delete json;
     }
   }
 

@@ -12,6 +12,19 @@ namespace Oxy::NetRender::JSON {
 
     auto& value() { return m_value; }
 
+    static bool parse_literal(const std::string& literal, JSONBoolean* res) {
+      if (literal == "true") {
+        res->value() = true;
+        return false;
+      }
+      else if (literal == "false") {
+        res->value() = false;
+        return false;
+      }
+
+      return true;
+    }
+
   private:
     bool m_value;
   };

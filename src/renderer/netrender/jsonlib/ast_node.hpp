@@ -7,6 +7,13 @@
 
 #include "renderer/netrender/jsonlib/json_value.hpp"
 
+#include "renderer/netrender/jsonlib/json_array.hpp"
+#include "renderer/netrender/jsonlib/json_boolean.hpp"
+#include "renderer/netrender/jsonlib/json_null.hpp"
+#include "renderer/netrender/jsonlib/json_number.hpp"
+#include "renderer/netrender/jsonlib/json_object.hpp"
+#include "renderer/netrender/jsonlib/json_string.hpp"
+
 namespace Oxy::NetRender::JSON {
 
   enum class JSONType {
@@ -123,6 +130,59 @@ namespace Oxy::NetRender::JSON {
       }
 
       return ss.str();
+    }
+
+    JSONValue* to_json_value() const {
+      switch (m_type) {
+      case JSONType::Value: assert(false); break;
+      case JSONType::Number: {
+        auto val = new JSONNumber();
+        assert(val->parse_literal(m_literal, val));
+        return val;
+      } break;
+
+      case JSONType::String: {
+        auto val = new JSONString();
+        assert(val->parse_literal(m_literal, val));
+        return val;
+      } break;
+
+      case JSONType::Boolean: {
+        auto val = new JSONBoolean();
+        assert(val->parse_literal(m_literal, val));
+        return val;
+      } break;
+
+      case JSONType::Null: return new JSONNull(); break;
+
+      case JSONType::Array: {
+        auto val = new JSONArray();
+
+        for (auto& child : m_children)
+          val->append(child->to_json_value());
+
+        return val;
+      } break;
+
+      case JSONType::Object: {
+        auto val = new JSONObject();
+
+        for (auto it = m_children.begin(); it != m_children.end();) {
+          auto key = new JSONString();
+          assert(key->parse_literal((*it)->m_literal, key));
+          it++;
+
+          auto value = (*it)->to_json_value();
+          it++;
+
+          val->append(key, value);
+        }
+
+        return val;
+      } break;
+      }
+
+      return nullptr;
     }
 
     bool has_children() const { return m_children.size() > 0; }

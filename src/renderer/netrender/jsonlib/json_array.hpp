@@ -32,6 +32,8 @@ namespace Oxy::NetRender::JSON {
       return ss.str();
     }
 
+    void append(JSONValue* value) { m_values.push_back(value); }
+
     auto& values() { return m_values; }
 
   private:
