@@ -22,7 +22,7 @@ int main() {
   CASE_JSON(R"""([1, 2, 3, [4, -4], 5, 6, 7, "8"])""", 1);
 
   {
-    JSON::Parser parser(R"""([1, 2, [10, 11], {"a": 3, "b": {}}, 5, 6])""");
+    JSON::Parser parser(R"""([1, 2, [10, 11], {"a": 3, "b": {"a": [1, 2, 3]}}, 5, 6])""");
     if (parser.parse()) {
       std::cout << parser.ast()->dump() << "\n";
     }

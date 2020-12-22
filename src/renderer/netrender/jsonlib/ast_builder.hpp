@@ -10,6 +10,18 @@ namespace Oxy::NetRender::JSON {
 
   class ASTBuilder {
   public:
+    ~ASTBuilder() {
+      if (m_stack.size() == 0)
+        return;
+
+      // if theres more than 1 child, even in case of parsing failure, something went wrong
+      // because nodes should have been rejected
+      // this may change though if i decide to use throw/catch for error handling
+      assert(m_stack.size() == 1);
+
+      delete m_stack.front();
+    }
+
     auto& node() {
       assert(m_stack.size() > 0);
       return m_stack.back();
