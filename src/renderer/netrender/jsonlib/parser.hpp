@@ -369,9 +369,9 @@ namespace Oxy::NetRender::JSON {
             trailing_comma = false;
 
 #ifndef TEST_JSON_NON_AST
-            m_ast.swap();
-            m_ast.bubble(-1); // value, -1 to go past the key thats above on the stack
-            m_ast.bubble();   // key
+            m_ast.reverse(2);
+            m_ast.bubble(-1); // key, -1 to go past the value thats above on the stack
+            m_ast.bubble();   // value
 #endif
 
             if (match_object_keyvalue_separator())
