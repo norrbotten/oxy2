@@ -8,24 +8,30 @@ namespace Oxy::NetRender::JSON {
 
   class ASTBuilder {
   public:
-    ASTBuilder()
-        : m_root(nullptr) {}
+    ASTBuilder() {}
 
-    void set_root(ASTNode* root) {
-      m_root = root;
-      select(m_root);
+    auto& node() {
+      assert(m_stack.size() > 0);
+      return m_stack.back();
     }
 
-    auto at() const { return m_stack.back(); }
+    void bubble() {
+      assert(m_stack.size() > 1);
+      m_stack.at(m_stack.size() - 2)->push(m_stack.back());
+      m_stack.pop_back();
+    }
 
-    void select(ASTNode* node) { m_stack.push_back(node); }
-    void back() { m_stack.pop_back(); }
+    void push(ASTNode* node) { m_stack.push_back(node); }
 
-    auto ast() { return m_root; }
+    void reject() {
+      auto node = m_stack.back();
+      m_stack.pop_back();
+      delete node;
+    }
+
+    auto ast() { return m_stack.size() > 0 ? m_stack.back() : nullptr; }
 
   private:
-    ASTNode* m_root;
-
     std::vector<ASTNode*> m_stack;
   };
 

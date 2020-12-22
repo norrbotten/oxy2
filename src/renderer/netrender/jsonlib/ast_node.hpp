@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <string>
 #include <vector>
 
@@ -8,6 +9,7 @@
 namespace Oxy::NetRender::JSON {
 
   enum class JSONType {
+    VALUE, // only used and is valid briefly in the parsing stage
     NUMBER,
     STRING,
     ARRAY,
@@ -24,6 +26,13 @@ namespace Oxy::NetRender::JSON {
         , m_literal(literal) {}
 
   public:
+    ~ASTNode() {
+      for (auto& child : m_children)
+        delete child;
+    }
+
+    static ASTNode* create_value() { return new ASTNode(JSONType::VALUE, ""); }
+
     static ASTNode* create_number(const JSONLiteral& literal) {
       return new ASTNode(JSONType::NUMBER, literal);
     }
@@ -42,16 +51,25 @@ namespace Oxy::NetRender::JSON {
 
     static ASTNode* create_null() { return new ASTNode(JSONType::NOLL, ""); }
 
-    ~ASTNode() {
-      for (auto& child : m_children)
-        delete child;
-    }
-
     bool has_children() const { return m_children.size() > 0; }
 
     const auto& children() const { return m_children; }
     const auto& type() const { return m_type; }
     const auto& literal() const { return m_literal; }
+
+    bool is_value() const { return m_type == JSONType::VALUE; }
+
+    void assign_value_type(JSONType type) {
+      assert(m_type == JSONType::VALUE);
+      m_type = type;
+    }
+
+    void assign_value_literal(const JSONLiteral& literal) {
+      assert(m_type == JSONType::NUMBER || m_type == JSONType::BOOLEAN ||
+             m_type == JSONType::STRING);
+
+      m_literal = literal;
+    }
 
     void push(ASTNode* node) { m_children.push_back(node); }
 

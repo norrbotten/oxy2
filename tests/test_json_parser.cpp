@@ -1,3 +1,5 @@
+#define TEST_JSON_NON_AST
+
 #include "renderer/netrender/jsonlib/parser.hpp"
 
 #include <vector>
@@ -22,6 +24,15 @@
 #define CASE_OBJECT(input, expected_output) CASE(input, match_object, expected_output)
 
 #define CASE_VALUE(input, expected_output) CASE(input, match_value, expected_output)
+
+#define CASE_JSON(input, expected_output)                                                          \
+  {                                                                                                \
+    JSON::Parser parser(input);                                                                    \
+    if (parser.parse() == expected_output)                                                         \
+      std::cout << input << "\t== " << expected_output << " SUCCESS\n";                            \
+    else                                                                                           \
+      std::cout << input << "\t!= " << expected_output << " FAILED\n";                             \
+  }
 
 int main() {
   using namespace Oxy::NetRender;

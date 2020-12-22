@@ -52,6 +52,8 @@ namespace Oxy::NetRender::JSON {
       return m_input.substr(m_position + offset, length);
     }
 
+    void discard() { m_consume_ptr = m_position; }
+
     std::string consume() {
       if (m_position == m_consume_ptr)
         return "";
@@ -64,11 +66,14 @@ namespace Oxy::NetRender::JSON {
 
     template <typename MatcherFunctor>
     bool match(MatcherFunctor matcher) {
-      int pos = m_position;
+      int pos  = m_position;
+      int cpos = m_consume_ptr;
 
       auto res = matcher();
-      if (!res)
-        m_position = pos;
+      if (!res) {
+        m_position    = pos;
+        m_consume_ptr = cpos;
+      }
 
       return res;
     }
@@ -157,12 +162,23 @@ namespace Oxy::NetRender::JSON {
 
     bool match_number() {
       return match([&] {
+        discard();
+
         optional([&] { return match_number_sign(); });
 
         if (!match_number_pre_fraction())
           return false;
 
-        return match_number_fraction() && match_number_exponent();
+        if (match_number_fraction() && match_number_exponent()) {
+#ifndef TEST_JSON_NON_AST
+          m_ast.node()->assign_value_type(JSONType::NUMBER);
+          m_ast.node()->assign_value_literal(consume());
+#endif
+
+          return true;
+        }
+
+        return false;
       });
     }
 
@@ -217,6 +233,8 @@ namespace Oxy::NetRender::JSON {
 
     bool match_string() {
       return match([&] {
+        discard();
+
         if (ch() != '"')
           return false;
 
@@ -230,6 +248,11 @@ namespace Oxy::NetRender::JSON {
 
         forward();
 
+#ifndef TEST_JSON_NON_AST
+        m_ast.node()->assign_value_type(JSONType::STRING);
+        m_ast.node()->assign_value_literal(consume());
+#endif
+
         return true;
       });
     }
@@ -238,6 +261,11 @@ namespace Oxy::NetRender::JSON {
       return match([&] {
         if (peek(0, 4) == "null") {
           forward(4);
+
+#ifndef TEST_JSON_NON_AST
+          m_ast.node()->assign_value_type(JSONType::NOLL);
+#endif
+
           return true;
         }
 
@@ -249,11 +277,23 @@ namespace Oxy::NetRender::JSON {
       return match([&] {
         if (peek(0, 4) == "true") {
           forward(4);
+
+#ifndef TEST_JSON_NON_AST
+          m_ast.node()->assign_value_type(JSONType::BOOLEAN);
+          m_ast.node()->assign_value_literal(consume());
+#endif
+
           return true;
         }
 
         if (peek(0, 5) == "false") {
           forward(5);
+
+#ifndef TEST_JSON_NON_AST
+          m_ast.node()->assign_value_type(JSONType::BOOLEAN);
+          m_ast.node()->assign_value_literal(consume());
+#endif
+
           return true;
         }
 
@@ -286,6 +326,11 @@ namespace Oxy::NetRender::JSON {
     bool match_object_string_value() {
       return match([&] {
         skip_whitespace();
+
+#ifndef TEST_JSON_NON_AST
+        // we call match_string directly here, so we need to push a new ast node
+        m_ast.push(ASTNode::create_value());
+#endif
 
         if (!match_string())
           return false;
@@ -322,11 +367,21 @@ namespace Oxy::NetRender::JSON {
           if (match_object_string_value()) {
             trailing_comma = false;
 
+#ifndef TEST_JSON_NON_AST
+            m_ast.bubble(); // key
+            m_ast.bubble(); // value
+#endif
+
             if (match_object_keyvalue_separator())
               trailing_comma = true;
           }
-          else
+          else {
+#ifndef TEST_JSON_NON_AST
+            // reject the key object
+            m_ast.reject();
+#endif
             break;
+          }
         }
 
         if (trailing_comma)
@@ -345,10 +400,18 @@ namespace Oxy::NetRender::JSON {
 
     bool match_value() {
       return match([&] {
+#ifndef TEST_JSON_NON_AST
+        m_ast.push(ASTNode::create_value());
+#endif
+
         skip_whitespace();
 
         if (!(match_string() || match_number() || match_object() || match_array() ||
               match_boolean() || match_null())) {
+
+#ifndef TEST_JSON_NON_AST
+          m_ast.reject();
+#endif
           return false;
         }
 
@@ -382,6 +445,10 @@ namespace Oxy::NetRender::JSON {
           if (match_value()) {
             trailing_comma = false;
 
+#ifndef TEST_JSON_NON_AST
+            m_ast.bubble();
+#endif
+
             if (match_array_separator())
               trailing_comma = true;
           }
@@ -403,9 +470,9 @@ namespace Oxy::NetRender::JSON {
       });
     }
 
-    bool parse() {
-      return match([&] { return false; });
-    }
+    bool parse() { return match_value(); }
+
+    auto ast() { return m_ast.ast(); }
 
   private:
     std::string m_input;
