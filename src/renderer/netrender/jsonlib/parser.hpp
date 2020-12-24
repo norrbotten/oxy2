@@ -2,9 +2,12 @@
 
 #include <iostream>
 
-#include "renderer/netrender/jsonlib/ast_builder.hpp"
+#include "renderer/common/ast_builder.hpp"
+#include "renderer/netrender/jsonlib/ast_node.hpp"
 
 namespace Oxy::NetRender::JSON {
+
+  using ASTBuilder = Common::ASTBuilder<ASTNode>;
 
   inline bool is_digit_1_to_9(char ch) { return ch >= '1' && ch <= '9'; }
   inline bool is_digit(char ch) { return ch >= '0' && ch <= '9'; }
