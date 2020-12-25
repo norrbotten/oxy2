@@ -23,6 +23,7 @@ namespace Oxy::XSDL::Compiler {
     Token parse_decimal_literal();
 
     Token parse_keyword();
+    Token parse_operator();
   };
 
 } // namespace Oxy::XSDL::Compiler

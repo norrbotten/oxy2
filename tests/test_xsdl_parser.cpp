@@ -35,4 +35,7 @@ int main() {
   CASE("parse decimal literal", parse_decimal_literal, "3e4");
   CASE("parse decimal literal", parse_decimal_literal, "0.5e2");
   CASE("parse decimal literal", parse_decimal_literal, "10.0");
+
+  CASE("parse operator", parse_operator, "+");
+  CASE("parse operator", parse_operator, "++");
 }

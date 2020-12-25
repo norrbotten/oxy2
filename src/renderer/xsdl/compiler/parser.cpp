@@ -118,4 +118,45 @@ namespace Oxy::XSDL::Compiler {
     return {};
   }
 
+  // Parses any operator
+  Token Parser::parse_operator() {
+    /* clang-format off */
+    // All operators, these need to be in ordered longest first
+    static auto operators = std::array{
+      "&&",
+      "||",
+      "+=",
+      "-=",
+      "*=",
+      "/=",
+      "==",
+      "!=",
+      "++",
+      "--",
+      "+",
+      "-",
+      "*",
+      "/",
+      ",",
+      "=",
+    };
+    /* clang-format on */
+
+    if (match([&] {
+          for (auto& op : operators) {
+            auto len = strlen(op);
+            if (peek(0, len) == op) {
+              forward(len);
+              return true;
+            }
+          }
+
+          return false;
+        })) {
+      return consume();
+    }
+
+    return {};
+  }
+
 } // namespace Oxy::XSDL::Compiler
