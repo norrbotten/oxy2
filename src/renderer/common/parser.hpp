@@ -29,6 +29,15 @@ namespace Oxy::Common {
     }
   }
 
+  inline bool is_valid_identifier_char(char ch) {
+    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') ||
+           ch == '_' || ch == '$';
+  }
+
+  inline bool is_valid_first_identifier_char(char ch) {
+    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || ch == '$';
+  }
+
   template <typename TASTBuilder>
   class Parser {
   public:
