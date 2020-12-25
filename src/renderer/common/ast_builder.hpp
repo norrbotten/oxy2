@@ -33,12 +33,17 @@ namespace Oxy::Common {
       m_stack.pop_back();
     }
 
+    auto last_pushed_node() const { return m_last_pushed_node; }
+
     void reverse(int count, int offset = 0) {
       assert(m_stack.size() - count - offset > 0);
       std::reverse(m_stack.end() - count - offset, m_stack.end() - offset);
     }
 
-    void push(T* node) { m_stack.push_back(node); }
+    void push(T* node) {
+      m_stack.push_back(node);
+      m_last_pushed_node = node;
+    }
 
     void reject() {
       auto node = m_stack.back();
@@ -50,6 +55,7 @@ namespace Oxy::Common {
 
   private:
     std::vector<T*> m_stack;
+    T*              m_last_pushed_node = nullptr;
   };
 
 } // namespace Oxy::Common

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -13,7 +15,26 @@ namespace Oxy::XSDL::Compiler {
         delete child;
     }
 
-    void push(ASTNode* node) { m_children.push_back(node); }
+    auto& parent() { return m_parent; }
+    auto& children() { return m_children; }
+
+    void push(ASTNode* node) {
+      m_children.push_back(node);
+      node->parent() = this;
+    }
+
+    void hoist() {
+      // need a grandparent to hoist
+      assert(parent() != nullptr);
+      assert(parent()->parent() != nullptr);
+
+      // remove self from parent
+      auto& pchildren = parent()->children();
+      pchildren.erase(std::find(pchildren.begin(), pchildren.end(), this));
+
+      // add to parents parent
+      parent()->parent()->push(this);
+    }
 
     virtual const char* class_name() const { return "***ASTNode***"; }
     ASTNode*            upcast() const { return (ASTNode*)this; };
@@ -46,6 +67,7 @@ namespace Oxy::XSDL::Compiler {
 
   private:
     std::vector<ASTNode*> m_children;
+    ASTNode*              m_parent = nullptr;
   };
 
 } // namespace Oxy::XSDL::Compiler
