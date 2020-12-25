@@ -20,6 +20,7 @@ namespace Oxy::XSDL::Compiler {
 
     Token parse_identifier();
     Token parse_integer_literal();
+    Token parse_decimal_literal();
 
     Token parse_keyword();
   };
