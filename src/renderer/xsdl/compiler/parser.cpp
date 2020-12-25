@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstring>
+#include <iostream>
 
 namespace Oxy::XSDL::Compiler {
 
@@ -70,6 +71,8 @@ namespace Oxy::XSDL::Compiler {
             while (Common::is_digit(ch()))
               forward();
           }
+          else
+            return false; // decimals need to have a dot
 
           // might have an exponent
           if (ch() == 'e' || ch() == 'E') {
@@ -157,6 +160,194 @@ namespace Oxy::XSDL::Compiler {
     }
 
     return {};
+  }
+
+  Token Parser::parse_left_parenthesis() {
+    if (match([&] {
+          if (ch() == '(') {
+            forward();
+            return true;
+          }
+
+          return false;
+        })) {
+      return consume();
+    }
+
+    return {};
+  }
+
+  Token Parser::parse_right_parenthesis() {
+    if (match([&] {
+          if (ch() == ')') {
+            forward();
+            return true;
+          }
+
+          return false;
+        })) {
+      return consume();
+    }
+
+    return {};
+  }
+
+  Token Parser::parse_left_bracket() {
+    if (match([&] {
+          if (ch() == '[') {
+            forward();
+            return true;
+          }
+
+          return false;
+        })) {
+      return consume();
+    }
+
+    return {};
+  }
+
+  Token Parser::parse_right_bracket() {
+    if (match([&] {
+          if (ch() == ']') {
+            forward();
+            return true;
+          }
+
+          return false;
+        })) {
+      return consume();
+    }
+
+    return {};
+  }
+
+  Token Parser::parse_left_sqbracket() {
+    if (match([&] {
+          if (ch() == '{') {
+            forward();
+            return true;
+          }
+
+          return false;
+        })) {
+      return consume();
+    }
+
+    return {};
+  }
+
+  Token Parser::parse_right_sqbracket() {
+    if (match([&] {
+          if (ch() == '}') {
+            forward();
+            return true;
+          }
+
+          return false;
+        })) {
+      return consume();
+    }
+
+    return {};
+  }
+
+  bool Parser::match_identifier() {
+    return match([&] {
+      if (auto ident = parse_identifier(); ident.has_value()) {
+        m_ast.push(new IdentifierNode(ident.value()));
+        m_ast.bubble();
+        return true;
+      }
+
+      return false;
+    });
+  }
+
+  bool Parser::match_integer_literal() {
+    return match([&] {
+      if (auto ident = parse_integer_literal(); ident.has_value()) {
+        m_ast.push(new IntegerLiteralNode(ident.value()));
+        m_ast.bubble();
+        return true;
+      }
+
+      return false;
+    });
+  }
+
+  bool Parser::match_decimal_literal() {
+    return match([&] {
+      if (auto ident = parse_decimal_literal(); ident.has_value()) {
+        m_ast.push(new DecimalLiteralNode(ident.value()));
+        m_ast.bubble();
+        return true;
+      }
+
+      return false;
+    });
+  }
+
+  bool Parser::match_left_parenthesis() {
+    return match([&] {
+      if (auto ident = parse_left_parenthesis(); ident.has_value()) {
+        m_ast.push(new ParenthesisNode(ParenthesisType::Left));
+        m_ast.bubble();
+        return true;
+      }
+
+      return false;
+    });
+  }
+
+  bool Parser::match_right_parenthesis() {
+    return match([&] {
+      if (auto ident = parse_right_parenthesis(); ident.has_value()) {
+        m_ast.push(new ParenthesisNode(ParenthesisType::Right));
+        m_ast.bubble();
+        return true;
+      }
+
+      return false;
+    });
+  }
+
+  bool Parser::match_literal_expression() {
+    return match([&] {
+      if (match_identifier()) {
+        return true;
+      }
+      else if (match_decimal_literal()) {
+        return true;
+      }
+      else if (match_integer_literal()) {
+        return true;
+      }
+      else if (match_left_parenthesis() && match_expression() && match_right_parenthesis()) {
+        m_ast.bubble();
+        return true;
+      }
+      else
+        return false;
+    });
+  }
+
+  bool Parser::match_expression() {
+    m_ast.push(new ExpressionStatementNode());
+    if (match([&] {
+          if (match_literal_expression()) {
+            return true;
+          }
+          else {
+            return false;
+          }
+        })) {
+      return true;
+    }
+    else {
+      m_ast.reject();
+      return false;
+    }
   }
 
 } // namespace Oxy::XSDL::Compiler

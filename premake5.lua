@@ -46,6 +46,7 @@ test("test_json_parser")
 test("test_json_ast")
 test("test_json")
 test("test_xsdl_parser")
+test("test_xsdl_ast")
 
 newaction {
     trigger = "build",

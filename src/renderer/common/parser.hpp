@@ -99,6 +99,7 @@ namespace Oxy::Common {
       }
     }
 
+  public:
     auto ast() { return m_ast.ast(); }
 
   protected:

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -17,9 +18,31 @@ namespace Oxy::XSDL::Compiler {
     virtual const char* class_name() const { return "***ASTNode***"; }
     ASTNode*            upcast() const { return (ASTNode*)this; };
 
-    virtual bool is_identifier() const { return false; }
+    std::string dump(int indent = 0) const {
+      std::stringstream ss;
+
+      auto getindent = [](int n) {
+        std::stringstream ss;
+        for (int i = 0; i < n; i++)
+          ss << "  ";
+        return ss.str();
+      };
+
+      ss << getindent(indent);
+      ss << class_name() << "\n";
+
+      for (auto& child : m_children)
+        ss << child->dump(indent + 1);
+
+      return ss.str();
+    }
+
     virtual bool is_statement() const { return false; }
     virtual bool is_expression_statement() const { return false; }
+    virtual bool is_parenthesis() const { return false; }
+    virtual bool is_identifier() const { return false; }
+    virtual bool is_integer_literal() const { return false; }
+    virtual bool is_decimal_literal() const { return false; }
 
   private:
     std::vector<ASTNode*> m_children;
