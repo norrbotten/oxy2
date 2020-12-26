@@ -35,6 +35,19 @@ namespace Oxy::Tracing {
       return ctx;
     };
 
+    virtual Vec3 random_point_on_surface() const override {
+      auto a = random<FloatType>(0, 1);
+      auto b = random<FloatType>(0, 1);
+
+      if (a + b >= 1.0) {
+        a = 1.0 - a;
+        b = 1.0 - b;
+      }
+
+      return m_triangle.p0() + a * (m_triangle.p1() - m_triangle.p0()) +
+             b * (m_triangle.p2() - m_triangle.p0());
+    }
+
   private:
     Primitive::TrianglePrimitive m_triangle;
   };

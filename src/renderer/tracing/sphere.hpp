@@ -33,6 +33,11 @@ namespace Oxy::Tracing {
       return ctx;
     };
 
+    virtual Vec3 random_point_on_surface() const override {
+      auto vec = random_vector_on_unit_sphere();
+      return m_sphere.center() + vec * m_sphere.radius();
+    }
+
   private:
     Primitive::SpherePrimitive m_sphere;
   };

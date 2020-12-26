@@ -3,6 +3,7 @@
 #include "renderer/sdl/parser.hpp"
 
 #include "renderer/integrators/naive.hpp"
+#include "renderer/integrators/naive_implicit.hpp"
 #include "renderer/integrators/preview.hpp"
 
 #include "renderer/tracing/objects.hpp"
@@ -24,7 +25,7 @@ namespace Oxy {
   class Renderer {
   public:
     Renderer()
-        : m_integrator(new Integrators::Naive()) {}
+        : m_integrator(new Integrators::NaiveImplicit()) {}
 
     std::optional<std::string> load_file(fs::path filename);
 
@@ -32,8 +33,12 @@ namespace Oxy {
       Timer timer;
       timer.start();
 
+      m_integrator->pre_pass();
+
       m_camera.for_each_pixel(m_film,
                               [&](const SingleRay& ray) { return m_integrator->radiance(ray); });
+
+      m_integrator->post_pass();
 
       return timer.elapsed_seconds();
     }

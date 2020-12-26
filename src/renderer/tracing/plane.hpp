@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+
 #include "renderer/primitives/plane.hpp"
 #include "renderer/tracing/object.hpp"
 
@@ -45,6 +47,10 @@ namespace Oxy::Tracing {
 
       return ctx;
     };
+
+    virtual Vec3 random_point_on_surface() const override {
+      assert(false); // planes are infinitely large, cant really get a random point
+    }
 
   private:
     Primitive::PlanePrimitive m_plane;

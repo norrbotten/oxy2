@@ -2,7 +2,7 @@
 render: {
   width: 1024
   height: 512
-  samples: 8192
+  samples: 128
 }
 
 camera: {

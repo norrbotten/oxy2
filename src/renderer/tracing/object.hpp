@@ -11,12 +11,14 @@ namespace Oxy::Tracing {
 
   /*
     Abstract tracable class
-    Tracables have a material and only need to implement ray intersection which
-    returns an intersection context
+    Tracables have a material and need to implement ray intersection and a method returning a random
+    point on its surface
   */
   class TracableObject {
   public:
     virtual IntersectionContext intersect_ray(const SingleRay& ray) = 0;
+
+    virtual Vec3 random_point_on_surface() const = 0;
 
     REF(material);
 

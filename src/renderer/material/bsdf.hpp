@@ -17,12 +17,6 @@ namespace Oxy {
     Color     absorption;
   };
 
-  /*
-    Generic BSDF material, not fully implemented yet
-
-    TODO:
-    Probability distribution function (importance sampling related thing)
-  */
   class BSDF final {
   public:
     BSDF() {}
@@ -93,6 +87,13 @@ namespace Oxy {
       }
 
       return result;
+    }
+
+    FloatType pdf(const Vec3& incident, const Vec3& out) const {
+      // TODO: obviously
+      (void)incident;
+      (void)out;
+      return 1.0;
     }
 
     REF(albedo);

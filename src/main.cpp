@@ -16,18 +16,6 @@ int main() {
 
   using namespace Oxy;
 
-  NetRender::HTTP::HTTPServer server(8080);
-
-  server.set_404_handler([](auto, auto res) {
-    std::cout << "404\n";
-    res.write_body("404").finalize().send();
-  });
-
-  server.get("/", [](auto, auto res) {
-    res.write_body("it works");
-    res.finalize().send();
-  });
-
   Renderer renderer;
 
   auto error = renderer.load_file("scenes/ground_plane.sdl");
@@ -52,7 +40,5 @@ int main() {
     renderer.sample_once();
   }
 
-  renderer.save_png("images/avx2_test.png");
-
-  server.block();
+  renderer.save_png("images/naive_implicit_test.png");
 }

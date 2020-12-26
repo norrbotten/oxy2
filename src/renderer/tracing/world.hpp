@@ -58,6 +58,8 @@ namespace Oxy::Tracing {
       m_objects.push_back(std::unique_ptr<T>(obj));
     }
 
+    auto& objects() { return m_objects; }
+
   private:
     std::vector<std::unique_ptr<TracableObject>> m_objects;
   };
