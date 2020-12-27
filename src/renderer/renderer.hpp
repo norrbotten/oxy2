@@ -5,6 +5,7 @@
 #include "renderer/integrators/naive.hpp"
 #include "renderer/integrators/naive_implicit.hpp"
 #include "renderer/integrators/preview.hpp"
+#include "renderer/integrators/pssmlt.hpp"
 
 #include "renderer/tracing/objects.hpp"
 
@@ -25,9 +26,16 @@ namespace Oxy {
   class Renderer {
   public:
     Renderer()
-        : m_integrator(new Integrators::NaiveImplicit()) {}
+        : m_integrator(new Integrators::PSSMLTIntegrator()) {}
 
     std::optional<std::string> load_file(fs::path filename);
+
+    void setup_integrator() {
+      Integrators::IntegratorSetupContext ctx;
+      ctx.width  = m_width;
+      ctx.height = m_height;
+      m_integrator->setup(ctx);
+    }
 
     double sample_once() {
       Timer timer;
@@ -35,8 +43,9 @@ namespace Oxy {
 
       m_integrator->pre_pass();
 
-      m_camera.for_each_pixel(m_film,
-                              [&](const SingleRay& ray) { return m_integrator->radiance(ray); });
+      m_camera.for_each_pixel(m_film, [&](int x, int y, const SingleRay& ray) {
+        return m_integrator->radiance(ray, x, y);
+      });
 
       m_integrator->post_pass();
 

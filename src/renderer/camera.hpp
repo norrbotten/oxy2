@@ -62,7 +62,7 @@ namespace Oxy {
 #pragma omp parallel for
       for (int y = 0; y < film.height(); y++)
         for (int x = 0; x < film.width(); x++)
-          film.splat(x, y, callback(get_ray(x, y, film.width(), film.height())));
+          film.splat(x, y, callback(x, y, get_ray(x, y, film.width(), film.height())));
     }
 
   private:

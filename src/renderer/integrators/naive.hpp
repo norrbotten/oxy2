@@ -9,12 +9,12 @@ namespace Oxy::Integrators {
 
     Dumb and slow, but works and produces pretty pictures
   */
-  class Naive final : public Integrator {
+  class NaiveIntegrator final : public Integrator {
   public:
-    Naive(int max_bounces = 16)
+    NaiveIntegrator(int max_bounces = 16)
         : m_max_bounces(max_bounces) {}
 
-    virtual Color radiance(const SingleRay& ray) override {
+    virtual Color radiance(const SingleRay& ray, int, int) override {
       SingleRay current_ray = ray;
 
       const static auto ambient_energy = Color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0) * 0.05;

@@ -14,12 +14,12 @@ namespace Oxy::Integrators {
   /*
     Preview integrator, for rendering a fast preview image
   */
-  class Preview final : public Integrator {
+  class PreviewIntegrator final : public Integrator {
   public:
-    Preview(PreviewMode mode = PreviewMode::Albedo)
+    PreviewIntegrator(PreviewMode mode = PreviewMode::Albedo)
         : m_preview_mode(mode) {}
 
-    virtual Color radiance(const SingleRay& ray) override {
+    virtual Color radiance(const SingleRay& ray, int, int) override {
       auto isect = m_world.intersect_ray(ray);
 
       if (isect.hit) {

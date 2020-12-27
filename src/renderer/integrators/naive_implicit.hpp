@@ -10,12 +10,12 @@ namespace Oxy::Integrators {
     Like the naive integrator, but at each bounce we implicitly sample all light sources,
     resulting in direct lighting converging much faster
   */
-  class NaiveImplicit : public Integrator {
+  class NaiveImplicitIntegrator final : public Integrator {
   public:
-    NaiveImplicit(int max_bounces = 8)
+    NaiveImplicitIntegrator(int max_bounces = 8)
         : m_max_bounces(max_bounces) {}
 
-    virtual Color radiance(const SingleRay& ray) override {
+    virtual Color radiance(const SingleRay& ray, int, int) override {
       SingleRay current_ray = ray;
 
       const static auto ambient_energy = Color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0);
