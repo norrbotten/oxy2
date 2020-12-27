@@ -5,10 +5,10 @@ Transmissive Stanford Dragon, 8192 samples, 871k triangles, 16 minute render on 
 
 ## In progress:
 * XSDL
-    * Basically want this to be a functional scripting language
-    * Also wanna write a JIT x86 compiler so I can define SDF's in a file with no real overhead
+   * Basically want this to be a functional scripting language
+   * Also wanna write a JIT x86 compiler so I can define SDF's in a file with no real overhead
 * Rendering
-    * Bidirectional path tracing
+   * Metropolis integrator
 
 ## Features:
 
@@ -16,6 +16,7 @@ Transmissive Stanford Dragon, 8192 samples, 871k triangles, 16 minute render on 
 * SDL (Scene description language) for defining scenes
 * Shitty rectilinear camera model with a tent filter
 * Crappy naive pathtracing with russian roulette pruning
+* A somewhat correct naive/implicit integrator
 * Materials
   * General purpose BSDF'ish thing
 * Textures
