@@ -44,6 +44,8 @@ namespace Oxy {
 
     auto max() const { return glm::max(m_r, glm::max(m_g, m_b)); }
 
+    auto luminance() const { return 0.2126 * m_r + 0.7152 * m_g + 0.0722 * m_b; }
+
     REF(r);
     REF(g);
     REF(b);

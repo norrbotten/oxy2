@@ -17,7 +17,7 @@ namespace Oxy::Integrators {
     virtual Color radiance(const SingleRay& ray, int, int) override {
       SingleRay current_ray = ray;
 
-      const static auto ambient_energy = Color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0) * 0.05;
+      const static auto ambient_energy = Color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0) * 0.00;
 
       Color color(0.0);
       Color throughput(1.0);

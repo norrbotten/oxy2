@@ -20,40 +20,85 @@ namespace Oxy::Integrators {
 
     So the idea is to store an array of variants for each vertex in the light path, with
     a templated bounce type and required number of parameters.
+
+    Turns out i was overthinking it with the templating, way easier to just store a fixed
+    amount of params per vertex.
   */
 
   namespace PSSMLT {
 
-    template <size_t NParams>
+    constexpr std::size_t NumVertexParams = 4;
+
     class Vertex {
     public:
-      template <size_t ParamIndex>
+      template <std::size_t ParamIndex>
       auto get() const {
         return m_params[ParamIndex];
       }
 
-      template <size_t ParamIndex>
-      void set(FloatType value) {
-        m_params[ParamIndex] = value;
+      void reset() {
+        for (std::size_t i = 0; i < NumVertexParams; i++)
+          m_params[i] = random<FloatType>(0, 1);
+      }
+
+      bool mutate(FloatType illum) {
+        if (random<FloatType>(0, 1) > (0.99 - glm::exp(-(illum + 1.0)))) {
+          reset();
+          return true;
+        }
+        else {
+          constexpr FloatType s1 = 1.0 / 1024.0;
+          constexpr FloatType s2 = 1.0 / 64.0;
+
+          static const FloatType log = -glm::log(s2 / s1);
+
+          for (std::size_t i = 0; i < NumVertexParams; i++) {
+            const FloatType dv = s2 * glm::exp(log * random<FloatType>(0, 1));
+
+            auto& value = m_params[i];
+            if (random<FloatType>(0, 1) < 0.5) {
+              value += dv;
+              if (value > 1)
+                value -= 1;
+            }
+            else {
+              value -= dv;
+              if (value < 0)
+                value += 1;
+            }
+          }
+
+          return false;
+        }
       }
 
     private:
-      FloatType m_params[NParams];
-
+      FloatType m_params[NumVertexParams];
       FloatType m_illum;
     };
 
     class Path {
     public:
       Path() = default;
-      Path(int max_segments) { m_path.reserve(max_segments); }
+      Path(int max_segments) {
+        m_path.reserve(max_segments);
 
-      using PathVertex = std::variant<Vertex<3>,  // diffuse
-                                      Vertex<3>,  // clearcoat
-                                      Vertex<2>>; // transmission
+        for (int i = 0; i < max_segments; i++) {
+          m_path.push_back(Vertex());
+          m_path.back().reset();
+        }
+
+        m_illum = 1.0;
+      }
+
+      void set_illum(FloatType illum) { m_illum = illum; }
+      auto illum() const { return m_illum; }
+
+      auto& vertex(int index) { return m_path[index]; }
 
     private:
-      std::vector<PathVertex> m_path;
+      std::vector<Vertex> m_path;
+      FloatType           m_illum;
     };
 
   } // namespace PSSMLT
@@ -66,10 +111,46 @@ namespace Oxy::Integrators {
     virtual Color radiance(const SingleRay& ray, int x, int y) override {
       auto& path = get_pixel_path(x, y);
 
-      (void)ray;
-      (void)path;
+      SingleRay current_ray = ray;
 
-      return Color();
+      const static auto ambient_energy = Color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0) * 0;
+
+      Color color(0.0);
+      Color throughput(1.0);
+
+      for (int n = 0; n < m_max_bounces; n++) {
+        auto isect = m_world.intersect_ray(current_ray);
+
+        if (!isect.hit) {
+          color += throughput * ambient_energy;
+          path.vertex(0).reset();
+          break;
+        }
+
+        auto& vertex = path.vertex(n);
+        vertex.mutate(path.illum());
+
+        auto& obj   = isect.object;
+        auto& mater = obj->material();
+
+        auto scatter =
+            mater->scatter_impl(isect, vertex.get<0>(), vertex.get<1>(), vertex.get<2>());
+
+        color += throughput * scatter.energy;
+
+        throughput *= scatter.absorption;
+        current_ray = scatter.ray;
+
+        auto p = throughput.max();
+        if (vertex.get<3>() > p)
+          break;
+
+        throughput *= 1.0 / p;
+      }
+
+      path.set_illum(color.luminance());
+
+      return color;
     }
 
     virtual void setup(const IntegratorSetupContext& ctx) override {

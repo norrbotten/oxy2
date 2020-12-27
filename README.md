@@ -15,8 +15,8 @@ Transmissive Stanford Dragon, 8192 samples, 871k triangles, 16 minute render on 
 * AVX2 / BVH accelerator for meshes
 * SDL (Scene description language) for defining scenes
 * Shitty rectilinear camera model with a tent filter
-* Crappy naive pathtracing with russian roulette pruning
-* A somewhat correct naive/implicit integrator
+* PSSMLT (Metropolis light transport)
+  * Although I am unsure i'm doing it properly
 * Materials
   * General purpose BSDF'ish thing
 * Textures
