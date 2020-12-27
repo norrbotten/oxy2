@@ -41,6 +41,9 @@ namespace Oxy {
     }
 
     LightRay scatter(const IntersectionContext& ctx) const {
+      // TODO: glossy refraction
+      // TODO: proper glossy reflection (no more mirror reflect + random)
+
       LightRay result;
 
       result.energy     = m_emission_energy;
@@ -89,11 +92,26 @@ namespace Oxy {
       return result;
     }
 
-    FloatType pdf(const Vec3& incident, const Vec3& out) const {
-      // TODO: obviously
-      (void)incident;
-      (void)out;
-      return 1.0;
+    FloatType pdf(const Vec3& incident, const Vec3& hitnormal, const Vec3& out) const {
+      // is this even called pdf? (as in probability distribution function)
+      // it just returns the probability of the incident ray reflecting of the
+      // hitnormal in the direction of out
+
+      auto incident_reflect = reflect(incident, hitnormal);
+      auto dot              = glm::dot(incident_reflect, out);
+
+      FloatType res = 0.0;
+
+      // emitted light (should do luminousity here instead)
+      res += (m_emission_energy.r() + m_emission_energy.g() + m_emission_energy.b()) / 3.0;
+
+      // diffuse bounce
+      res += dot * m_roughness;
+
+      // diffuse clearcoat bounce
+      res += dot * m_clearcoat * m_clearcoat_roughness;
+
+      return res;
     }
 
     REF(albedo);

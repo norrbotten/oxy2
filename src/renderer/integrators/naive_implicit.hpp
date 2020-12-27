@@ -12,7 +12,7 @@ namespace Oxy::Integrators {
   */
   class NaiveImplicit : public Integrator {
   public:
-    NaiveImplicit(int max_bounces = 16)
+    NaiveImplicit(int max_bounces = 6)
         : m_max_bounces(max_bounces) {}
 
     virtual Color radiance(const SingleRay& ray) override {
@@ -53,10 +53,11 @@ namespace Oxy::Integrators {
 
               // drew it out on paper, 70% sure its correct
               auto attenuation = 1.0 / (1.0 + light_isect.t * light_isect.t);
-              implicit_energy += light_isect.object->material()->sample(light_isect) * throughput *
-                                 scatter.absorption *
-                                 mater->pdf(-light_isect.ray.direction, -current_ray.direction) *
-                                 attenuation;
+              implicit_energy +=
+                  light_isect.object->material()->sample(light_isect) * throughput *
+                  scatter.absorption *
+                  mater->pdf(-light_isect.ray.direction, isect.hitnormal, -current_ray.direction) *
+                  attenuation;
             }
 
             implicit_samples++;
