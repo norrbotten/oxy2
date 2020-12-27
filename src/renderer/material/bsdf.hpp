@@ -40,7 +40,9 @@ namespace Oxy {
       return m_texture != nullptr ? m_texture->sample(ctx.uv.x, ctx.uv.y) * m_albedo : m_albedo;
     }
 
-    LightRay scatter(const IntersectionContext& ctx) const {
+    LightRay scatter_impl(const IntersectionContext& ctx, FloatType arg1, FloatType arg2,
+                          FloatType arg3) const {
+
       // TODO: glossy refraction
       // TODO: proper glossy reflection (no more mirror reflect + random)
 
@@ -49,29 +51,29 @@ namespace Oxy {
       result.energy     = m_emission_energy;
       result.absorption = this->sample(ctx);
 
-      if (random<FloatType>(0, 1) < m_transmission) {
+      if (arg1 < m_transmission) {
         auto entering_solid = glm::dot(ctx.hitnormal, ctx.ray.direction) < 0;
         auto ior1           = entering_solid ? 1.0 : m_ior;
         auto ior2           = entering_solid ? m_ior : 1.0;
 
         auto reflection = schlick(ctx.ray.direction, ctx.hitnormal, ior1 / ior2);
 
-        auto refracted = random<FloatType>(0, 1) < reflection
-                             ? reflect(ctx.ray.direction, ctx.hitnormal)
-                             : refract(ctx.ray.direction, ctx.hitnormal, ior1, ior2);
+        auto refracted = arg2 < reflection ? reflect(ctx.ray.direction, ctx.hitnormal)
+                                           : refract(ctx.ray.direction, ctx.hitnormal, ior1, ior2);
 
         result.ray = SingleRay{ctx.hitpos + refracted * 1e-6, refracted};
       }
-      else if (random<FloatType>(0, 1) < m_clearcoat) {
+      else if (arg1 < m_clearcoat) {
         Vec3 reflected;
 
         if (m_clearcoat_roughness == 0.0)
           reflected = reflect(ctx.ray.direction, ctx.hitnormal);
         else if (m_clearcoat_roughness == 1.0)
-          reflected = random_vector_on_hemisphere(ctx.hitnormal);
+          reflected = random_vector_on_hemisphere(ctx.hitnormal, arg2, arg3);
         else
-          reflected = glm::normalize(reflect(ctx.ray.direction, ctx.hitnormal) +
-                                     random_vector_on_unit_sphere() * m_clearcoat_roughness);
+          reflected =
+              glm::normalize(reflect(ctx.ray.direction, ctx.hitnormal) +
+                             random_vector_on_unit_sphere(arg2, arg3) * m_clearcoat_roughness);
 
         result.ray = SingleRay{ctx.hitpos + ctx.hitnormal * 1e-6, reflected};
       }
@@ -81,15 +83,20 @@ namespace Oxy {
         if (m_roughness == 0.0)
           reflected = reflect(ctx.ray.direction, ctx.hitnormal);
         else if (m_roughness == 1.0)
-          reflected = random_vector_on_hemisphere(ctx.hitnormal);
+          reflected = random_vector_on_hemisphere(ctx.hitnormal, arg2, arg3);
         else
           reflected = glm::normalize(reflect(ctx.ray.direction, ctx.hitnormal) +
-                                     random_vector_on_unit_sphere() * m_roughness);
+                                     random_vector_on_unit_sphere(arg2, arg3) * m_roughness);
 
         result.ray = SingleRay{ctx.hitpos + ctx.hitnormal * 1e-6, reflected};
       }
 
       return result;
+    }
+
+    LightRay scatter(const IntersectionContext& ctx) const {
+      return scatter_impl(ctx, random<FloatType>(0, 1), random<FloatType>(0, 1),
+                          random<FloatType>(0, 1));
     }
 
     FloatType pdf(const Vec3& incident, const Vec3& hitnormal, const Vec3& out) const {

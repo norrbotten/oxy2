@@ -26,7 +26,7 @@ namespace Oxy {
   class Renderer {
   public:
     Renderer()
-        : m_integrator(new Integrators::PSSMLTIntegrator()) {}
+        : m_integrator(new Integrators::NaiveIntegrator()) {}
 
     std::optional<std::string> load_file(fs::path filename);
 

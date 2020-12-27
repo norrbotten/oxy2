@@ -25,7 +25,6 @@ int main() {
     return 1;
   }
 
-  /*
   std::vector<Primitive::TrianglePrimitive> dragon;
   std::cout << "Parse: " << Parsers::parse_stl("data/dragon.stl", dragon) << "\n";
 
@@ -35,7 +34,6 @@ int main() {
   dragon_obj->material() = renderer.material_pool().get("frosted glass").value();
 
   renderer.world().add_object(dragon_obj);
-  */
 
   renderer.setup_integrator();
 
@@ -44,5 +42,5 @@ int main() {
     renderer.sample_once();
   }
 
-  renderer.save_png("images/naive_implicit_test3.png");
+  renderer.save_png("images/pssmlt_test1.png");
 }

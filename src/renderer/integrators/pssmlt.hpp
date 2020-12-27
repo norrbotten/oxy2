@@ -64,10 +64,10 @@ namespace Oxy::Integrators {
         : m_max_bounces(max_bounces) {}
 
     virtual Color radiance(const SingleRay& ray, int x, int y) override {
-      // allocate_pixel_path(x, y);
       auto& path = get_pixel_path(x, y);
 
       (void)ray;
+      (void)path;
 
       return Color();
     }
