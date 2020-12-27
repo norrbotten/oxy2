@@ -113,7 +113,7 @@ namespace Oxy::Integrators {
 
       SingleRay current_ray = ray;
 
-      const static auto ambient_energy = Color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0) * 0;
+      const static auto ambient_energy = Color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0) * 0.02;
 
       Color color(0.0);
       Color throughput(1.0);

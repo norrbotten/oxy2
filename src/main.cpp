@@ -37,10 +37,15 @@ int main() {
 
   renderer.setup_integrator();
 
+  Timer timer;
+  timer.start();
+
   for (int i = 0; i < renderer.max_samples(); i++) {
-    std::cout << i << "\n";
+    std::cout << i << " - done in "
+              << estimate_seconds_left(i, timer.elapsed_seconds(), renderer.max_samples())
+              << " seconds\n";
     renderer.sample_once();
   }
 
-  renderer.save_png("images/pssmlt_test1.png");
+  renderer.save_png("images/pssmlt_test3.png");
 }

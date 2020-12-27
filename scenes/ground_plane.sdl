@@ -2,19 +2,19 @@
 render: {
   width: 1024
   height: 512
-  samples: 512
+  samples: 8192
 }
 
 camera: {
   position: [-5, 3, 3.5]
-  aim: [0.0, 0.0, 0.8]
+  aim: [0.0, 0.0, 0.9]
   fov: 52
 }
 
 material: {
   name: light
   params: {
-    emission: [15.0]
+    emission: [45.0]
   }
 }
 
@@ -22,20 +22,6 @@ material: {
   name: red light
   params: {
     emission: [45.0, 0.7, 0.15]
-  }
-}
-
-material: {
-  name: green light
-  params: {
-    emission: [0.7, 25.0, 0.15]
-  }
-}
-
-material: {
-  name: blue light
-  params: {
-    emission: [0.7, 0.15, 25.0]
   }
 }
 
@@ -50,18 +36,8 @@ material: {
   name: frosted glass
   params: {
     albedo: [0.9, 0.9, 1.0]
-    roughness: 0.1
-    transmission: 0.8
+    transmission: 0.95
     ior: 1.45
-  }
-}
-
-object: {
-  type: sphere
-  material: light
-  params: {
-    center: [0.0, 0.0, 4.0]
-    radius: 0.25
   }
 }
 
@@ -70,25 +46,7 @@ object: {
   material: red light
   params: {
     center: [-0.13, 1.1, 1.6]
-    radius: 0.15
-  }
-}
-
-object: {
-  type: sphere
-  material: green light
-  params: {
-    center: [-2, 0, 1.6]
-    radius: 0.07
-  }
-}
-
-object: {
-  type: sphere
-  material: blue light
-  params: {
-    center: [2, 0, 1.6]
-    radius: 0.07
+    radius: 0.1
   }
 }
 
