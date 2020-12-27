@@ -98,7 +98,7 @@ namespace Oxy {
       // hitnormal in the direction of out
 
       auto incident_reflect = reflect(incident, hitnormal);
-      auto dot              = glm::dot(incident_reflect, out);
+      auto dot              = glm::abs(glm::dot(incident_reflect, out));
 
       FloatType res = 0.0;
 

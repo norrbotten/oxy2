@@ -40,5 +40,5 @@ int main() {
     renderer.sample_once();
   }
 
-  renderer.save_png("images/naive_implicit_test2.png");
+  renderer.save_png("images/naive_implicit_test3.png");
 }
