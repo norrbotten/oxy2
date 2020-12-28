@@ -118,8 +118,6 @@ namespace Oxy::Integrators {
 
       SingleRay current_ray = ray;
 
-      const static auto ambient_energy = Color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0) * 0.01;
-
       Color color(0.0);
       Color throughput(1.0);
 
@@ -127,7 +125,7 @@ namespace Oxy::Integrators {
         auto isect = m_world.intersect_ray(current_ray);
 
         if (!isect.hit) {
-          color += throughput * ambient_energy;
+          color += throughput * m_world.sample_environment(current_ray);
           path.vertex(0).reset();
           break;
         }

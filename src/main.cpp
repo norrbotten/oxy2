@@ -12,6 +12,8 @@
 
 #include "renderer/netrender/httplib/http_server.hpp"
 
+#include "renderer/tracing/env_gradient.hpp"
+
 static bool break_loop = false;
 
 int main() {
@@ -25,6 +27,9 @@ int main() {
   using namespace Oxy;
 
   Renderer renderer;
+
+  renderer.world().set_environment(
+      new Tracing::GradientEnvironment(Color(1.0, 0.0, 0.0), Color(0.0, 1.0, 0.0), 0.02));
 
   std::cout << "Loading file..\n";
   auto error = renderer.load_file("scenes/ground_plane.sdl");
@@ -86,5 +91,5 @@ int main() {
 
   std::cout << "Render done. writing png\n";
 
-  renderer.save_png("images/ring_caustic.png");
+  renderer.save_png("images/ring_caustic2.png");
 }

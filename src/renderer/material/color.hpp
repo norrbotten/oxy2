@@ -54,14 +54,20 @@ namespace Oxy {
     CREF(g);
     CREF(b);
 
-    Color operator+(const Color& rhs) { return Color{r() + rhs.r(), g() + rhs.g(), b() + rhs.b()}; }
-    Color operator+(FloatType rhs) { return Color{r() + rhs, g() + rhs, b() + rhs}; }
+    Color operator+(const Color& rhs) const {
+      return Color{r() + rhs.r(), g() + rhs.g(), b() + rhs.b()};
+    }
+    Color operator+(FloatType rhs) const { return Color{r() + rhs, g() + rhs, b() + rhs}; }
 
-    Color operator*(const Color& rhs) { return Color{r() * rhs.r(), g() * rhs.g(), b() * rhs.b()}; }
-    Color operator*(FloatType rhs) { return Color{r() * rhs, g() * rhs, b() * rhs}; }
+    Color operator*(const Color& rhs) const {
+      return Color{r() * rhs.r(), g() * rhs.g(), b() * rhs.b()};
+    }
+    Color operator*(FloatType rhs) const { return Color{r() * rhs, g() * rhs, b() * rhs}; }
 
-    Color operator/(const Color& rhs) { return Color{r() / rhs.r(), g() / rhs.g(), b() / rhs.b()}; }
-    Color operator/(FloatType rhs) { return Color{r() / rhs, g() / rhs, b() / rhs}; }
+    Color operator/(const Color& rhs) const {
+      return Color{r() / rhs.r(), g() / rhs.g(), b() / rhs.b()};
+    }
+    Color operator/(FloatType rhs) const { return Color{r() / rhs, g() / rhs, b() / rhs}; }
 
     Color& operator+=(const Color& rhs) {
       m_r += rhs.r();

@@ -5,6 +5,8 @@
 #include <vector>
 
 #include "renderer/sdl/execution.hpp"
+
+#include "renderer/tracing/environment.hpp"
 #include "renderer/tracing/object.hpp"
 
 namespace Oxy::Tracing {
@@ -18,7 +20,12 @@ namespace Oxy::Tracing {
   */
   class World {
   public:
-    IntersectionContext intersect_ray(const SingleRay& ray) {
+    ~World() {
+      if (m_environment)
+        delete m_environment;
+    }
+
+    IntersectionContext intersect_ray(const SingleRay& ray) const {
       IntersectionContext res;
 
       auto min = std::numeric_limits<FloatType>::max();
@@ -34,7 +41,7 @@ namespace Oxy::Tracing {
       return res;
     }
 
-    IntersectionContext intersect_line(const Vec3& start, const Vec3& end) {
+    IntersectionContext intersect_line(const Vec3& start, const Vec3& end) const {
       IntersectionContext res;
 
       auto len = glm::length(end - start);
@@ -53,6 +60,13 @@ namespace Oxy::Tracing {
       return res;
     }
 
+    Color sample_environment(const SingleRay& ray) const {
+      if (m_environment != nullptr)
+        return m_environment->sample(ray);
+
+      return Color();
+    }
+
     template <typename T>
     void add_object(T* obj) {
       m_objects.push_back(std::unique_ptr<T>(obj));
@@ -60,8 +74,11 @@ namespace Oxy::Tracing {
 
     auto& objects() { return m_objects; }
 
+    void set_environment(EnvironmentMap* env) { m_environment = env; }
+
   private:
     std::vector<std::unique_ptr<TracableObject>> m_objects;
+    EnvironmentMap*                              m_environment{nullptr};
   };
 
 } // namespace Oxy::Tracing

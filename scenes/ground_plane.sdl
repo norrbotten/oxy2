@@ -1,8 +1,8 @@
 
 render: {
-  width: 2048
-  height: 1024
-  samples: 8192
+  width: 1024
+  height: 512
+  samples: 512
 }
 
 camera: {
