@@ -1,7 +1,7 @@
 # Oxy 2
 
-![Dragon](images/dragon.png)
-Transmissive Stanford Dragon, 8192 samples, 871k triangles, 16 minute render on 24 threads
+![Dragon](images/pssmlt_4k.png)
+Standford Dragon rendered with the PSSMLT integrator
 
 ## In progress:
 * XSDL
@@ -14,9 +14,10 @@ Transmissive Stanford Dragon, 8192 samples, 871k triangles, 16 minute render on 
 
 * AVX2 / BVH accelerator for meshes
 * SDL (Scene description language) for defining scenes
-* Shitty rectilinear camera model with a tent filter
-* PSSMLT (Metropolis light transport)
-  * Although I am unsure i'm doing it properly
+* PSSMLT (Primary sample space Metropolis light transport)
+  * No idea if i'm doing it properly, but caustics converge in way fewer samples
+* Naive/implicit integrator
+  * Converges direct light very fast, but caustics look like ass
 * Materials
   * General purpose BSDF'ish thing
 * Textures
@@ -41,8 +42,8 @@ Transmissive Stanford Dragon, 8192 samples, 871k triangles, 16 minute render on 
 
 ## More renders
 
-![More caustics](images/caustic3.png)
-Version of above image with some extra lights, rendered in 4K
+![Monke](images/ring_caustic.png)
+Blender Suzanne in a ring
 
 ![Caustic](images/caustic.png)
 Different colored lights mixing through a sphere

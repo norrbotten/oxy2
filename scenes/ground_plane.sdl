@@ -1,27 +1,20 @@
 
 render: {
-  width: 1024
-  height: 512
+  width: 2048
+  height: 1024
   samples: 8192
 }
 
 camera: {
-  position: [-5, 3, 3.5]
-  aim: [0.0, 0.0, 0.9]
-  fov: 52
+  position: [-1.8, 1.2, 1.4]
+  aim: [0.0, 0.0, -0.1]
+  fov: 65
 }
 
 material: {
   name: light
   params: {
-    emission: [45.0]
-  }
-}
-
-material: {
-  name: red light
-  params: {
-    emission: [45.0, 0.7, 0.15]
+    emission: [15.0]
   }
 }
 
@@ -33,20 +26,37 @@ material: {
 }
 
 material: {
-  name: frosted glass
+  name: gold
   params: {
-    albedo: [0.9, 0.9, 1.0]
-    transmission: 0.95
+    albedo: [0.831, 0.686, 0.216]
+    roughness: 0.01
+  }
+}
+
+material: {
+  name: glass
+  params: {
+    albedo: [1.0, 1.0, 1.0]
+    transmission: 1.0
     ior: 1.45
   }
 }
 
 object: {
   type: sphere
-  material: red light
+  material: light
   params: {
-    center: [-0.13, 1.1, 1.6]
-    radius: 0.1
+    center: [0.0, 4.0, 4.0]
+    radius: 0.5
+  }
+}
+
+object: {
+  type: sphere
+  material: light
+  params: {
+    center: [0.0, 0.0, 4.0]
+    radius: 0.125
   }
 }
 
@@ -54,7 +64,7 @@ object: {
   type: plane
   material: white lambert
   params: {
-    point: [0.0, 0.0, -0.1]
+    point: [0.0, 0.0, 0.01]
     normal: [0.0, 0.0, 1.0]
   }
 }

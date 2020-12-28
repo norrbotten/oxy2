@@ -39,10 +39,21 @@ namespace Oxy::Integrators {
       void reset() {
         for (std::size_t i = 0; i < NumVertexParams; i++)
           m_params[i] = random<FloatType>(0, 1);
+
+        m_contribution = 0.0;
       }
 
-      bool mutate(FloatType illum) {
-        if (random<FloatType>(0, 1) > (0.99 - glm::exp(-(illum + 1.0)))) {
+      bool mutate(FloatType contribution) {
+        // i have no idea what im doing lmao
+
+        if (m_contribution == 0.0)
+          m_contribution = contribution;
+        else
+          m_contribution += (contribution - m_contribution) * 0.25;
+
+        auto a = 1.0 - glm::exp(-contribution);
+
+        if (random<FloatType>(0, 1) > a) {
           reset();
           return true;
         }
@@ -74,7 +85,7 @@ namespace Oxy::Integrators {
 
     private:
       FloatType m_params[NumVertexParams];
-      FloatType m_illum;
+      FloatType m_contribution;
     };
 
     class Path {
@@ -87,18 +98,12 @@ namespace Oxy::Integrators {
           m_path.push_back(Vertex());
           m_path.back().reset();
         }
-
-        m_illum = 1.0;
       }
-
-      void set_illum(FloatType illum) { m_illum = illum; }
-      auto illum() const { return m_illum; }
 
       auto& vertex(int index) { return m_path[index]; }
 
     private:
       std::vector<Vertex> m_path;
-      FloatType           m_illum;
     };
 
   } // namespace PSSMLT
@@ -113,7 +118,7 @@ namespace Oxy::Integrators {
 
       SingleRay current_ray = ray;
 
-      const static auto ambient_energy = Color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0) * 0.02;
+      const static auto ambient_energy = Color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0) * 0.01;
 
       Color color(0.0);
       Color throughput(1.0);
@@ -128,7 +133,6 @@ namespace Oxy::Integrators {
         }
 
         auto& vertex = path.vertex(n);
-        vertex.mutate(path.illum());
 
         auto& obj   = isect.object;
         auto& mater = obj->material();
@@ -148,7 +152,10 @@ namespace Oxy::Integrators {
         throughput *= 1.0 / p;
       }
 
-      path.set_illum(color.luminance());
+      for (int n = 0; n < m_max_bounces; n++) {
+        auto& vertex = path.vertex(n);
+        vertex.mutate(15.0 * color.luminance());
+      }
 
       return color;
     }

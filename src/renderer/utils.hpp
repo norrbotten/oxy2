@@ -1,6 +1,9 @@
 #pragma once
 
+#include <iomanip>
 #include <random>
+#include <sstream>
+#include <string>
 
 #include "renderer/types.hpp"
 
@@ -218,6 +221,28 @@ namespace Oxy {
 
     auto step = glm::max(10.0, (double)current_samples * 0.1);
     return current_samples + step;
+  }
+
+  /*
+    Formats seconds into hours, minutes and seconds
+  */
+  inline std::string format_time(int time_seconds) {
+    std::ostringstream ss;
+
+    auto hours   = time_seconds / 3600;
+    auto minutes = (time_seconds / 60) % 60;
+    auto seconds = time_seconds % 60;
+
+    ss << std::setw(2) << std::setfill('0');
+    ss << hours << ":";
+
+    ss << std::setw(2) << std::setfill('0');
+    ss << minutes << ":";
+
+    ss << std::setw(2) << std::setfill('0');
+    ss << seconds;
+
+    return ss.str();
   }
 
 } // namespace Oxy
