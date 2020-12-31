@@ -7,7 +7,7 @@ namespace Oxy::Tracing {
   // the earth is huge, the camera not so.
   class PreloadedNishitaEnvironment : public EnvironmentMap {
   public:
-    PreloadedNishitaEnvironment(const NishitaParameters& parameters = {}, int res = 2048)
+    PreloadedNishitaEnvironment(const NishitaParameters& parameters = {}, int res = 1024)
         : m_resolution(res) {
 
       m_map = new Color[res * res]();

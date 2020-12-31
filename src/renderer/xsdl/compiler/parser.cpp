@@ -324,8 +324,8 @@ namespace Oxy::XSDL::Compiler {
         return true;
       }
       else if (match_left_parenthesis() && match_expression() && match_right_parenthesis()) {
-        // m_ast.last_pushed_node()->hoist();
         m_ast.bubble();
+        m_ast.last_pushed_node()->hoist();
         return true;
       }
       else
