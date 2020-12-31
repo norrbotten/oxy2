@@ -36,6 +36,11 @@ namespace Oxy {
         , m_g((FloatType)g / 255.0)
         , m_b((FloatType)b / 255.0) {}
 
+    Color(const Vec3& vec)
+        : m_r(vec.x)
+        , m_g(vec.y)
+        , m_b(vec.z) {}
+
     void to_chars(unsigned char& r, unsigned char& g, unsigned char& b) {
       r = (unsigned char)(255 * m_r);
       g = (unsigned char)(255 * m_g);

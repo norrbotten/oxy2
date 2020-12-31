@@ -12,7 +12,7 @@
 
 #include "renderer/netrender/httplib/http_server.hpp"
 
-#include "renderer/tracing/env_gradient.hpp"
+#include "renderer/tracing/environments/nishita.hpp"
 
 static bool break_loop = false;
 
@@ -28,8 +28,7 @@ int main() {
 
   Renderer renderer;
 
-  renderer.world().set_environment(
-      new Tracing::GradientEnvironment(Color(1.0, 0.0, 0.0), Color(0.0, 1.0, 0.0), 0.02));
+  renderer.world().set_environment(new Tracing::NishitaEnvironment());
 
   std::cout << "Loading file..\n";
   auto error = renderer.load_file("scenes/ground_plane.sdl");
@@ -38,6 +37,8 @@ int main() {
     std::cout << error.value() << "\n";
     return 1;
   }
+
+  /*
 
   {
     std::cout << "Loading mesh..\n";
@@ -67,6 +68,8 @@ int main() {
     renderer.world().add_object(obj);
   }
 
+  */
+
   std::cout << "Setting up integrator..\n";
   renderer.setup_integrator();
 
@@ -91,5 +94,5 @@ int main() {
 
   std::cout << "Render done. writing png\n";
 
-  renderer.save_png("images/ring_caustic2.png");
+  renderer.save_png("images/envmap1.png");
 }

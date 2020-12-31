@@ -49,6 +49,9 @@ Standford Dragon rendered with the PSSMLT integrator
 ![Monke](images/ring_caustic2.png)
 Blender Suzanne in a ring
 
+![Monke](images/envmap1.png)
+Nishita sky model
+
 ![Caustic](images/caustic.png)
 Different colored lights mixing through a sphere
 
