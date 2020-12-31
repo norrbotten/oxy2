@@ -17,7 +17,7 @@ namespace Oxy::Tracing {
 
   class NishitaEnvironment : public EnvironmentMap {
   public:
-    NishitaEnvironment(const NishitaParameters& parameters = NishitaParameters{})
+    NishitaEnvironment(const NishitaParameters& parameters = {})
         : m_params(parameters) {
 
       m_params.sun_direction = glm::normalize(m_params.sun_direction);

@@ -12,7 +12,7 @@
 
 #include "renderer/netrender/httplib/http_server.hpp"
 
-#include "renderer/tracing/environments/nishita.hpp"
+#include "renderer/tracing/environments/preloaded_nishita.hpp"
 
 static bool break_loop = false;
 
@@ -28,7 +28,7 @@ int main() {
 
   Renderer renderer;
 
-  renderer.world().set_environment(new Tracing::NishitaEnvironment());
+  renderer.world().set_environment(new Tracing::PreloadedNishitaEnvironment());
 
   std::cout << "Loading file..\n";
   auto error = renderer.load_file("scenes/ground_plane.sdl");
@@ -94,5 +94,5 @@ int main() {
 
   std::cout << "Render done. writing png\n";
 
-  renderer.save_png("images/envmap1.png");
+  renderer.save_png("images/envmap2.png");
 }
