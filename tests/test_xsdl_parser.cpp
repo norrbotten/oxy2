@@ -77,4 +77,19 @@ int main() {
       std::cout << "Exception: " << e.what() << "\n";
     }
   }
+
+  std::cout << "\n";
+
+  {
+    try {
+      Tokenizer tokenizer("\"aaaaaaa\"");
+      tokenizer.process();
+
+      for (auto& token : tokenizer.ctokens())
+        std::cout << token.stringify() << "\n";
+    }
+    catch (const TokenizationError& e) {
+      std::cout << "Exception: " << e.what() << "\n";
+    }
+  }
 }

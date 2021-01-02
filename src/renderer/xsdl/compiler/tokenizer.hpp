@@ -14,6 +14,18 @@ namespace Oxy::XSDL::Compiler {
     TokenizationError(const std::string& error)
         : m_error(error) {}
 
+    TokenizationError(const std::string& error, int line, int col) {
+      std::stringstream ss;
+      ss << error << " @ " << line << ":" << col;
+      m_error = ss.str();
+    }
+
+    TokenizationError(const std::string& error, int line, int col, const std::string& expecting) {
+      std::stringstream ss;
+      ss << error << " @ line " << line << ":" << col << ", expecting " << expecting;
+      m_error = ss.str();
+    }
+
     virtual const char* what() const noexcept { return m_error.c_str(); }
 
   private:

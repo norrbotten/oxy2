@@ -44,7 +44,7 @@ namespace Oxy::XSDL::Compiler {
       else if (parse_squiggly_brackets())
         push_token(TokenType::SquigglyBracket);
       else
-        throw TokenizationError("Unknown syntax");
+        throw TokenizationError("Unknown syntax", m_line, m_column);
     }
   }
 
@@ -124,7 +124,7 @@ namespace Oxy::XSDL::Compiler {
             forward();
 
           if (!is_digit(ch()))
-            return false;
+            throw TokenizationError("Invalid number format", m_line, m_column, "exponent or digit");
 
           forward();
 
@@ -212,7 +212,7 @@ namespace Oxy::XSDL::Compiler {
         ;
 
       if (ch() != '"')
-        return false;
+        throw TokenizationError("Unescaped string", m_line, m_column, "'\"'");
 
       forward();
 
