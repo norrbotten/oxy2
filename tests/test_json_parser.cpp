@@ -1,4 +1,5 @@
 #define TEST_JSON_NON_AST
+#define TEST_JSON
 
 #include "renderer/netrender/jsonlib/parser.hpp"
 
