@@ -7,11 +7,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
 
-#define REF(field)                                                                                 \
-  auto& field() { return m_##field; }
-
-#define CREF(field)                                                                                \
-  const auto& field() const { return m_##field; }
+#include "renderer/macros.hpp"
 
 namespace Oxy {
 

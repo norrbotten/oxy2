@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "renderer/macros.hpp"
+
 #include "renderer/xsdl/compiler/token.hpp"
 
 namespace Oxy::XSDL::Compiler::AST { // sticking these in an extra namespace
@@ -28,7 +30,12 @@ namespace Oxy::XSDL::Compiler::AST { // sticking these in an extra namespace
   // NumberConstantToken
   class NumberConstantExpressionNode final : public ExpressionNode {
   public:
+    NumberConstantExpressionNode(const Token& token)
+        : m_token(token) {}
+
     virtual std::string class_name() const override { return "NumberExpressionNode"; }
+
+    REF(token); // dont need the semicolon, but the syntax highlighter is funny without it
 
   private:
     Token m_token;
@@ -39,7 +46,12 @@ namespace Oxy::XSDL::Compiler::AST { // sticking these in an extra namespace
   // StringConstantToken
   class StringConstantExpressionNode final : public ExpressionNode {
   public:
+    StringConstantExpressionNode(const Token& token)
+        : m_token(token) {}
+
     virtual std::string class_name() const override { return "StringConstantExpressionNode"; }
+
+    REF(token);
 
   private:
     Token m_token;
@@ -50,7 +62,12 @@ namespace Oxy::XSDL::Compiler::AST { // sticking these in an extra namespace
   // IdentifierToken
   class IdentifierExpressionNode final : public ExpressionNode {
   public:
+    IdentifierExpressionNode(const Token& token)
+        : m_token(token) {}
+
     virtual std::string class_name() const override { return "IdentifierExpressionNode"; }
+
+    REF(token);
 
   private:
     Token m_token;
@@ -65,7 +82,10 @@ namespace Oxy::XSDL::Compiler::AST { // sticking these in an extra namespace
       if (m_expression != nullptr)
         delete m_expression;
     }
+
     virtual std::string class_name() const override { return "ParenthesisExpressionNode"; }
+
+    REF(expression);
 
   private:
     ExpressionNode* m_expression{nullptr};
@@ -85,6 +105,9 @@ namespace Oxy::XSDL::Compiler::AST { // sticking these in an extra namespace
     }
     virtual std::string class_name() const override { return "IndexingExpressionNode"; }
 
+    REF(expression);
+    REF(index_expression);
+
   private:
     ExpressionNode* m_expression{nullptr};
     ExpressionNode* m_index_expression{nullptr};
@@ -101,7 +124,7 @@ namespace Oxy::XSDL::Compiler::AST { // sticking these in an extra namespace
 
   //
 
-  // StatementNode ...
+  // StatementNode ';' ... ';'
   class CompoundStatementNode final : public StatementNode {
   public:
     virtual ~CompoundStatementNode() {
@@ -110,6 +133,8 @@ namespace Oxy::XSDL::Compiler::AST { // sticking these in an extra namespace
     }
 
     virtual std::string class_name() const override { return "CompoundStatementNode"; }
+
+    REF(statements);
 
   private:
     std::vector<StatementNode*> m_statements;
@@ -130,6 +155,9 @@ namespace Oxy::XSDL::Compiler::AST { // sticking these in an extra namespace
 
     virtual std::string class_name() const override { return "ConditionalStatementNode"; }
 
+    REF(condition);
+    REF(body);
+
   private:
     ExpressionNode* m_condition{nullptr};
     StatementNode*  m_body{nullptr};
@@ -149,6 +177,9 @@ namespace Oxy::XSDL::Compiler::AST { // sticking these in an extra namespace
     }
 
     virtual std::string class_name() const override { return "WhileStatementNode"; }
+
+    REF(condition);
+    REF(body);
 
   private:
     ExpressionNode* m_condition{nullptr};
@@ -176,6 +207,11 @@ namespace Oxy::XSDL::Compiler::AST { // sticking these in an extra namespace
 
     virtual std::string class_name() const override { return "ForStatementNode"; }
 
+    REF(pre);
+    REF(condition);
+    REF(post);
+    REF(body);
+
   private:
     ExpressionNode* m_pre{nullptr};
     ExpressionNode* m_condition{nullptr};
@@ -185,7 +221,7 @@ namespace Oxy::XSDL::Compiler::AST { // sticking these in an extra namespace
 
   //
 
-  // 'return' ExpressionNode
+  // 'return' ExpressionNode ';'
   class ReturnStatementNode final : public StatementNode {
   public:
     virtual ~ReturnStatementNode() {
@@ -194,6 +230,8 @@ namespace Oxy::XSDL::Compiler::AST { // sticking these in an extra namespace
     }
 
     virtual std::string class_name() const override { return "ReturnStatementNode"; }
+
+    REF(expression);
 
   private:
     ExpressionNode* m_expression{nullptr};
@@ -214,9 +252,26 @@ namespace Oxy::XSDL::Compiler::AST { // sticking these in an extra namespace
 
     virtual std::string class_name() const override { return "VariableDefStatementNode"; }
 
+    REF(identifier);
+    REF(expression);
+
   private:
     IdentifierExpressionNode* m_identifier{nullptr};
     ExpressionNode*           m_expression{nullptr};
+  };
+
+  //
+
+  // ExpressionNode ';'
+
+  class ExpressionStatement final : public StatementNode {
+  public:
+    virtual std::string class_name() const override { return "ExpressionStatement"; }
+
+    REF(expression);
+
+  private:
+    ExpressionNode* m_expression{nullptr};
   };
 
   //

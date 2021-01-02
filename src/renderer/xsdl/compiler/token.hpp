@@ -23,6 +23,7 @@ namespace Oxy::XSDL::Compiler {
     Parenthesis,
     Bracket,
     SquigglyBracket,
+    Identifier,
   };
 
   constexpr const char* TokenTypeString[] = {
@@ -42,6 +43,7 @@ namespace Oxy::XSDL::Compiler {
     "Parenthesis",
     "Bracket",
     "SquigglyBracket",
+    "Identifier",
   };
   // clang-format on
 

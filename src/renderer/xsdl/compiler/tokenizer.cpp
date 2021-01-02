@@ -43,6 +43,8 @@ namespace Oxy::XSDL::Compiler {
         push_token(TokenType::Bracket);
       else if (parse_squiggly_brackets())
         push_token(TokenType::SquigglyBracket);
+      else if (parse_identifier())
+        push_token(TokenType::Identifier);
       else
         throw TokenizationError("Unknown syntax", m_line, m_column);
     }
