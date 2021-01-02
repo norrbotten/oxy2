@@ -37,7 +37,7 @@ int main() {
 
   {
     try {
-      Tokenizer tokenizer("if elseif else while ;\n&& || + ++");
+      Tokenizer tokenizer("if elif else while ;\n&& || + ++");
       tokenizer.process();
 
       for (auto& token : tokenizer.ctokens())
@@ -53,6 +53,21 @@ int main() {
   {
     try {
       Tokenizer tokenizer("true true false false");
+      tokenizer.process();
+
+      for (auto& token : tokenizer.ctokens())
+        std::cout << token.stringify() << "\n";
+    }
+    catch (const TokenizationError& e) {
+      std::cout << "Exception: " << e.what() << "\n";
+    }
+  }
+
+  std::cout << "\n";
+
+  {
+    try {
+      Tokenizer tokenizer("while true { break; }");
       tokenizer.process();
 
       for (auto& token : tokenizer.ctokens())

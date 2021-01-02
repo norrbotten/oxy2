@@ -9,7 +9,7 @@ namespace Oxy::XSDL::Compiler {
 
     while (!eof()) {
       skip_whitespace();
-      m_streamer.discard();
+      discard();
 
       if (parse_end_of_statement())
         push_token(TokenType::EndOfStatement);
@@ -23,12 +23,26 @@ namespace Oxy::XSDL::Compiler {
         push_token(TokenType::Operator);
       else if (parse_while())
         push_token(TokenType::While);
+      else if (parse_for())
+        push_token(TokenType::For);
       else if (parse_if())
         push_token(TokenType::If);
       else if (parse_elseif())
         push_token(TokenType::ElseIf);
       else if (parse_else())
         push_token(TokenType::Else);
+      else if (parse_break())
+        push_token(TokenType::Break);
+      else if (parse_continue())
+        push_token(TokenType::Continue);
+      else if (parse_break())
+        push_token(TokenType::Break);
+      else if (parse_parenthesis())
+        push_token(TokenType::Parenthesis);
+      else if (parse_brackets())
+        push_token(TokenType::Bracket);
+      else if (parse_squiggly_brackets())
+        push_token(TokenType::SquigglyBracket);
       else
         throw TokenizationError("Unknown syntax");
     }
@@ -241,9 +255,9 @@ namespace Oxy::XSDL::Compiler {
     });
   }
 
-  bool Tokenizer::parse_while() {
+  bool Tokenizer::parse_keyword(const char* word) {
     return match([&] {
-      if (parse_identifier() && token() == "while") {
+      if (parse_identifier() && token() == word) {
         return true;
       }
 
@@ -251,9 +265,24 @@ namespace Oxy::XSDL::Compiler {
     });
   }
 
-  bool Tokenizer::parse_if() {
+  bool Tokenizer::parse_while() { return parse_keyword("while"); }
+
+  bool Tokenizer::parse_for() { return parse_keyword("for"); }
+
+  bool Tokenizer::parse_if() { return parse_keyword("if"); }
+
+  bool Tokenizer::parse_elseif() { return parse_keyword("elif"); }
+
+  bool Tokenizer::parse_else() { return parse_keyword("else"); }
+
+  bool Tokenizer::parse_break() { return parse_keyword("break"); }
+
+  bool Tokenizer::parse_continue() { return parse_keyword("continue"); }
+
+  bool Tokenizer::parse_parenthesis() {
     return match([&] {
-      if (parse_identifier() && token() == "if") {
+      if (ch() == '(' || ch() == ')') {
+        forward();
         return true;
       }
 
@@ -261,9 +290,10 @@ namespace Oxy::XSDL::Compiler {
     });
   }
 
-  bool Tokenizer::parse_elseif() {
+  bool Tokenizer::parse_brackets() {
     return match([&] {
-      if (parse_identifier() && token() == "elseif") {
+      if (ch() == '[' || ch() == ']') {
+        forward();
         return true;
       }
 
@@ -271,9 +301,10 @@ namespace Oxy::XSDL::Compiler {
     });
   }
 
-  bool Tokenizer::parse_else() {
+  bool Tokenizer::parse_squiggly_brackets() {
     return match([&] {
-      if (parse_identifier() && token() == "else") {
+      if (ch() == '{' || ch() == '}') {
+        forward();
         return true;
       }
 

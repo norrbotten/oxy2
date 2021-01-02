@@ -84,12 +84,15 @@ namespace Oxy::XSDL::Compiler {
 
     bool parse_operator();
 
+    bool parse_keyword(const char* word);
+
     bool parse_while();
+    bool parse_for();
     bool parse_if();
     bool parse_elseif();
     bool parse_else();
-
-    bool parse_keyword();
+    bool parse_break();
+    bool parse_continue();
 
     bool parse_parenthesis();
     bool parse_brackets();

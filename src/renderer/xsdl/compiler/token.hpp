@@ -17,7 +17,12 @@ namespace Oxy::XSDL::Compiler {
     If,
     ElseIf,
     Else,
-    Keyword,
+    Break,
+    Continue,
+    OtherKeyword,
+    Parenthesis,
+    Bracket,
+    SquigglyBracket,
   };
 
   constexpr const char* TokenTypeString[] = {
@@ -31,7 +36,12 @@ namespace Oxy::XSDL::Compiler {
     "If",
     "ElseIf",
     "Else",
-    "Keyword",
+    "Break",
+    "Continue",
+    "OtherKeyword",
+    "Parenthesis",
+    "Bracket",
+    "SquigglyBracket",
   };
   // clang-format on
 
