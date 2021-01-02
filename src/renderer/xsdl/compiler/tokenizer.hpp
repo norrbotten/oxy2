@@ -37,6 +37,8 @@ namespace Oxy::XSDL::Compiler {
     auto forward(int steps = 1) { return m_streamer.forward(steps); }
     auto discard() { return m_streamer.discard(); }
 
+    auto token() const { return m_streamer.get_parsed(); }
+
     void skip_whitespace() {
       while (!eof()) {
         if (ch() == ' ' || ch() == '\t') {
@@ -71,6 +73,8 @@ namespace Oxy::XSDL::Compiler {
 
       return true;
     }
+
+    bool parse_identifier();
 
     bool parse_end_of_statement();
 

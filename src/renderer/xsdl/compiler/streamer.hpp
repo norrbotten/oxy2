@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 #include <utility>
 
@@ -42,6 +43,13 @@ namespace Oxy::XSDL::Compiler {
       m_consume = m_position;
 
       return {str, m_position - m_last_consume_pos};
+    }
+
+    std::string get_parsed() const {
+      if (m_position == m_consume)
+        return "";
+
+      return m_input.substr(m_consume, m_position - m_consume);
     }
 
     void discard() { m_consume = m_position; }

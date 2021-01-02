@@ -34,6 +34,20 @@ namespace Oxy::XSDL::Compiler {
     }
   }
 
+  bool Tokenizer::parse_identifier() {
+    return match([&] {
+      if (!is_valid_first_identifier_char(ch()))
+        return false;
+
+      forward();
+
+      while (is_valid_identifier_char(ch()))
+        forward();
+
+      return true;
+    });
+  }
+
   bool Tokenizer::parse_end_of_statement() {
     return match([&] {
       if (ch() == ';') {
@@ -47,12 +61,11 @@ namespace Oxy::XSDL::Compiler {
 
   bool Tokenizer::parse_boolean() {
     return match([&] {
-      if (peek(0, 4) == "true") {
-        forward(4);
+      if (match([&] { return parse_identifier() && token() == "true"; })) {
         return true;
       }
-      else if (peek(0, 5) == "false") {
-        forward(5);
+
+      if (match([&] { return parse_identifier() && token() == "false"; })) {
         return true;
       }
 
@@ -216,6 +229,10 @@ namespace Oxy::XSDL::Compiler {
       for (auto& str : Operators) {
         if (peek(0, strlen(str)) == str) {
           forward(strlen(str));
+
+          if (match([&] { return parse_operator(); }))
+            return false;
+
           return true;
         }
       }
@@ -226,8 +243,7 @@ namespace Oxy::XSDL::Compiler {
 
   bool Tokenizer::parse_while() {
     return match([&] {
-      if (peek(0, 5) == "while") {
-        forward(5);
+      if (parse_identifier() && token() == "while") {
         return true;
       }
 
@@ -237,8 +253,7 @@ namespace Oxy::XSDL::Compiler {
 
   bool Tokenizer::parse_if() {
     return match([&] {
-      if (peek(0, 2) == "if") {
-        forward(2);
+      if (parse_identifier() && token() == "if") {
         return true;
       }
 
@@ -248,8 +263,7 @@ namespace Oxy::XSDL::Compiler {
 
   bool Tokenizer::parse_elseif() {
     return match([&] {
-      if (peek(0, 6) == "elseif") {
-        forward(6);
+      if (parse_identifier() && token() == "elseif") {
         return true;
       }
 
@@ -259,8 +273,7 @@ namespace Oxy::XSDL::Compiler {
 
   bool Tokenizer::parse_else() {
     return match([&] {
-      if (peek(0, 4) == "else") {
-        forward(4);
+      if (parse_identifier() && token() == "else") {
         return true;
       }
 

@@ -52,7 +52,7 @@ int main() {
 
   {
     try {
-      Tokenizer tokenizer("truetruefalsefalse"); // this is dumb, cuz its valid
+      Tokenizer tokenizer("true true false false");
       tokenizer.process();
 
       for (auto& token : tokenizer.ctokens())
