@@ -33,6 +33,7 @@ namespace Oxy::XSDL::Compiler {
   private:
     auto ch() { return m_streamer.ch(); }
     auto eof() { return m_streamer.eof(); }
+    auto peek(unsigned int o = 0, unsigned int l = 1) { return m_streamer.peek(o, l); }
     auto forward(int steps = 1) { return m_streamer.forward(steps); }
     auto discard() { return m_streamer.discard(); }
 
@@ -71,8 +72,22 @@ namespace Oxy::XSDL::Compiler {
       return true;
     }
 
+    bool parse_boolean();
     bool parse_number();
     bool parse_string();
+
+    bool parse_operator();
+
+    bool parse_while();
+    bool parse_if();
+    bool parse_elseif();
+    bool parse_else();
+
+    bool parse_keyword();
+
+    bool parse_parenthesis();
+    bool parse_brackets();
+    bool parse_squiggly_brackets();
 
   private:
     Streamer           m_streamer;

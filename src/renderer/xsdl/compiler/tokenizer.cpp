@@ -7,14 +7,32 @@ namespace Oxy::XSDL::Compiler {
 
     while (!eof()) {
       skip_whitespace();
+      m_streamer.discard();
 
-      if (parse_number())
+      if (parse_boolean())
+        push_token(TokenType::BooleanConstant);
+      else if (parse_number())
         push_token(TokenType::NumberConstant);
       else if (parse_string())
         push_token(TokenType::StringConstant);
       else
         throw TokenizationError("Unknown syntax");
     }
+  }
+
+  bool Tokenizer::parse_boolean() {
+    return match([&] {
+      if (peek(0, 4) == "true") {
+        forward(4);
+        return true;
+      }
+      else if (peek(0, 5) == "false") {
+        forward(5);
+        return true;
+      }
+
+      return false;
+    });
   }
 
   bool Tokenizer::parse_number() {
@@ -133,8 +151,6 @@ namespace Oxy::XSDL::Compiler {
     };
 
     return match([&] {
-      discard();
-
       if (ch() != '"')
         return false;
 
