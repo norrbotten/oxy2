@@ -72,6 +72,8 @@ namespace Oxy::XSDL::Compiler {
       return true;
     }
 
+    bool parse_end_of_statement();
+
     bool parse_boolean();
     bool parse_number();
     bool parse_string();

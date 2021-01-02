@@ -1,5 +1,7 @@
 #include "renderer/xsdl/compiler/tokenizer.hpp"
 
+#include <cstring>
+
 namespace Oxy::XSDL::Compiler {
 
   void Tokenizer::process() {
@@ -9,15 +11,38 @@ namespace Oxy::XSDL::Compiler {
       skip_whitespace();
       m_streamer.discard();
 
-      if (parse_boolean())
+      if (parse_end_of_statement())
+        push_token(TokenType::EndOfStatement);
+      else if (parse_boolean())
         push_token(TokenType::BooleanConstant);
       else if (parse_number())
         push_token(TokenType::NumberConstant);
       else if (parse_string())
         push_token(TokenType::StringConstant);
+      else if (parse_operator())
+        push_token(TokenType::Operator);
+      else if (parse_while())
+        push_token(TokenType::While);
+      else if (parse_if())
+        push_token(TokenType::If);
+      else if (parse_elseif())
+        push_token(TokenType::ElseIf);
+      else if (parse_else())
+        push_token(TokenType::Else);
       else
         throw TokenizationError("Unknown syntax");
     }
+  }
+
+  bool Tokenizer::parse_end_of_statement() {
+    return match([&] {
+      if (ch() == ';') {
+        forward();
+        return true;
+      }
+
+      return false;
+    });
   }
 
   bool Tokenizer::parse_boolean() {
@@ -165,6 +190,81 @@ namespace Oxy::XSDL::Compiler {
       forward();
 
       return true;
+    });
+  }
+
+  bool Tokenizer::parse_operator() {
+    // clang-format off
+    constexpr const char* Operators[] = {
+      "++",
+      "--",
+      "**",
+      "==",
+      "||",
+      "&&",
+      "*",
+      "/",
+      "+",
+      "-",
+      "=",
+    };
+    // clang-format on
+
+    // dont actually need the match here since we dont move anywhere in a failing case
+    // just keeping it for styles sake
+    return match([&] {
+      for (auto& str : Operators) {
+        if (peek(0, strlen(str)) == str) {
+          forward(strlen(str));
+          return true;
+        }
+      }
+
+      return false;
+    });
+  }
+
+  bool Tokenizer::parse_while() {
+    return match([&] {
+      if (peek(0, 5) == "while") {
+        forward(5);
+        return true;
+      }
+
+      return false;
+    });
+  }
+
+  bool Tokenizer::parse_if() {
+    return match([&] {
+      if (peek(0, 2) == "if") {
+        forward(2);
+        return true;
+      }
+
+      return false;
+    });
+  }
+
+  bool Tokenizer::parse_elseif() {
+    return match([&] {
+      if (peek(0, 6) == "elseif") {
+        forward(6);
+        return true;
+      }
+
+      return false;
+    });
+  }
+
+  bool Tokenizer::parse_else() {
+    return match([&] {
+      if (peek(0, 4) == "else") {
+        forward(4);
+        return true;
+      }
+
+      return false;
     });
   }
 

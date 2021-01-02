@@ -32,4 +32,34 @@ int main() {
       std::cout << "Exception: " << e.what() << "\n";
     }
   }
+
+  std::cout << "\n";
+
+  {
+    try {
+      Tokenizer tokenizer("if elseif else while ;\n&& || + ++");
+      tokenizer.process();
+
+      for (auto& token : tokenizer.ctokens())
+        std::cout << token.stringify() << "\n";
+    }
+    catch (const TokenizationError& e) {
+      std::cout << "Exception: " << e.what() << "\n";
+    }
+  }
+
+  std::cout << "\n";
+
+  {
+    try {
+      Tokenizer tokenizer("truetruefalsefalse"); // this is dumb, cuz its valid
+      tokenizer.process();
+
+      for (auto& token : tokenizer.ctokens())
+        std::cout << token.stringify() << "\n";
+    }
+    catch (const TokenizationError& e) {
+      std::cout << "Exception: " << e.what() << "\n";
+    }
+  }
 }

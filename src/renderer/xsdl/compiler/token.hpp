@@ -7,6 +7,7 @@ namespace Oxy::XSDL::Compiler {
 
   // clang-format off
   enum class TokenType {
+    EndOfStatement,
     BooleanConstant,
     NumberConstant,
     StringConstant,
@@ -14,12 +15,13 @@ namespace Oxy::XSDL::Compiler {
     While,
     For,
     If,
-    IfElse,
+    ElseIf,
     Else,
     Keyword,
   };
 
   constexpr const char* TokenTypeString[] = {
+    "EndOfStatement",
     "BooleanConstant",
     "NumberConstant",
     "StringConstant",
@@ -27,7 +29,7 @@ namespace Oxy::XSDL::Compiler {
     "While",
     "For",
     "If",
-    "IfElse",
+    "ElseIf",
     "Else",
     "Keyword",
   };
