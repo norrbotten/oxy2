@@ -82,6 +82,7 @@ namespace Oxy::XSDL::Compiler {
     bool build_parenthesis_expression();
     bool build_indexing_expression();
 
+    bool build_expression_non_leftrec_cases();
     bool build_expression();
 
     bool build_compound_statement();

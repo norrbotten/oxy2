@@ -75,6 +75,8 @@ namespace Oxy::XSDL::Compiler {
   }
 
   bool ASTBuilder::build_indexing_expression() {
+    return false;
+
     if (end_of_tokens())
       return false;
 
@@ -90,9 +92,8 @@ namespace Oxy::XSDL::Compiler {
           else
             return false;
 
-          if (!build_expression()) {
+          if (!build_expression())
             return false;
-          }
 
           if (auto t = matches(TokenType::Bracket, "]"); t.valid())
             forward();
@@ -117,28 +118,30 @@ namespace Oxy::XSDL::Compiler {
       pop(); // pop IndexingExpressionNode
       return false;
     }
+  } // namespace Oxy::XSDL::Compiler
+
+  bool ASTBuilder::build_expression_non_leftrec_cases() {
+    return match([&] {
+      if (build_number_literal_expression())
+        return true;
+      else if (build_string_literal_expression())
+        return true;
+      else if (build_identifier_expression())
+        return true;
+      else if (build_parenthesis_expression())
+        return true;
+      else
+        return false;
+    });
   }
 
   bool ASTBuilder::build_expression() {
-    if (match([&] {
-          if (build_number_literal_expression())
-            return true;
-          else if (build_string_literal_expression())
-            return true;
-          else if (build_identifier_expression())
-            return true;
-          else if (build_parenthesis_expression())
-            return true;
-          else if (build_indexing_expression())
-            return true;
-          else
-            return false;
-        })) {
-      return true;
-    }
-    else {
-      return false;
-    }
+    return match([&] {
+      if (build_indexing_expression())
+        return true;
+      else
+        return false;
+    });
   }
 
   bool ASTBuilder::build_compound_statement() {
