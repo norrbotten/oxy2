@@ -1,50 +1,24 @@
-#include "renderer/xsdl/xsdl.hpp"
 
 #include <iostream>
 
+#include "renderer/xsdl/compiler/ast.hpp"
+#include "renderer/xsdl/compiler/tokenizer.hpp"
+
 int main() {
-  using namespace Oxy::XSDL;
+  using namespace Oxy::XSDL::Compiler;
 
   {
-    Compiler::Parser parser("5");
-    if (parser.match_expression()) {
-      std::cout << parser.ast()->dump();
-    }
-  }
+    Tokenizer tokenizer("{;;;;}");
+    tokenizer.process();
 
-  std::cout << "\n";
+    for (auto& token : tokenizer.ctokens())
+      std::cout << token.stringify() << "\n";
 
-  {
-    Compiler::Parser parser("5.0");
-    if (parser.match_expression()) {
-      std::cout << parser.ast()->dump();
-    }
-  }
+    ASTBuilder ast_builder(tokenizer.ctokens());
 
-  std::cout << "\n";
-
-  {
-    Compiler::Parser parser("abc");
-    if (parser.match_expression()) {
-      std::cout << parser.ast()->dump();
-    }
-  }
-
-  std::cout << "\n";
-
-  {
-    Compiler::Parser parser("(abc)");
-    if (parser.match_expression()) {
-      std::cout << parser.ast()->dump();
-    }
-  }
-
-  std::cout << "\n";
-
-  {
-    Compiler::Parser parser("((abc))");
-    if (parser.match_expression()) {
-      std::cout << parser.ast()->dump();
+    if (ast_builder.process()) {
+      auto node = ast_builder.ast();
+      std::cout << node->class_name() << "\n";
     }
   }
 }

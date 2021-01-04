@@ -245,4 +245,36 @@ namespace Oxy {
     return ss.str();
   }
 
+  inline bool is_digit_1_to_9(char ch) { return ch >= '1' && ch <= '9'; }
+  inline bool is_digit(char ch) { return ch >= '0' && ch <= '9'; }
+
+  inline bool is_hex_digit(char ch) {
+    return (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F');
+  }
+
+  inline bool is_control_char(char ch) { return ch < 32; }
+
+  inline bool is_valid_escape(char ch) {
+    switch (ch) {
+    case '\\':
+    case '"':
+    case 'b':
+    case 'f':
+    case 'n':
+    case 'r':
+    case 't':
+    case 'u': return true;
+    default: return false;
+    }
+  }
+
+  inline bool is_valid_identifier_char(char ch) {
+    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') ||
+           ch == '_' || ch == '$';
+  }
+
+  inline bool is_valid_first_identifier_char(char ch) {
+    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || ch == '$';
+  }
+
 } // namespace Oxy

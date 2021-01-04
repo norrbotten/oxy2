@@ -1,41 +1,95 @@
-#include "renderer/xsdl/xsdl.hpp"
-
 #include <iostream>
 
-#define CASE(name, method, input)                                                                  \
-  {                                                                                                \
-    std::cout << name << " - ";                                                                    \
-    Compiler::Parser parser(input);                                                                \
-    auto             ident = parser.method();                                                      \
-    if (ident.has_value())                                                                         \
-      std::cout << ident.value() << "\n";                                                          \
-    else                                                                                           \
-      std::cout << "***Did not match***\n";                                                        \
-  }
+#include "renderer/xsdl/compiler/tokenizer.hpp"
 
 int main() {
-  using namespace Oxy::XSDL;
+  using namespace Oxy::XSDL::Compiler;
 
-  CASE("parse identifier", parse_identifier, "_abc12$hello");
-  CASE("parse identifier", parse_identifier, "____");
+  {
+    try {
+      Tokenizer tokenizer("1000 3000 \"a\\nbc\"");
+      tokenizer.process();
 
-  CASE("parse integer literal", parse_integer_literal, "123");
-  CASE("parse integer literal", parse_integer_literal, "-123");
-  CASE("parse integer literal", parse_integer_literal, "-5");
+      for (auto& token : tokenizer.ctokens())
+        std::cout << token.stringify() << "\n";
+    }
+    catch (const TokenizationError& e) {
+      std::cout << "Exception: " << e.what() << "\n";
+    }
+  }
 
-  CASE("parse keyword", parse_keyword, "if");
-  CASE("parse keyword", parse_keyword, "else");
-  CASE("parse keyword", parse_keyword, "else if");
-  CASE("parse keyword", parse_keyword, "while");
-  CASE("parse keyword", parse_keyword, "for");
-  CASE("parse keyword", parse_keyword, "return");
+  std::cout << "\n";
 
-  CASE("parse decimal literal", parse_decimal_literal, "1.0");
-  CASE("parse decimal literal", parse_decimal_literal, "1.0e4");
-  CASE("parse decimal literal", parse_decimal_literal, "3e4");
-  CASE("parse decimal literal", parse_decimal_literal, "0.5e2");
-  CASE("parse decimal literal", parse_decimal_literal, "10.0");
+  {
+    try {
+      Tokenizer tokenizer("true false true 1 2 3\n2 3 5");
+      tokenizer.process();
 
-  CASE("parse operator", parse_operator, "+");
-  CASE("parse operator", parse_operator, "++");
+      for (auto& token : tokenizer.ctokens())
+        std::cout << token.stringify() << "\n";
+    }
+    catch (const TokenizationError& e) {
+      std::cout << "Exception: " << e.what() << "\n";
+    }
+  }
+
+  std::cout << "\n";
+
+  {
+    try {
+      Tokenizer tokenizer("if elif else while ;\n&& || + ++");
+      tokenizer.process();
+
+      for (auto& token : tokenizer.ctokens())
+        std::cout << token.stringify() << "\n";
+    }
+    catch (const TokenizationError& e) {
+      std::cout << "Exception: " << e.what() << "\n";
+    }
+  }
+
+  std::cout << "\n";
+
+  {
+    try {
+      Tokenizer tokenizer("true true false false");
+      tokenizer.process();
+
+      for (auto& token : tokenizer.ctokens())
+        std::cout << token.stringify() << "\n";
+    }
+    catch (const TokenizationError& e) {
+      std::cout << "Exception: " << e.what() << "\n";
+    }
+  }
+
+  std::cout << "\n";
+
+  {
+    try {
+      Tokenizer tokenizer("while true { break; }");
+      tokenizer.process();
+
+      for (auto& token : tokenizer.ctokens())
+        std::cout << token.stringify() << "\n";
+    }
+    catch (const TokenizationError& e) {
+      std::cout << "Exception: " << e.what() << "\n";
+    }
+  }
+
+  std::cout << "\n";
+
+  {
+    try {
+      Tokenizer tokenizer("\"aaaaaaa\"");
+      tokenizer.process();
+
+      for (auto& token : tokenizer.ctokens())
+        std::cout << token.stringify() << "\n";
+    }
+    catch (const TokenizationError& e) {
+      std::cout << "Exception: " << e.what() << "\n";
+    }
+  }
 }

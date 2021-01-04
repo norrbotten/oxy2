@@ -1,20 +1,74 @@
 #pragma once
 
-#include <iostream>
+#include <string>
 
-#include "renderer/common/ast_builder.hpp"
-#include "renderer/common/parser.hpp"
-
-#include "renderer/netrender/jsonlib/ast_node.hpp"
+#include "renderer/netrender/jsonlib/ast_builder.hpp"
+#include "renderer/utils.hpp"
 
 namespace Oxy::NetRender::JSON {
 
-  using ASTBuilder = Common::ASTBuilder<ASTNode>;
-
-  class Parser final : public Common::Parser<ASTBuilder> {
+  class Parser {
   public:
     Parser(const std::string& input)
-        : Common::Parser<ASTBuilder>(input) {}
+        : m_input(input)
+        , m_position(0)
+        , m_consume_ptr(0) {}
+
+  protected:
+    void forward(unsigned int step = 1) { m_position += step; }
+
+    bool eof(unsigned int offset = 0) { return (m_position + offset) >= m_input.size(); }
+
+    char ch(unsigned int offset = 0) {
+      if (eof(offset))
+        return '\0';
+
+      return m_input.at(m_position + offset);
+    }
+
+    std::string peek(unsigned int offset = 0, unsigned int length = 1) {
+      return m_input.substr(m_position + offset, length);
+    }
+
+    void discard() { m_consume_ptr = m_position; }
+
+    std::string consume() {
+      if (m_position == m_consume_ptr)
+        return "";
+
+      auto str      = m_input.substr(m_consume_ptr, m_position - m_consume_ptr);
+      m_consume_ptr = m_position;
+
+      return str;
+    }
+
+    template <typename MatcherFunctor>
+    bool match(MatcherFunctor matcher) {
+      int pos  = m_position;
+      int cpos = m_consume_ptr;
+
+      auto res = matcher();
+      if (!res) {
+        m_position    = pos;
+        m_consume_ptr = cpos;
+      }
+
+      return res;
+    }
+
+    template <typename MatcherFunctor>
+    bool optional(MatcherFunctor matcher) {
+      return matcher();
+    }
+
+#ifdef TEST_JSON
+  public:
+#endif
+    void skip_whitespace() {
+      while (ch() == ' ' || ch() == '\n' || ch() == '\r' || ch() == '\t') {
+        forward();
+      }
+    }
 
     bool match_number_sign() {
       return match([&] {
@@ -30,10 +84,10 @@ namespace Oxy::NetRender::JSON {
         if (ch() == '.') {
           forward();
 
-          if (!Common::is_digit(ch()))
+          if (!is_digit(ch()))
             return false;
 
-          while (Common::is_digit(ch()))
+          while (is_digit(ch()))
             forward();
 
           return true;
@@ -51,12 +105,12 @@ namespace Oxy::NetRender::JSON {
           if (ch() == '-' || ch() == '+')
             forward();
 
-          if (!Common::is_digit(ch()))
+          if (!is_digit(ch()))
             return false;
 
           forward();
 
-          while (Common::is_digit(ch()))
+          while (is_digit(ch()))
             forward();
 
           return true;
@@ -73,12 +127,12 @@ namespace Oxy::NetRender::JSON {
           return true;
         }
         else {
-          if (!Common::is_digit_1_to_9(ch()))
+          if (!is_digit_1_to_9(ch()))
             return false;
 
           forward();
 
-          while (Common::is_digit(ch()))
+          while (is_digit(ch()))
             forward();
 
           return true;
@@ -111,7 +165,7 @@ namespace Oxy::NetRender::JSON {
     bool match_4_hex_digits() {
       return match([&] {
         for (int i = 0; i < 4; i++) {
-          if (!Common::is_hex_digit(ch()))
+          if (!is_hex_digit(ch()))
             return false;
 
           forward();
@@ -130,7 +184,7 @@ namespace Oxy::NetRender::JSON {
             forward();
             return match_4_hex_digits();
           }
-          else if (Common::is_valid_escape(ch())) {
+          else if (is_valid_escape(ch())) {
             forward();
             return true;
           }
@@ -144,7 +198,7 @@ namespace Oxy::NetRender::JSON {
 
     bool match_noncontrol_char() {
       return match([&] {
-        if (Common::is_control_char(ch()) || ch() == '"' || ch() == '\\')
+        if (is_control_char(ch()) || ch() == '"' || ch() == '\\')
           return false;
 
         forward();
@@ -404,11 +458,12 @@ namespace Oxy::NetRender::JSON {
       });
     }
 
-    bool parse() { return match_value(); }
-
+  public:
     auto ast() { return m_ast.ast(); }
 
-  private:
+    bool parse() { return match_value(); }
+
+  protected:
     std::string m_input;
     int         m_position, m_consume_ptr;
 

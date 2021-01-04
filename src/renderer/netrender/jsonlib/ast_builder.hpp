@@ -3,11 +3,12 @@
 #include <cassert>
 #include <vector>
 
-namespace Oxy::Common {
+#include "renderer/netrender/jsonlib/ast_node.hpp"
+
+namespace Oxy::NetRender::JSON {
 
   // TODO: some kind of preallocated pool of nodes to speed up ma dynamic memory
 
-  template <typename T>
   class ASTBuilder {
   public:
     ~ASTBuilder() {
@@ -40,7 +41,7 @@ namespace Oxy::Common {
       std::reverse(m_stack.end() - count - offset, m_stack.end() - offset);
     }
 
-    void push(T* node) {
+    void push(ASTNode* node) {
       m_stack.push_back(node);
       m_last_pushed_node = node;
     }
@@ -54,8 +55,8 @@ namespace Oxy::Common {
     auto ast() { return m_stack.size() > 0 ? m_stack.back() : nullptr; }
 
   private:
-    std::vector<T*> m_stack;
-    T*              m_last_pushed_node = nullptr;
+    std::vector<ASTNode*> m_stack;
+    ASTNode*              m_last_pushed_node = nullptr;
   };
 
-} // namespace Oxy::Common
+} // namespace Oxy::NetRender::JSON
