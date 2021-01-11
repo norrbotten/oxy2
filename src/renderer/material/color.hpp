@@ -120,4 +120,8 @@ namespace Oxy {
     FloatType m_r, m_g, m_b;
   };
 
+  inline std::ostream& operator<<(std::ostream& ofs, const Color& col) {
+    return ofs << "[" << col.r() << ", " << col.g() << ", " << col.b() << "]";
+  }
+
 } // namespace Oxy
