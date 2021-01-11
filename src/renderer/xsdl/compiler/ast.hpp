@@ -8,23 +8,6 @@
 
 namespace Oxy::XSDL::Compiler {
 
-  class TokenProxy {
-  public:
-    TokenProxy() = default;
-    TokenProxy(const Token& token)
-        : m_token(token)
-        , m_token_valid(true) {}
-
-    auto& token() const { return m_token; }
-    bool  valid() const { return m_token_valid; }
-
-    operator bool() { return m_token_valid; }
-
-  private:
-    Token m_token;
-    bool  m_token_valid{false};
-  };
-
   // ASTBuilder has a similar pattern to the tokenizer
   class ASTBuilder {
   public:

@@ -118,7 +118,7 @@ namespace Oxy::XSDL::Compiler {
       pop(); // pop IndexingExpressionNode
       return false;
     }
-  } // namespace Oxy::XSDL::Compiler
+  }
 
   bool ASTBuilder::build_expression_non_leftrec_cases() {
     return match([&] {
