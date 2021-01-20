@@ -38,6 +38,13 @@ namespace Oxy::Tracing {
       return m_sphere.center() + vec * m_sphere.radius();
     }
 
+    virtual SingleRay random_ray_from_surface() const override {
+      auto vec   = random_vector_on_unit_sphere();
+      auto point = m_sphere.center() + vec * (m_sphere.radius() + 1e-6);
+
+      return SingleRay{point, random_vector_on_hemisphere(vec)};
+    }
+
   private:
     Primitive::SpherePrimitive m_sphere;
   };

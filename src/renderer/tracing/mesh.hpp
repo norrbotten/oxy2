@@ -59,6 +59,24 @@ namespace Oxy::Tracing {
       return tri.p0() + a * (tri.p1() - tri.p0()) + b * (tri.p2() - tri.p0());
     }
 
+    virtual SingleRay random_ray_from_surface() const override {
+      // pick a random triangle
+      auto tri_n = random<int>(0, m_triangles.size() - 1);
+      auto tri   = m_triangles[tri_n];
+
+      auto a = random<FloatType>(0, 1);
+      auto b = random<FloatType>(0, 1);
+
+      if (a + b >= 1.0) {
+        a = 1.0 - a;
+        b = 1.0 - b;
+      }
+
+      auto point = tri.p0() + a * (tri.p1() - tri.p0()) + b * (tri.p2() - tri.p0());
+
+      return SingleRay{point, random_vector_on_hemisphere(tri.normal())};
+    }
+
   private:
     std::vector<Primitive::TrianglePrimitive> m_triangles;
     std::vector<Accel::AVX2PackedTriangles>   m_packed_triangles;

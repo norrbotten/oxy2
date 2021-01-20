@@ -18,7 +18,8 @@ namespace Oxy::Tracing {
   public:
     virtual IntersectionContext intersect_ray(const SingleRay& ray) = 0;
 
-    virtual Vec3 random_point_on_surface() const = 0;
+    virtual Vec3      random_point_on_surface() const = 0;
+    virtual SingleRay random_ray_from_surface() const = 0;
 
     REF(material);
 

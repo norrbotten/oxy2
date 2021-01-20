@@ -75,6 +75,14 @@ namespace Oxy::Tracing {
       return ctx;
     }
 
+    virtual Vec3 random_point_on_surface() const override {
+      assert(false); // cant really do this on an sdf
+    }
+
+    virtual SingleRay random_ray_from_surface() const override {
+      assert(false); // cant really do this on an sdf
+    }
+
   private:
     Vec3      m_origin;
     FloatType m_scale;

@@ -2,6 +2,7 @@
 
 #include "renderer/sdl/parser.hpp"
 
+#include "renderer/integrators/bdpt.hpp"
 #include "renderer/integrators/naive.hpp"
 #include "renderer/integrators/naive_implicit.hpp"
 #include "renderer/integrators/preview.hpp"
@@ -26,7 +27,7 @@ namespace Oxy {
   class Renderer {
   public:
     Renderer()
-        : m_integrator(new Integrators::PSSMLTIntegrator()) {}
+        : m_integrator(new Integrators::BDPTIntegrator()) {}
 
     std::optional<std::string> load_file(fs::path filename);
 

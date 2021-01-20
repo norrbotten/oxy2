@@ -52,6 +52,10 @@ namespace Oxy::Tracing {
       assert(false); // planes are infinitely large, cant really get a random point
     }
 
+    virtual SingleRay random_ray_from_surface() const override {
+      assert(false); // planes are infinitely large, cant really get a random point
+    }
+
   private:
     Primitive::PlanePrimitive m_plane;
 

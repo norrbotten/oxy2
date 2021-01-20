@@ -48,6 +48,11 @@ namespace Oxy::Tracing {
              b * (m_triangle.p2() - m_triangle.p0());
     }
 
+    virtual SingleRay random_ray_from_surface() const override {
+      auto point = this->random_point_on_surface();
+      return SingleRay{point, random_vector_on_hemisphere(m_triangle.normal())};
+    }
+
   private:
     Primitive::TrianglePrimitive m_triangle;
   };
