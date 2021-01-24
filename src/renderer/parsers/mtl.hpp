@@ -2,26 +2,27 @@
 
 #include <filesystem>
 #include <fstream>
+#include <unordered_map>
 #include <vector>
 
-#include "renderer/renderer.hpp"
-
-namespace Oxy::Parsers {
+namespace Oxy::Parsers::MTL {
 
   namespace fs = std::filesystem;
 
-  bool parse_mtl(fs::path path, Renderer& renderer) {
-    struct mtl_data {
-      std::string name;
+  struct Material {
+    std::string name;
 
-      double Ka[3];
-      double Kd[3];
-      double Ks[3];
+    double Ka[3];
+    double Kd[3];
+    double Ks[3];
 
-      double d;
-      double Tr; // 1 - d
-    };
+    double d;
+    double Tr; // 1 - d
+  };
 
+  using MaterialBucket = std::unordered_map<std::string, Material>;
+
+  bool parse_mtl(fs::path path, MaterialBucket& result) {
     std::ifstream infile(path, std::ios::binary);
     std::string   line;
 
@@ -31,4 +32,4 @@ namespace Oxy::Parsers {
     return false;
   }
 
-} // namespace Oxy::Parsers
+} // namespace Oxy::Parsers::MTL
