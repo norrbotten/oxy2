@@ -109,8 +109,8 @@ namespace Oxy {
 
       FloatType res = 0.0;
 
-      // emitted light (should do luminousity here instead)
-      res += (m_emission_energy.r() + m_emission_energy.g() + m_emission_energy.b()) / 3.0;
+      // emitted light
+      res += m_emission_energy.luminance();
 
       // diffuse bounce
       res += dot * m_roughness;

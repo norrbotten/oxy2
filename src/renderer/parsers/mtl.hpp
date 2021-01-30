@@ -12,12 +12,16 @@ namespace Oxy::Parsers::MTL {
   struct Material {
     std::string name;
 
-    double Ka[3];
-    double Kd[3];
-    double Ks[3];
+    double Ns{0};
+
+    double Ka[3]{0};
+    double Kd[3]{0};
+    double Ks[3]{0};
+    double Ke[3]{0};
+
+    double Ni{1.45};
 
     double d;
-    double Tr; // 1 - d
   };
 
   using MaterialBucket = std::unordered_map<std::string, Material>;
@@ -26,7 +30,23 @@ namespace Oxy::Parsers::MTL {
     std::ifstream infile(path, std::ios::binary);
     std::string   line;
 
+    Material current_material;
+    bool     first_material = true;
+
     while (std::getline(infile, line)) {
+      if (line.at(0) == '#')
+        continue;
+
+      else if (line.substr(0, 6) == "newmtl") {
+        if (!first_material)
+          result[current_material.name] = current_material;
+
+        if (first_material)
+          first_material = false;
+
+        current_material      = Material{};
+        current_material.name = line.substr(7);
+      }
     }
 
     return false;
