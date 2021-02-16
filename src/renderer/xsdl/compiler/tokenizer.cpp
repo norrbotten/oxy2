@@ -43,14 +43,14 @@ namespace Oxy::XSDL::Compiler {
         push_token(TokenType::Bracket);
       else if (parse_squiggly_brackets())
         push_token(TokenType::SquigglyBracket);
-      else if (parse_identifier())
+      else if (parse_identifier_or_keyword())
         push_token(TokenType::Identifier);
       else
         throw TokenizationError("Unknown syntax", m_line, m_column);
     }
   }
 
-  bool Tokenizer::parse_identifier() {
+  bool Tokenizer::parse_identifier_or_keyword() {
     return match([&] {
       if (!is_valid_first_identifier_char(ch()))
         return false;
@@ -77,11 +77,11 @@ namespace Oxy::XSDL::Compiler {
 
   bool Tokenizer::parse_boolean() {
     return match([&] {
-      if (match([&] { return parse_identifier() && token() == "true"; })) {
+      if (match([&] { return parse_identifier_or_keyword() && token() == "true"; })) {
         return true;
       }
 
-      if (match([&] { return parse_identifier() && token() == "false"; })) {
+      if (match([&] { return parse_identifier_or_keyword() && token() == "false"; })) {
         return true;
       }
 
@@ -259,7 +259,7 @@ namespace Oxy::XSDL::Compiler {
 
   bool Tokenizer::parse_keyword(const char* word) {
     return match([&] {
-      if (parse_identifier() && token() == word) {
+      if (parse_identifier_or_keyword() && token() == word) {
         return true;
       }
 

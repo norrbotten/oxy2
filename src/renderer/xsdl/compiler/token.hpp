@@ -25,6 +25,7 @@ namespace Oxy::XSDL::Compiler {
     Bracket,
     SquigglyBracket,
     Identifier,
+    ___INVALID___,
   };
 
   constexpr const char* TokenTypeString[] = {
@@ -45,6 +46,7 @@ namespace Oxy::XSDL::Compiler {
     "Bracket",
     "SquigglyBracket",
     "Identifier",
+    "___INVALID___",
   };
   // clang-format on
 
@@ -77,7 +79,7 @@ namespace Oxy::XSDL::Compiler {
         : m_token(token)
         , m_token_valid(true) {}
 
-    auto& token() const { return m_token; }
+    auto& get() const { return m_token; }
     bool  valid() const { return m_token_valid; }
 
     operator bool() { return m_token_valid; }

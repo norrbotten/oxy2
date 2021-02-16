@@ -1,6 +1,9 @@
 #pragma once
 
+#include <cstring>
+#include <fstream>
 #include <iomanip>
+#include <optional>
 #include <random>
 #include <sstream>
 #include <string>
@@ -290,6 +293,27 @@ namespace Oxy {
 
     res.push_back(s.substr(pos_start));
     return res;
+  }
+
+  inline std::optional<std::string> load_file_into_string(const std::string& filename) {
+    std::ifstream f(filename, std::ios::binary);
+
+    if (!f.good())
+      return {};
+
+    std::string ret;
+
+    char buf[1024];
+    while (!f.eof()) {
+      auto read = f.readsome(buf, 1023);
+      buf[read] = 0; // make sure it has a null termination
+      ret += buf;
+
+      if (!read)
+        break;
+    }
+
+    return ret;
   }
 
 } // namespace Oxy

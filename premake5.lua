@@ -45,8 +45,7 @@ test("test_http_server")
 test("test_json_parser")
 test("test_json_ast")
 test("test_json")
-test("test_xsdl_parser")
-test("test_xsdl_ast")
+test("test_xsdl_tokenizer")
 test("test_obj_parser")
 
 newaction {

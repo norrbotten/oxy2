@@ -68,7 +68,23 @@ namespace Oxy::XSDL::Compiler {
     }
 
     void push_token(TokenType type) {
+      /* clang-format off */
+      const auto valid_keywords = {
+        "let",
+        "const",
+        "func",
+      };
+      /* clang-format on */
+
       auto [literal, diff] = m_streamer.consume();
+
+      if (type == TokenType::Identifier) {
+        for (auto& keyword : valid_keywords) {
+          if (literal == keyword)
+            type = TokenType::OtherKeyword;
+        }
+      }
+
       m_tokens.push_back(Token{type, literal, m_line, m_column});
 
       m_column += diff + literal.size();
@@ -86,7 +102,7 @@ namespace Oxy::XSDL::Compiler {
       return true;
     }
 
-    bool parse_identifier();
+    bool parse_identifier_or_keyword();
 
     bool parse_end_of_statement();
 
