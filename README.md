@@ -49,6 +49,9 @@ Standford Dragon rendered with the PSSMLT integrator
 ![Monke](images/ring_caustic2.png)
 Blender Suzanne in a ring
 
+![Monke2](images/monke.png)
+Monke in a red and blue cornell box with a glossy wall
+
 ![Monke](images/envmap1.png)
 Nishita sky model
 

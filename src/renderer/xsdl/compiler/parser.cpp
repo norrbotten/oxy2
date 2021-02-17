@@ -75,6 +75,7 @@ namespace Oxy::XSDL::Compiler {
       }
     } break;
 
+    case ParserState::FunctionDeclExpression:
     case ParserState::Error: assert(!"bork");
     }
 

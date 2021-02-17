@@ -44,12 +44,6 @@ namespace Oxy::SDL {
     std::string path;
   };
 
-  enum class MaterialType {
-    Unset,
-    BSDF,
-    Emission,
-  };
-
   struct MaterialDeclarationData {
     std::string name;
     std::string texture;

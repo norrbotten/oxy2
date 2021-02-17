@@ -49,11 +49,11 @@ namespace Oxy::Integrators {
         if (m_contribution == 0.0)
           m_contribution = contribution;
         else
-          m_contribution += (contribution - m_contribution) * 0.25;
+          m_contribution += (contribution - m_contribution) * 0.125;
 
-        auto a = 1.0 - glm::exp(-contribution);
+        auto a = glm::exp(-m_contribution);
 
-        if (random<FloatType>(0, 1) > a) {
+        if (random<FloatType>(0, 1) < a) {
           reset();
           return true;
         }
@@ -126,7 +126,10 @@ namespace Oxy::Integrators {
 
         if (!isect.hit) {
           color += throughput * m_world.sample_environment(current_ray);
-          path.vertex(0).reset();
+
+          if (n < 3)
+            path.vertex(0).reset();
+
           break;
         }
 
@@ -138,7 +141,8 @@ namespace Oxy::Integrators {
         auto scatter =
             mater->scatter_impl(isect, vertex.get<0>(), vertex.get<1>(), vertex.get<2>());
 
-        color += throughput * scatter.energy;
+        color += throughput * scatter.energy *
+                 mater->pdf(current_ray.direction, isect.hitnormal, scatter.ray.direction);
 
         throughput *= scatter.absorption;
         current_ray = scatter.ray;
@@ -152,7 +156,7 @@ namespace Oxy::Integrators {
 
       for (int n = 0; n < m_max_bounces; n++) {
         auto& vertex = path.vertex(n);
-        vertex.mutate(15.0 * color.luminance());
+        vertex.mutate(1.0 * color.luminance());
       }
 
       return color;

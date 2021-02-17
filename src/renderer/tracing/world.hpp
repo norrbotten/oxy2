@@ -47,7 +47,7 @@ namespace Oxy::Tracing {
       auto len = glm::length(end - start);
       auto ray = SingleRay{start, (end - start) / len};
 
-      auto min = len;
+      auto min = len + 1e-6;
       for (auto&& obj : m_objects) {
         auto obj_ctx = obj->intersect_ray(ray);
 

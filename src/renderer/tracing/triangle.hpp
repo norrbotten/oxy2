@@ -45,12 +45,14 @@ namespace Oxy::Tracing {
       }
 
       return m_triangle.p0() + a * (m_triangle.p1() - m_triangle.p0()) +
-             b * (m_triangle.p2() - m_triangle.p0());
+             b * (m_triangle.p2() - m_triangle.p0()) + m_triangle.normal();
     }
 
     virtual SingleRay random_ray_from_surface() const override {
-      auto point = this->random_point_on_surface();
-      return SingleRay{point, random_vector_on_hemisphere(m_triangle.normal())};
+      const auto sign = random_sign<FloatType>();
+
+      auto point = this->random_point_on_surface() + m_triangle.normal() * sign * 1e-6;
+      return SingleRay{point, random_vector_on_hemisphere(m_triangle.normal() * sign)};
     }
 
   private:

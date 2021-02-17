@@ -12,7 +12,7 @@
 
 #include "renderer/netrender/httplib/http_server.hpp"
 
-#include "renderer/tracing/environments/preloaded_nishita.hpp"
+#include "renderer/tracing/environments/flat.hpp"
 
 static bool break_loop = false;
 
@@ -28,8 +28,9 @@ int main() {
 
   Renderer renderer;
 
-  renderer.world().set_environment(new Tracing::PreloadedNishitaEnvironment());
+  renderer.world().set_environment(new Tracing::FlatEnvironment(Color{0.0, 0.0, 0.0}));
 
+  /*
   std::cout << "Loading file..\n";
   auto error = renderer.load_file("scenes/ground_plane.sdl");
 
@@ -37,8 +38,6 @@ int main() {
     std::cout << error.value() << "\n";
     return 1;
   }
-
-  /*
 
   {
     std::cout << "Loading mesh..\n";
@@ -53,11 +52,20 @@ int main() {
 
     renderer.world().add_object(obj);
   }
+  */
+
+  std::cout << "Loading file..\n";
+  auto error = renderer.load_file("scenes/cornellbox.sdl");
+
+  if (error.has_value()) {
+    std::cout << error.value() << "\n";
+    return 1;
+  }
 
   {
     std::cout << "Loading mesh..\n";
     std::vector<Primitive::TrianglePrimitive> mesh;
-    std::cout << "Parse: " << Parsers::parse_stl("data/monke.stl", mesh) << "\n";
+    std::cout << "Parse: " << Parsers::parse_stl("data/bigmonke.stl", mesh) << "\n";
 
     std::cout << mesh.size() << " triangles\n";
 
@@ -67,8 +75,6 @@ int main() {
 
     renderer.world().add_object(obj);
   }
-
-  */
 
   std::cout << "Setting up integrator..\n";
   renderer.setup_integrator();
@@ -94,5 +100,5 @@ int main() {
 
   std::cout << "Render done. writing png\n";
 
-  renderer.save_png("images/envmap2.png");
+  renderer.save_png("images/bong4.png");
 }

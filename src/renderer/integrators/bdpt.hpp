@@ -7,11 +7,14 @@ namespace Oxy::Integrators {
   namespace BDPT {
 
     struct LightPathVertex {
-      IntersectionContext isect;
-      Color               energy;
+      IntersectionContext      isect;
+      Color                    energy;
+      Tracing::TracableObject* source_obj;
 
       bool is_environment_hit() const { return !isect.hit; }
     };
+
+    constexpr auto MAX_LIGHT_PATH_VERTEX = 64;
 
   } // namespace BDPT
 
@@ -20,7 +23,7 @@ namespace Oxy::Integrators {
   */
   class BDPTIntegrator final : public Integrator {
   public:
-    BDPTIntegrator(int max_ray_bounce = 8, int max_light_bounce = 8)
+    BDPTIntegrator(int max_ray_bounce = 5, int max_light_bounce = 5)
         : m_max_ray_bounce(max_ray_bounce)
         , m_max_light_bounce(max_light_bounce) {}
 
@@ -38,18 +41,42 @@ namespace Oxy::Integrators {
           break;
         }
 
-        auto& obj   = isect.object;
-        auto& mater = obj->material();
+        const auto& obj   = isect.object;
+        const auto& mater = obj->material();
 
-        auto scatter = mater->scatter(isect);
+        const auto scatter = mater->scatter(isect);
 
         color += throughput * scatter.energy;
 
         throughput *= scatter.absorption;
 
         // sample a light path
-        // for (const auto& light_vertex : light_random_walk()) {
-        //}
+        const auto [light_path, light_path_n] = light_random_walk();
+
+        for (int i = 0; i < light_path_n; i++) {
+          const auto& light_vertex = *(light_path + light_path_n);
+
+          const auto& light_ray_isect = light_vertex.isect;
+          auto to_light_vertex = m_world.intersect_line(isect.hitpos + isect.hitnormal * 1e-6,
+                                                        light_ray_isect.ray.origin);
+
+          // path is obscured
+          if (!to_light_vertex.hit || light_vertex.source_obj != to_light_vertex.object)
+            continue;
+
+          // connect the paths
+          const auto light_mater = light_ray_isect.object->material();
+
+          /* clang-format off */
+          auto contribution = throughput *
+                              light_vertex.energy *
+                              mater->pdf(current_ray.direction, isect.hitnormal, to_light_vertex.ray.direction) *
+                              light_mater->pdf(light_ray_isect.ray.direction, light_ray_isect.hitnormal, -to_light_vertex.ray.direction) /
+                              (1.0 + light_ray_isect.t * light_ray_isect.t);
+          /* clang-format on */
+
+          color += contribution;
+        }
 
         // russian roulette ray termination
         auto p = throughput.max();
@@ -73,11 +100,8 @@ namespace Oxy::Integrators {
     }
 
   private:
-    std::vector<BDPT::LightPathVertex> light_random_walk() const {
-      // we can probably just write this into some thread local buffer since its got a max size
-      // would provide the benefit of not having to dynamically allocate stuff
-      std::vector<BDPT::LightPathVertex> result;
-      result.reserve(m_max_light_bounce);
+    std::pair<const BDPT::LightPathVertex* const, int> light_random_walk() const {
+      static thread_local std::array<BDPT::LightPathVertex, BDPT::MAX_LIGHT_PATH_VERTEX> result;
 
       // pick a random light source
       // (this would need to be weighed by intesity, surface area, etc.. for no bias to occur)
@@ -89,7 +113,8 @@ namespace Oxy::Integrators {
       Color color  = source->material()->albedo();
       Color energy = source->material()->emission_energy();
 
-      for (int i = 0; i < m_max_light_bounce; i++) {
+      int i;
+      for (i = 0; i < m_max_light_bounce; i++) {
         auto isect = m_world.intersect_ray(current_ray);
 
         if (!isect.hit)
@@ -105,10 +130,10 @@ namespace Oxy::Integrators {
 
         current_ray = scatter.ray;
 
-        result.push_back(BDPT::LightPathVertex{isect, color * energy});
+        result[i] = BDPT::LightPathVertex{isect, color * energy, source};
       }
 
-      return result;
+      return {result.data(), i};
     }
 
   private:

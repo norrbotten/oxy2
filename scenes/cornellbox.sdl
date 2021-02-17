@@ -1,0 +1,132 @@
+render: {
+  width: 1024
+  height: 1024
+  samples: 640000
+}
+
+camera: {
+  position: [-8.0, -4.0, -1.5]
+  aim: [0.0, 0.0, -2.2]
+  fov: 65
+}
+
+material: {
+  name: white lambert
+  params: {
+    roughness: 1.0
+  }
+}
+
+material: {
+  name: glossy
+  params: {
+    albedo: [0.75]
+    roughness: 0.0625
+  }
+}
+
+material: {
+  name: glass
+  params: {
+    ior: 1.45
+    albedo: [0.9, 1.0, 0.75]
+    transmission: 0.85
+  }
+}
+
+material: {
+  name: red lambert
+  params: {
+    albedo: [1.0, 0.0, 0.0]
+    roughness: 1.0
+  }
+}
+
+material: {
+  name: blue lambert
+  params: {
+    albedo: [0.0, 0.0, 1.0]
+    roughness: 1.0
+  }
+}
+
+material: {
+  name: light
+  params: {
+    emission: [10.0]
+  }
+}
+
+object: {
+  type: triangle
+  material: light
+  params: {
+    p0: [1.5, -1.5, 5.0]
+    p1: [-1.5, 1.5, 5.0]
+    p2: [1.5, 1.5, 5.0]
+  }
+}
+
+object: {
+  type: triangle
+  material: light
+  params: {
+    p0: [1.5, -1.5, 5.0]
+    p1: [-1.5, 1.5, 5.0]
+    p2: [-1.5, -1.5, 5.0]
+  }
+}
+
+object: {
+  type: sphere
+  material: glossy
+  params: {
+    center: [10005.0, 0.0, 0.0]
+    radius: 10000
+  }
+}
+
+object: {
+  type: sphere
+  material: white lambert
+  params: {
+    center: [-10015.0, 0.0, 0.0]
+    radius: 10000
+  }
+}
+
+object: {
+  type: sphere
+  material: red lambert
+  params: {
+    center: [0.0, 10005.0, 0.0]
+    radius: 10000
+  }
+}
+
+object: {
+  type: sphere
+  material: blue lambert
+  params: {
+    center: [0.0, -10005.0, 0.0]
+    radius: 10000
+  }
+}
+
+object: {
+  type: sphere
+  material: white lambert
+  params: {
+    center: [0.0, 0.0, 10005.1]
+    radius: 10000
+  }
+}
+
+object: {
+  type: sphere
+  material: white lambert
+  params: {
+    center: [0.0, 0.0, -10005.0]
+    radius: 10000
+  }
+}

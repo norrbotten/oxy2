@@ -49,6 +49,12 @@ namespace Oxy {
     return dist(gen, typename dist_type::param_type{from, to});
   }
 
+  // Returns -1 or 1
+  template <typename T>
+  T random_sign() {
+    return random<float>(0, 1) < 0.5f ? T(-1) : T(1);
+  }
+
   /*
     Reflects a vector around a normal
   */
