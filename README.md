@@ -1,7 +1,7 @@
 # Oxy 2
 
 ![Dragon](images/pssmlt_4k.png)
-Standford Dragon rendered with the PSSMLT integrator
+Stanford Dragon rendered with the PSSMLT integrator
 
 ## In progress:
 * XSDL
